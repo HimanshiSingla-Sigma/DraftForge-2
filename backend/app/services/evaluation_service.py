@@ -1,11 +1,16 @@
+import time
+
 from app.ai.evaluation.evaluator import EvaluationEngine
 from app.ai.evaluation.models import EvaluationFinding
+from app.core.authorization import assert_can_access_evaluation
 from app.core.constants import DocumentType, FindingCategory, FindingStatus
 from app.core.exceptions import NotFoundError, PermissionDeniedError
 from app.db.repositories.draft_repository import DraftRepository
 from app.db.repositories.evaluation_repository import EvaluationRepository
 from app.db.repositories.evidence_repository import EvidenceRepository
+from app.models.database.models import UserProfileDB
 from app.models.schemas.evaluation import EvaluationFindingResponse, EvaluationResponse
+from app.observability import record_evaluation, set_attributes, span
 from app.pipelines.skill_pipeline import SkillPipeline
 
 
@@ -18,6 +23,7 @@ class EvaluationService:
         self.skill_pipeline = SkillPipeline()
 
     def evaluate_draft(self, user_id: str, draft_id: str, version_number: int = None) -> EvaluationResponse:
+        started = time.perf_counter()
         draft = self.draft_repo.get_by_id(draft_id)
         if not draft:
             raise NotFoundError("Draft", draft_id)
@@ -41,7 +47,31 @@ class EvaluationService:
             except (ValueError, KeyError):
                 doc_type = DocumentType.AFFIDAVIT_OF_CHARACTER
 
-        eval_result = self.engine.evaluate_draft(version.get("raw_content", ""), doc_type)
+        # The deterministic scorer is the product's core claim, so its latency
+        # and score distribution are tracked in their own right rather than
+        # being folded into the endpoint's timing.
+        with span(
+            "evaluation.deterministic_scoring",
+            **{
+                "evaluation.document_type": doc_type.value,
+                "evaluation.content_length": len(version.get("raw_content", "")),
+            },
+        ):
+            eval_result = self.engine.evaluate_draft(version.get("raw_content", ""), doc_type)
+            set_attributes(
+                **{
+                    "evaluation.overall_score": float(eval_result.overall_score),
+                    "evaluation.finding_count": len(eval_result.findings),
+                    "evaluation.rubric_version": eval_result.rubric_version,
+                }
+            )
+
+        record_evaluation(
+            document_type=doc_type.value,
+            duration_seconds=time.perf_counter() - started,
+            overall_score=float(eval_result.overall_score),
+            success=True,
+        )
 
         # 1. Persist evaluation record
         eval_record = self.eval_repo.create({
@@ -91,7 +121,12 @@ class EvaluationService:
             evidence_items=evidence_items,
         )
 
-    def get_evaluation(self, evaluation_id: str) -> EvaluationResponse:
+    def get_evaluation(self, evaluation_id: str, requester: UserProfileDB) -> EvaluationResponse:
+        # Authorize before reading: the record contains the student's scores and
+        # verbatim draft evidence, so a bare id lookup leaks coursework across
+        # the whole cohort.
+        assert_can_access_evaluation(evaluation_id, requester)
+
         record = self.eval_repo.get_with_evidence(evaluation_id)
         if not record:
             raise NotFoundError("Evaluation", evaluation_id)

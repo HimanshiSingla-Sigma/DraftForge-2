@@ -1,10 +1,12 @@
 import re
+import time
 from typing import Any, Dict, List, Optional
 import httpx
 from app.ai.llm.base import BaseLLM, LLMMessage, LLMResponse
 from app.config import get_settings
-from app.core.exceptions import BaseAppException
+from app.core.exceptions import BaseAppException, UpstreamServiceError
 from app.core.logging import get_logger
+from app.observability import record_llm_call, set_attributes, span
 
 logger = get_logger("groq_provider")
 settings = get_settings()
@@ -92,7 +94,7 @@ class GroqLLM(BaseLLM):
             "Content-Type": "application/json"
         }
 
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=settings.LLM_REQUEST_TIMEOUT_SECONDS) as client:
             model_to_use = await self._get_active_model(client)
 
             payload: Dict[str, Any] = {
@@ -105,24 +107,72 @@ class GroqLLM(BaseLLM):
             if response_format:
                 payload["response_format"] = response_format
 
+            started = time.perf_counter()
             try:
-                response = await client.post(self.chat_url, headers=headers, json=payload)
-                if response.status_code != 200:
-                    logger.error(f"Groq API Error {response.status_code}: {response.text}")
-                response.raise_for_status()
-                data = response.json()
+                with span(
+                    "llm.groq.chat",
+                    **{
+                        "llm.provider": "groq",
+                        "llm.model": model_to_use,
+                        "llm.temperature": temperature,
+                        "llm.max_tokens": max_tokens,
+                        "llm.message_count": len(messages),
+                    },
+                ):
+                    response = await client.post(self.chat_url, headers=headers, json=payload)
+                    if response.status_code != 200:
+                        logger.error(f"Groq API Error {response.status_code}: {response.text}")
+                    response.raise_for_status()
+                    data = response.json()
 
-                raw_content = data["choices"][0]["message"]["content"]
-                # Clean reasoning tags before returning
-                cleaned_content = strip_reasoning_tags(raw_content)
-                usage = data.get("usage", {})
+                    raw_content = data["choices"][0]["message"]["content"]
+                    # Clean reasoning tags before returning
+                    cleaned_content = strip_reasoning_tags(raw_content)
+                    usage = data.get("usage", {})
+
+                    prompt_tokens = int(usage.get("prompt_tokens") or 0)
+                    completion_tokens = int(usage.get("completion_tokens") or 0)
+
+                    # Token counts are the unit that maps to spend; request
+                    # counts alone cannot bound or explain the bill.
+                    set_attributes(
+                        **{
+                            "llm.prompt_tokens": prompt_tokens,
+                            "llm.completion_tokens": completion_tokens,
+                        }
+                    )
+                    record_llm_call(
+                        provider="groq",
+                        model=model_to_use,
+                        operation="chat",
+                        duration_seconds=time.perf_counter() - started,
+                        prompt_tokens=prompt_tokens,
+                        completion_tokens=completion_tokens,
+                        success=True,
+                    )
+
                 return LLMResponse(content=cleaned_content, model=model_to_use, usage=usage)
+            except BaseAppException:
+                raise
             except httpx.HTTPStatusError as exc:
-                logger.error(f"Groq HTTP error: {exc.response.text}")
-                raise BaseAppException(
-                    status_code=502,
-                    detail=f"Groq inference failed ({exc.response.status_code}): {exc.response.text}"
-                ) from exc
+                record_llm_call(
+                    provider="groq",
+                    model=model_to_use,
+                    operation="chat",
+                    duration_seconds=time.perf_counter() - started,
+                    success=False,
+                )
+                # The upstream body can carry account, quota and key-fingerprint
+                # detail, so it is logged but never returned to the caller.
+                logger.error(f"Groq HTTP {exc.response.status_code}: {exc.response.text}")
+                if exc.response.status_code == 429:
+                    raise UpstreamServiceError(
+                        "Groq", f"rate limited: {exc.response.status_code}"
+                    ) from exc
+                raise UpstreamServiceError("Groq", f"status={exc.response.status_code}") from exc
+            except httpx.TimeoutException as exc:
+                logger.error(f"Groq request timed out after {settings.LLM_REQUEST_TIMEOUT_SECONDS}s")
+                raise UpstreamServiceError("Groq", "timeout") from exc
             except Exception as exc:
-                logger.error(f"Groq unexpected error: {exc}")
-                raise BaseAppException(status_code=502, detail=f"Groq inference failed: {str(exc)}") from exc
+                logger.error(f"Groq unexpected error: {exc.__class__.__name__}: {exc}")
+                raise UpstreamServiceError("Groq", exc.__class__.__name__) from exc
