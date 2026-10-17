@@ -21,6 +21,7 @@ def test_smtp_network_unreachable_catches_oserror_and_returns_false():
     service.settings.EMAIL_PROVIDER = "smtp"
     service.settings.SMTP_HOST = "smtp.gmail.com"
     service.settings.SMTP_PORT = 587
+    service.settings.RESEND_API_KEY = ""
 
     with patch("smtplib.SMTP", side_effect=OSError(101, "Network is unreachable")):
         result = service._dispatch(
@@ -30,6 +31,25 @@ def test_smtp_network_unreachable_catches_oserror_and_returns_false():
             html_content="<p>Link</p>",
         )
         assert result is False
+
+
+def test_smtp_network_unreachable_auto_retries_resend():
+    service = EmailService()
+    service.settings.EMAIL_PROVIDER = "smtp"
+    service.settings.SMTP_HOST = "smtp.gmail.com"
+    service.settings.SMTP_PORT = 587
+    service.settings.RESEND_API_KEY = "re_test_key"
+
+    mock_resp = MagicMock(status_code=200)
+    with patch("smtplib.SMTP", side_effect=OSError(101, "Network is unreachable")):
+        with patch("httpx.post", return_value=mock_resp):
+            result = service._dispatch(
+                recipient_email="student@ncuindia.edu",
+                subject="Invitation",
+                text_content="Your link",
+                html_content="<p>Link</p>",
+            )
+            assert result is True
 
 
 def test_resend_email_dispatch_success():

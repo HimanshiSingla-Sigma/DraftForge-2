@@ -66,6 +66,7 @@ async def invite_teacher(
         teacher_email=payload.email,
         section_ids=payload.section_ids,
         full_name=payload.full_name,
+        admin_name=admin.full_name or "Himanshi Singla",
         ip_address=ip_address,
     )
     email_sent = result.get("email_sent", False)

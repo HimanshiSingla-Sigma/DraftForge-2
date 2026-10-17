@@ -111,6 +111,7 @@ async def invite_student_to_section(
         student_email=payload.email,
         section_id=section_id,
         full_name=payload.full_name,
+        inviter_name=current_user.full_name or current_user.email,
         ip_address=ip_address,
     )
     email_sent = invitation.get("email_sent", False)

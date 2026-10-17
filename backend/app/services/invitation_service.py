@@ -55,6 +55,7 @@ class InvitationService:
         teacher_email: str,
         section_ids: Optional[List[str]] = None,
         full_name: Optional[str] = None,
+        admin_name: Optional[str] = None,
         ip_address: Optional[str] = None,
     ) -> Dict[str, Any]:
         norm_email = self._validate_email_syntax(teacher_email)
@@ -107,7 +108,8 @@ class InvitationService:
                     role="TEACHER",
                     invitation_url=invitation_url,
                     expires_hours=self.settings.INVITATION_EXPIRY_HOURS,
-                    inviter_name=admin_email,
+                    inviter_email=admin_email,
+                    inviter_name=admin_name or "Himanshi Singla",
                     section_names=section_names,
                 )
             except Exception as exc:
@@ -176,7 +178,8 @@ class InvitationService:
                 role="TEACHER",
                 invitation_url=invitation_url,
                 expires_hours=self.settings.INVITATION_EXPIRY_HOURS,
-                inviter_name=admin_email,
+                inviter_email=admin_email,
+                inviter_name=admin_name or "Himanshi Singla",
                 section_names=section_names,
             )
         except Exception as exc:
@@ -212,6 +215,7 @@ class InvitationService:
         student_email: str,
         section_id: str,
         full_name: Optional[str] = None,
+        inviter_name: Optional[str] = None,
         ip_address: Optional[str] = None,
     ) -> Dict[str, Any]:
         norm_email = self._validate_email_syntax(student_email)
@@ -263,7 +267,8 @@ class InvitationService:
                     role="STUDENT",
                     invitation_url=invitation_url,
                     expires_hours=self.settings.INVITATION_EXPIRY_HOURS,
-                    inviter_name=inviter_email,
+                    inviter_email=inviter_email,
+                    inviter_name=inviter_name or inviter_email,
                     section_names=[sec["name"]],
                 )
             except Exception as exc:
@@ -320,7 +325,8 @@ class InvitationService:
                 role="STUDENT",
                 invitation_url=invitation_url,
                 expires_hours=self.settings.INVITATION_EXPIRY_HOURS,
-                inviter_name=inviter_email,
+                inviter_email=inviter_email,
+                inviter_name=inviter_name or inviter_email,
                 section_names=[sec["name"]],
             )
         except Exception as exc:
@@ -508,6 +514,7 @@ class InvitationService:
         invitation_id: str,
         actor_id: str,
         actor_email: str,
+        actor_name: Optional[str] = None,
         ip_address: Optional[str] = None,
     ) -> Dict[str, Any]:
         invite = self.invitation_repo.get_by_id(invitation_id)
@@ -535,12 +542,19 @@ class InvitationService:
 
         email_sent = False
         try:
+            effective_inviter_email = actor_email
+            effective_inviter_name = actor_name or actor_email
+            if invite.get("role") == "TEACHER" and not actor_name:
+                effective_inviter_name = "Himanshi Singla (DraftForge Administration)"
+                effective_inviter_email = actor_email or "singlahimanshi2@gmail.com"
+
             email_sent = self.email_service.send_invitation_email(
                 recipient_email=invite["email"],
                 role=invite["role"],
                 invitation_url=invitation_url,
                 expires_hours=self.settings.INVITATION_EXPIRY_HOURS,
-                inviter_name=actor_email,
+                inviter_email=effective_inviter_email,
+                inviter_name=effective_inviter_name,
                 section_names=section_names,
             )
         except Exception as exc:

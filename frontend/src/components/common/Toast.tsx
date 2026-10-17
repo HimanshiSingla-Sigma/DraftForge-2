@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { CheckCircle2, AlertCircle, X, Sparkles } from 'lucide-react';
 
-export type ToastType = 'success' | 'error' | 'info';
+export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
 interface Toast {
   id: string;
@@ -43,6 +43,8 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 ? 'border-[#059669]'
                 : toast.type === 'error'
                 ? 'border-[#DC2626]'
+                : toast.type === 'warning'
+                ? 'border-[#D97706]'
                 : 'border-[#0B192C]'
             }`}
           >
@@ -53,16 +55,25 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                     ? 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]'
                     : toast.type === 'error'
                     ? 'bg-rose-50 text-rose-600 border-rose-200'
+                    : toast.type === 'warning'
+                    ? 'bg-amber-50 text-amber-600 border-amber-200'
                     : 'bg-[#FAF8F5] text-[#1E3E62] border-[#E6E2D8]'
                 }`}
               >
                 {toast.type === 'success' && <CheckCircle2 className="w-4 h-4" />}
                 {toast.type === 'error' && <AlertCircle className="w-4 h-4" />}
+                {toast.type === 'warning' && <AlertCircle className="w-4 h-4" />}
                 {toast.type === 'info' && <Sparkles className="w-4 h-4" />}
               </div>
               <div>
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5A6A80] block">
-                  {toast.type === 'success' ? '✦ DraftForge Intelligence' : toast.type === 'error' ? '⚠ System Advisory' : '◆ Studio Event'}
+                  {toast.type === 'success'
+                    ? '✦ DraftForge Intelligence'
+                    : toast.type === 'error'
+                    ? '⚠ System Advisory'
+                    : toast.type === 'warning'
+                    ? '⚡ Action Required'
+                    : '◆ Studio Event'}
                 </span>
                 <p className="text-xs font-bold leading-relaxed text-[#0B192C]">{toast.message}</p>
               </div>

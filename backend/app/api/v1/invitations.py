@@ -67,6 +67,7 @@ async def resend_invitation(
         invitation_id=invitation_id,
         actor_id=current_user.id,
         actor_email=current_user.email,
+        actor_name=current_user.full_name or current_user.email,
         ip_address=ip_address,
     )
     email_sent = updated.get("email_sent", False)
