@@ -63,6 +63,8 @@ class InvitationResponse(BaseModel):
     expires_at: Any
     accepted_at: Optional[Any] = None
     created_at: Optional[Any] = None
+    invitation_url: Optional[str] = None
+    email_sent: Optional[bool] = None
 
 
 class VerifyInvitationResponse(BaseModel):

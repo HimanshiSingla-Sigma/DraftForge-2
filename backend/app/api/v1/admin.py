@@ -68,7 +68,19 @@ async def invite_teacher(
         full_name=payload.full_name,
         ip_address=ip_address,
     )
-    return {"status": "success", "message": f"Invitation dispatched to {payload.email}", "invitation": result}
+    email_sent = result.get("email_sent", False)
+    msg = (
+        f"Faculty invitation dispatched to {payload.email}."
+        if email_sent
+        else f"Faculty invitation created for {payload.email}. (Email delivery was not possible; please copy the activation link below)."
+    )
+    return {
+        "status": "success",
+        "message": msg,
+        "invitation": result,
+        "invitation_url": result.get("invitation_url"),
+        "email_sent": email_sent,
+    }
 
 
 @router.get("/students", response_model=List[StudentOverviewResponse])

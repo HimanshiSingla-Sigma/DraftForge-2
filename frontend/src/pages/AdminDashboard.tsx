@@ -26,6 +26,8 @@ import {
   UserPlus,
   Filter,
   AlertTriangle,
+  Copy,
+  Check,
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
@@ -68,6 +70,14 @@ export const AdminDashboard: React.FC = () => {
   const [teacherFullName, setTeacherFullName] = useState('');
   const [teacherSectionIds, setTeacherSectionIds] = useState<string[]>([]);
   const [invitingTeacher, setInvitingTeacher] = useState(false);
+
+  // Newly created/resent teacher invitation link state
+  const [teacherInviteResult, setTeacherInviteResult] = useState<{
+    email: string;
+    url: string;
+    emailSent: boolean;
+  } | null>(null);
+  const [copiedUrl, setCopiedUrl] = useState<boolean>(false);
 
   // Admin Transfer Form
   const [newAdminEmail, setNewAdminEmail] = useState('');
@@ -161,12 +171,29 @@ export const AdminDashboard: React.FC = () => {
     e.preventDefault();
     setInvitingTeacher(true);
     try {
-      await api.inviteTeacher({
+      const res: any = await api.inviteTeacher({
         email: teacherEmail.trim().toLowerCase(),
         full_name: teacherFullName.trim() || undefined,
         section_ids: teacherSectionIds,
       });
-      showToast(`Faculty invitation dispatched to ${teacherEmail}.`, 'success');
+      const data = res.data || {};
+      const inviteUrl = data.invitation_url || data.invitation?.invitation_url;
+      const emailSent = data.email_sent ?? data.invitation?.email_sent ?? false;
+
+      if (emailSent) {
+        showToast(`Faculty invitation dispatched to ${teacherEmail}.`, 'success');
+      } else {
+        showToast(`Faculty invitation created. Email delivery unavailable; link ready to copy below.`, 'warning');
+      }
+
+      if (inviteUrl) {
+        setTeacherInviteResult({
+          email: teacherEmail.trim().toLowerCase(),
+          url: inviteUrl,
+          emailSent: !!emailSent,
+        });
+      }
+
       setTeacherEmail('');
       setTeacherFullName('');
       setTeacherSectionIds([]);
@@ -176,7 +203,7 @@ export const AdminDashboard: React.FC = () => {
         loadTabData();
       }
     } catch (err: any) {
-      const msg = err.response?.data?.detail || 'Failed to invite faculty member.';
+      const msg = err.response?.data?.message || err.response?.data?.detail || 'Failed to invite faculty member.';
       showToast(msg, 'error');
     } finally {
       setInvitingTeacher(false);
@@ -202,8 +229,24 @@ export const AdminDashboard: React.FC = () => {
   // Resend / Revoke
   const handleResend = async (id: string) => {
     try {
-      await api.resendInvitation(id);
-      showToast('Invitation token refreshed and resent.', 'success');
+      const res: any = await api.resendInvitation(id);
+      const data = res.data || {};
+      const inviteUrl = data.invitation_url || data.invitation?.invitation_url;
+      const emailSent = data.email_sent ?? data.invitation?.email_sent ?? false;
+
+      if (emailSent) {
+        showToast('Invitation token refreshed and resent.', 'success');
+      } else {
+        showToast('Token refreshed! Email delivery unavailable; link ready to copy below.', 'warning');
+      }
+
+      if (inviteUrl) {
+        setTeacherInviteResult({
+          email: data.invitation?.email || 'Invited User',
+          url: inviteUrl,
+          emailSent: !!emailSent,
+        });
+      }
       loadTabData();
     } catch (err: any) {
       showToast('Failed to resend invitation.', 'error');
@@ -296,6 +339,56 @@ export const AdminDashboard: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Newly Created / Resent Faculty Invite URL Banner */}
+      {teacherInviteResult && (
+        <div className="tactile-card p-4 bg-amber-50 border-2 border-amber-300 rounded-2xl space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-amber-800" />
+              <span className="font-bold text-xs text-amber-900">
+                {teacherInviteResult.emailSent
+                  ? `Faculty Invitation Dispatched to ${teacherInviteResult.email}`
+                  : `Faculty Invitation Ready (Manual Link Sharing) for ${teacherInviteResult.email}`}
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                setTeacherInviteResult(null);
+                setCopiedUrl(false);
+              }}
+              className="text-amber-700 hover:text-amber-900 text-xs font-bold cursor-pointer"
+            >
+              ✕ Dismiss
+            </button>
+          </div>
+          <p className="text-[11px] text-amber-800">
+            {teacherInviteResult.emailSent
+              ? 'An email was sent. You can also copy the direct single-use faculty onboarding URL below:'
+              : 'Server-side automated email delivery is not configured or was blocked by host. Share this direct link with the faculty member:'}
+          </p>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              readOnly
+              value={teacherInviteResult.url}
+              className="flex-1 bg-white border-2 border-amber-200 rounded-xl px-3 py-1.5 text-xs font-mono text-[#0B192C] select-all focus:outline-none"
+            />
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(teacherInviteResult.url);
+                setCopiedUrl(true);
+                showToast('Faculty invitation link copied to clipboard!', 'success');
+                setTimeout(() => setCopiedUrl(false), 2500);
+              }}
+              className="tactile-btn px-3 py-1.5 bg-[#1E3E62] hover:bg-[#152C46] text-white text-xs font-bold rounded-xl border-b-2 border-[#0B192C] flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+            >
+              {copiedUrl ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-[#F59E0B]" />}
+              <span>{copiedUrl ? 'Copied!' : 'Copy Link'}</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* KPI Overview Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">

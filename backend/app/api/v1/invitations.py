@@ -69,7 +69,19 @@ async def resend_invitation(
         actor_email=current_user.email,
         ip_address=ip_address,
     )
-    return {"status": "success", "message": "Invitation refreshed and resent.", "invitation": updated}
+    email_sent = updated.get("email_sent", False)
+    msg = (
+        "Invitation refreshed and email resent."
+        if email_sent
+        else "Invitation refreshed. (Email delivery was not possible; please copy the activation link below)."
+    )
+    return {
+        "status": "success",
+        "message": msg,
+        "invitation": updated,
+        "invitation_url": updated.get("invitation_url"),
+        "email_sent": email_sent,
+    }
 
 
 @router.post("/{invitation_id}/revoke")

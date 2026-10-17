@@ -159,8 +159,9 @@ The DraftForge Academic Team
         text_content: str,
         html_content: str,
     ) -> bool:
-        provider = (self.settings.EMAIL_PROVIDER or "console").lower()
+        provider = (self.settings.EMAIL_PROVIDER or "console").strip().lower()
 
+        # 1. CONSOLE PROVIDER (Local Dev / Offline Staging)
         if provider == "console":
             logger.info(
                 f"[EMAIL DISPATCH - CONSOLE] To: {recipient_email} | Subject: {subject}\n"
@@ -168,45 +169,25 @@ The DraftForge Academic Team
             )
             return True
 
-        elif provider == "smtp":
-            if not self.settings.SMTP_HOST:
-                logger.error("SMTP_HOST is not configured in settings.")
-                return False
-            try:
-                msg = MIMEMultipart("alternative")
-                msg["Subject"] = subject
-                msg["From"] = f"{self.settings.SMTP_FROM_NAME} <{self.settings.SMTP_FROM_EMAIL}>"
-                msg["To"] = recipient_email
-
-                part1 = MIMEText(text_content, "plain")
-                part2 = MIMEText(html_content, "html")
-                msg.attach(part1)
-                msg.attach(part2)
-
-                server = smtplib.SMTP(self.settings.SMTP_HOST, self.settings.SMTP_PORT, timeout=15)
-                if self.settings.SMTP_USE_TLS:
-                    server.starttls()
-                if self.settings.SMTP_USERNAME and self.settings.SMTP_PASSWORD:
-                    server.login(self.settings.SMTP_USERNAME, self.settings.SMTP_PASSWORD)
-                server.sendmail(self.settings.SMTP_FROM_EMAIL, [recipient_email], msg.as_string())
-                server.quit()
-                logger.info(f"Successfully delivered email via SMTP to {recipient_email}")
-                return True
-            except Exception as exc:
-                logger.error(f"SMTP delivery failed to {recipient_email}: {exc}")
-                raise RuntimeError(f"Email delivery failed: {str(exc)}") from exc
-
+        # 2. RESEND PROVIDER (HTTPS REST API - Recommended for Render)
         elif provider == "resend":
             if not self.settings.RESEND_API_KEY:
-                logger.error("RESEND_API_KEY is not configured.")
+                logger.error("EMAIL_PROVIDER is set to 'resend' but RESEND_API_KEY is not configured.")
+                self._fallback_console(recipient_email, subject, text_content)
                 return False
             try:
+                from_email = self.settings.RESEND_FROM_EMAIL or self.settings.SMTP_FROM_EMAIL
+                # Resend requires 'onboarding@resend.dev' for sandbox unless a custom domain is verified
+                if not from_email or "draftforge.ai" in from_email:
+                    from_email = "onboarding@resend.dev"
+
+                from_name = self.settings.SMTP_FROM_NAME or "DraftForge Legal AI"
                 headers = {
                     "Authorization": f"Bearer {self.settings.RESEND_API_KEY}",
                     "Content-Type": "application/json",
                 }
                 payload = {
-                    "from": f"{self.settings.SMTP_FROM_NAME} <{self.settings.SMTP_FROM_EMAIL}>",
+                    "from": f"{from_name} <{from_email}>",
                     "to": [recipient_email],
                     "subject": subject,
                     "html": html_content,
@@ -217,12 +198,139 @@ The DraftForge Academic Team
                     logger.info(f"Successfully delivered email via Resend to {recipient_email}")
                     return True
                 else:
-                    logger.error(f"Resend returned status {resp.status_code}: {resp.text}")
-                    raise RuntimeError(f"Resend error: {resp.text}")
+                    logger.error(f"Resend HTTP error {resp.status_code}: {resp.text}")
+                    self._fallback_console(recipient_email, subject, text_content)
+                    return False
             except Exception as exc:
-                logger.error(f"Resend delivery failed to {recipient_email}: {exc}")
-                raise RuntimeError(f"Email delivery failed: {str(exc)}") from exc
+                logger.error(f"Resend dispatch exception to {recipient_email}: {exc}")
+                self._fallback_console(recipient_email, subject, text_content)
+                return False
+
+        # 3. BREVO / SENDINBLUE PROVIDER (HTTPS REST API - Free tier 300 emails/day)
+        elif provider in ("brevo", "sendinblue"):
+            if not self.settings.BREVO_API_KEY:
+                logger.error("EMAIL_PROVIDER is set to 'brevo' but BREVO_API_KEY is not configured.")
+                self._fallback_console(recipient_email, subject, text_content)
+                return False
+            try:
+                from_email = self.settings.BREVO_FROM_EMAIL or self.settings.SMTP_FROM_EMAIL or "noreply@draftforge.ai"
+                from_name = self.settings.SMTP_FROM_NAME or "DraftForge Legal AI"
+                headers = {
+                    "api-key": self.settings.BREVO_API_KEY,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                }
+                payload = {
+                    "sender": {"name": from_name, "email": from_email},
+                    "to": [{"email": recipient_email}],
+                    "subject": subject,
+                    "htmlContent": html_content,
+                    "textContent": text_content,
+                }
+                resp = httpx.post("https://api.brevo.com/v3/smtp/email", json=payload, headers=headers, timeout=15)
+                if resp.status_code in (200, 201):
+                    logger.info(f"Successfully delivered email via Brevo to {recipient_email}")
+                    return True
+                else:
+                    logger.error(f"Brevo HTTP error {resp.status_code}: {resp.text}")
+                    self._fallback_console(recipient_email, subject, text_content)
+                    return False
+            except Exception as exc:
+                logger.error(f"Brevo dispatch exception to {recipient_email}: {exc}")
+                self._fallback_console(recipient_email, subject, text_content)
+                return False
+
+        # 4. SENDGRID PROVIDER (HTTPS REST API)
+        elif provider == "sendgrid":
+            if not self.settings.SENDGRID_API_KEY:
+                logger.error("EMAIL_PROVIDER is set to 'sendgrid' but SENDGRID_API_KEY is not configured.")
+                self._fallback_console(recipient_email, subject, text_content)
+                return False
+            try:
+                from_email = self.settings.SENDGRID_FROM_EMAIL or self.settings.SMTP_FROM_EMAIL or "noreply@draftforge.ai"
+                from_name = self.settings.SMTP_FROM_NAME or "DraftForge Legal AI"
+                headers = {
+                    "Authorization": f"Bearer {self.settings.SENDGRID_API_KEY}",
+                    "Content-Type": "application/json",
+                }
+                payload = {
+                    "personalizations": [{"to": [{"email": recipient_email}]}],
+                    "from": {"name": from_name, "email": from_email},
+                    "subject": subject,
+                    "content": [
+                        {"type": "text/plain", "value": text_content},
+                        {"type": "text/html", "value": html_content},
+                    ],
+                }
+                resp = httpx.post("https://api.sendgrid.com/v3/mail/send", json=payload, headers=headers, timeout=15)
+                if resp.status_code in (200, 201, 202):
+                    logger.info(f"Successfully delivered email via SendGrid to {recipient_email}")
+                    return True
+                else:
+                    logger.error(f"SendGrid HTTP error {resp.status_code}: {resp.text}")
+                    self._fallback_console(recipient_email, subject, text_content)
+                    return False
+            except Exception as exc:
+                logger.error(f"SendGrid dispatch exception to {recipient_email}: {exc}")
+                self._fallback_console(recipient_email, subject, text_content)
+                return False
+
+        # 5. SMTP PROVIDER (Direct TCP Socket)
+        elif provider == "smtp":
+            if not self.settings.SMTP_HOST:
+                logger.error("SMTP_HOST is not configured in settings.")
+                self._fallback_console(recipient_email, subject, text_content)
+                return False
+            try:
+                msg = MIMEMultipart("alternative")
+                msg["Subject"] = subject
+                from_email = self.settings.SMTP_FROM_EMAIL or "noreply@draftforge.ai"
+                from_name = self.settings.SMTP_FROM_NAME or "DraftForge Legal AI"
+                msg["From"] = f"{from_name} <{from_email}>"
+                msg["To"] = recipient_email
+
+                part1 = MIMEText(text_content, "plain")
+                part2 = MIMEText(html_content, "html")
+                msg.attach(part1)
+                msg.attach(part2)
+
+                port = int(self.settings.SMTP_PORT or 587)
+                if port == 465:
+                    server = smtplib.SMTP_SSL(self.settings.SMTP_HOST, port, timeout=15)
+                else:
+                    server = smtplib.SMTP(self.settings.SMTP_HOST, port, timeout=15)
+                    if self.settings.SMTP_USE_TLS:
+                        server.starttls()
+
+                if self.settings.SMTP_USERNAME and self.settings.SMTP_PASSWORD:
+                    server.login(self.settings.SMTP_USERNAME, self.settings.SMTP_PASSWORD)
+                server.sendmail(from_email, [recipient_email], msg.as_string())
+                server.quit()
+                logger.info(f"Successfully delivered email via SMTP to {recipient_email}")
+                return True
+            except OSError as exc:
+                logger.error(
+                    f"SMTP delivery failed to {recipient_email}: {exc}. "
+                    "NOTE: Render and major cloud providers block outbound SMTP ports 25, 465, and 587. "
+                    "To send emails from Render, switch EMAIL_PROVIDER to 'resend', 'brevo', 'sendgrid', or 'console'."
+                )
+                self._fallback_console(recipient_email, subject, text_content)
+                return False
+            except Exception as exc:
+                logger.error(f"SMTP delivery failed to {recipient_email}: {exc}")
+                self._fallback_console(recipient_email, subject, text_content)
+                return False
 
         logger.warning(f"Unknown email provider '{provider}', falling back to console log.")
-        logger.info(f"[EMAIL TO {recipient_email}] {subject}")
+        self._fallback_console(recipient_email, subject, text_content)
         return True
+
+    def _fallback_console(self, recipient_email: str, subject: str, text_content: str) -> None:
+        """
+        Safety fallback to ensure invitation activation links and important messages
+        are always logged in server stdout even if outbound mail transport fails.
+        """
+        logger.warning(
+            f"[EMAIL DISPATCH - CONSOLE FALLBACK] To: {recipient_email} | Subject: {subject}\n"
+            f"--- Body Preview ---\n{text_content.strip()}\n-------------------"
+        )

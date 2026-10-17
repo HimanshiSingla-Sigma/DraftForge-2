@@ -100,8 +100,9 @@ class InvitationService:
 
             invitation_url = f"{self.settings.APP_BASE_URL.rstrip('/')}/accept-invitation?token={raw_token}"
 
+            email_sent = False
             try:
-                self.email_service.send_invitation_email(
+                email_sent = self.email_service.send_invitation_email(
                     recipient_email=norm_email,
                     role="TEACHER",
                     invitation_url=invitation_url,
@@ -111,7 +112,10 @@ class InvitationService:
                 )
             except Exception as exc:
                 logger.error(f"Email dispatch failed for teacher invite {existing_invite['id']}: {exc}")
-                raise RuntimeError(f"Invitation updated but email delivery failed: {str(exc)}") from exc
+                email_sent = False
+
+            if not email_sent:
+                logger.warning(f"Faculty invitation link for {norm_email}: {invitation_url}")
 
             self.audit_repo.log_event(
                 action="RESEND_INVITATION",
@@ -130,7 +134,7 @@ class InvitationService:
                 "status": "PENDING",
                 "expires_at": expires_at.isoformat(),
                 "invitation_url": invitation_url,
-                "email_sent": True,
+                "email_sent": bool(email_sent),
             }
 
         # Validate section IDs if provided
@@ -165,8 +169,9 @@ class InvitationService:
         invitation_url = f"{self.settings.APP_BASE_URL.rstrip('/')}/accept-invitation?token={raw_token}"
 
         # Dispatch email
+        email_sent = False
         try:
-            self.email_service.send_invitation_email(
+            email_sent = self.email_service.send_invitation_email(
                 recipient_email=norm_email,
                 role="TEACHER",
                 invitation_url=invitation_url,
@@ -176,8 +181,10 @@ class InvitationService:
             )
         except Exception as exc:
             logger.error(f"Email dispatch failed for teacher invite {invitation['id']}: {exc}")
-            # Do not rollback DB token, but note error
-            raise RuntimeError(f"Invitation created but email delivery failed: {str(exc)}") from exc
+            email_sent = False
+
+        if not email_sent:
+            logger.warning(f"Faculty invitation link for {norm_email}: {invitation_url}")
 
         # Audit log
         self.audit_repo.log_event(
@@ -190,6 +197,8 @@ class InvitationService:
             ip_address=ip_address,
         )
 
+        invitation["invitation_url"] = invitation_url
+        invitation["email_sent"] = bool(email_sent)
         return invitation
 
     # =========================================================================
@@ -247,8 +256,9 @@ class InvitationService:
 
             invitation_url = f"{self.settings.APP_BASE_URL.rstrip('/')}/accept-invitation?token={raw_token}"
 
+            email_sent = False
             try:
-                self.email_service.send_invitation_email(
+                email_sent = self.email_service.send_invitation_email(
                     recipient_email=norm_email,
                     role="STUDENT",
                     invitation_url=invitation_url,
@@ -258,7 +268,10 @@ class InvitationService:
                 )
             except Exception as exc:
                 logger.error(f"Email dispatch failed for student invite {existing_invite['id']}: {exc}")
-                raise RuntimeError(f"Invitation updated but email delivery failed: {str(exc)}") from exc
+                email_sent = False
+
+            if not email_sent:
+                logger.warning(f"Student invitation link for {norm_email}: {invitation_url}")
 
             self.audit_repo.log_event(
                 action="RESEND_INVITATION",
@@ -276,8 +289,9 @@ class InvitationService:
                 "role": UserRole.STUDENT.value,
                 "status": "PENDING",
                 "expires_at": expires_at.isoformat(),
+                "section_ids": existing_sections,
                 "invitation_url": invitation_url,
-                "email_sent": True,
+                "email_sent": bool(email_sent),
             }
 
         raw_token = self._generate_token()
@@ -299,8 +313,9 @@ class InvitationService:
 
         invitation_url = f"{self.settings.APP_BASE_URL.rstrip('/')}/accept-invitation?token={raw_token}"
 
+        email_sent = False
         try:
-            self.email_service.send_invitation_email(
+            email_sent = self.email_service.send_invitation_email(
                 recipient_email=norm_email,
                 role="STUDENT",
                 invitation_url=invitation_url,
@@ -310,7 +325,10 @@ class InvitationService:
             )
         except Exception as exc:
             logger.error(f"Email dispatch failed for student invite {invitation['id']}: {exc}")
-            raise RuntimeError(f"Invitation created but email delivery failed: {str(exc)}") from exc
+            email_sent = False
+
+        if not email_sent:
+            logger.warning(f"Student invitation link for {norm_email}: {invitation_url}")
 
         self.audit_repo.log_event(
             action="INVITE_STUDENT",
@@ -322,6 +340,8 @@ class InvitationService:
             ip_address=ip_address,
         )
 
+        invitation["invitation_url"] = invitation_url
+        invitation["email_sent"] = bool(email_sent)
         return invitation
 
     # =========================================================================
@@ -513,14 +533,22 @@ class InvitationService:
             if sec:
                 section_names.append(sec["name"])
 
-        self.email_service.send_invitation_email(
-            recipient_email=invite["email"],
-            role=invite["role"],
-            invitation_url=invitation_url,
-            expires_hours=self.settings.INVITATION_EXPIRY_HOURS,
-            inviter_name=actor_email,
-            section_names=section_names,
-        )
+        email_sent = False
+        try:
+            email_sent = self.email_service.send_invitation_email(
+                recipient_email=invite["email"],
+                role=invite["role"],
+                invitation_url=invitation_url,
+                expires_hours=self.settings.INVITATION_EXPIRY_HOURS,
+                inviter_name=actor_email,
+                section_names=section_names,
+            )
+        except Exception as exc:
+            logger.error(f"Email dispatch exception on resend for {invitation_id}: {exc}")
+            email_sent = False
+
+        if not email_sent:
+            logger.warning(f"Resent invitation link for {invite['email']}: {invitation_url}")
 
         self.audit_repo.log_event(
             action="RESEND_INVITATION",
@@ -532,7 +560,10 @@ class InvitationService:
             ip_address=ip_address,
         )
 
-        return updated or invite
+        res = dict(updated or invite)
+        res["invitation_url"] = invitation_url
+        res["email_sent"] = bool(email_sent)
+        return res
 
     # =========================================================================
     # 6. REVOKE INVITATION

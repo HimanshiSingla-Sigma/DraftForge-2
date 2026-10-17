@@ -66,7 +66,7 @@ class Settings(BaseSettings):
     STUDENT_EMAIL_POLICY: str = "ANY_VERIFIED"  # "ANY_VERIFIED" or "COLLEGE_DOMAIN_ONLY"
 
     # Email Notifications Configuration
-    EMAIL_PROVIDER: str = "console"  # "console", "smtp", "resend"
+    EMAIL_PROVIDER: str = "console"  # "console", "resend", "brevo", "sendgrid", "smtp"
     SMTP_HOST: str = ""
     SMTP_PORT: int = 587
     SMTP_USERNAME: str = ""
@@ -75,6 +75,11 @@ class Settings(BaseSettings):
     SMTP_FROM_NAME: str = "DraftForge Legal AI"
     SMTP_USE_TLS: bool = True
     RESEND_API_KEY: str = ""
+    RESEND_FROM_EMAIL: str = ""
+    BREVO_API_KEY: str = ""
+    BREVO_FROM_EMAIL: str = ""
+    SENDGRID_API_KEY: str = ""
+    SENDGRID_FROM_EMAIL: str = ""
 
     def get_allowed_college_domains_list(self) -> List[str]:
         return [

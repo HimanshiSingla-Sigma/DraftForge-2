@@ -113,10 +113,18 @@ async def invite_student_to_section(
         full_name=payload.full_name,
         ip_address=ip_address,
     )
+    email_sent = invitation.get("email_sent", False)
+    msg = (
+        f"Invitation email dispatched to {payload.email}."
+        if email_sent
+        else f"Invitation created for {payload.email}. (Email delivery was not possible; please copy the activation link below)."
+    )
     return {
         "status": "success",
-        "message": f"Invitation dispatched to {payload.email}",
+        "message": msg,
         "invitation": invitation,
+        "invitation_url": invitation.get("invitation_url"),
+        "email_sent": email_sent,
     }
 
 

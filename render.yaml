@@ -60,6 +60,14 @@ services:
         value: fastembed
       - key: EMBEDDING_MODEL
         value: BAAI/bge-small-en-v1.5
+      - key: EMAIL_PROVIDER
+        value: resend
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        value: onboarding@resend.dev
+      - key: SMTP_FROM_NAME
+        value: DraftForge Legal AI
 
   # ============================================================================
   # 2. DraftForge React + Vite Frontend Static Site
