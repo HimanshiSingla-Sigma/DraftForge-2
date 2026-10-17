@@ -1,0 +1,41 @@
+name: draftforge_mobile
+description: "DraftForge AI — Legal Drafting & Statutory Evaluation Mobile Application"
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Networking & HTTP
+  dio: ^5.4.3+1
+  http_parser: ^4.0.2
+
+  # Secure Storage & Session
+  flutter_secure_storage: ^9.2.2
+  shared_preferences: ^2.2.3
+
+  # State Management & Architecture
+  provider: ^6.1.2
+
+  # UI, Icons, Typography & Feedback
+  google_fonts: ^6.2.1
+  lucide_icons: ^0.257.0
+  intl: ^0.19.0
+  flutter_markdown: ^0.7.2
+
+  # Document & File Upload
+  file_picker: ^8.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
