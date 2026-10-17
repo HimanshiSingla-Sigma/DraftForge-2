@@ -32,7 +32,11 @@ async def get_assignment_submissions(
     """
     Lists student submissions for an assignment with full evaluation reports (Teacher Only).
     """
-    return submission_service.list_assignment_submissions(assignment_id=assignment_id, teacher_id=current_user.id)
+    return submission_service.list_assignment_submissions(
+        assignment_id=assignment_id,
+        teacher_id=current_user.id,
+        user_role=current_user.role,
+    )
 
 
 @router.post("/{submission_id}/override", response_model=SubmissionResponse, dependencies=[Depends(require_teacher)])
@@ -47,5 +51,6 @@ async def override_submission_score(
     return submission_service.override_submission_score(
         submission_id=submission_id,
         teacher_id=current_user.id,
-        payload=payload
+        payload=payload,
+        user_role=current_user.role,
     )

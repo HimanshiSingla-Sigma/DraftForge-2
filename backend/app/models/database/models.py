@@ -93,3 +93,66 @@ class EvaluationDB(BaseModel):
     override_reason: Optional[str] = None
     created_at: Optional[Any] = None
     evidence_items: List[EvaluationEvidenceDB] = Field(default_factory=list)
+
+
+class SectionDB(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    id: str
+    name: str
+    code: str
+    academic_year: str = "2025-2026"
+    description: Optional[str] = None
+    is_active: bool = True
+    created_at: Optional[Any] = None
+    updated_at: Optional[Any] = None
+
+
+class TeacherSectionDB(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    id: str
+    teacher_id: str
+    section_id: str
+    assigned_at: Optional[Any] = None
+
+
+class StudentSectionDB(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    id: str
+    student_id: str
+    section_id: str
+    enrolled_at: Optional[Any] = None
+
+
+class InvitationDB(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    id: str
+    email: str
+    role: UserRole
+    inviter_id: str
+    section_ids: List[str] = Field(default_factory=list)
+    token_hash: str
+    status: str = "PENDING"
+    expires_at: Any
+    accepted_at: Optional[Any] = None
+    accepted_user_id: Optional[str] = None
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+    created_at: Optional[Any] = None
+    updated_at: Optional[Any] = None
+
+
+class AuditLogDB(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    id: str
+    actor_id: Optional[str] = None
+    actor_email: Optional[str] = None
+    action: str
+    target_type: Optional[str] = None
+    target_id: Optional[str] = None
+    details: Dict[str, Any] = Field(default_factory=dict)
+    ip_address: Optional[str] = None
+    created_at: Optional[Any] = None

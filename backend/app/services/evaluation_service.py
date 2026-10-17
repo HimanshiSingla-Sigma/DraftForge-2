@@ -17,11 +17,14 @@ class EvaluationService:
         self.engine = EvaluationEngine()
         self.skill_pipeline = SkillPipeline()
 
-    def evaluate_draft(self, user_id: str, draft_id: str, version_number: int = None) -> EvaluationResponse:
+    def evaluate_draft(self, user_id: str, draft_id: str, version_number: int = None, user_role: str = "STUDENT") -> EvaluationResponse:
         draft = self.draft_repo.get_by_id(draft_id)
         if not draft:
             raise NotFoundError("Draft", draft_id)
-        if str(draft.get("user_id", "")).strip() != str(user_id).strip():
+
+        is_owner = str(draft.get("user_id", "")).strip() == str(user_id).strip()
+        role_str = str(user_role.value if hasattr(user_role, "value") else user_role).upper()
+        if not is_owner and role_str not in ["ADMIN", "TEACHER"]:
             raise PermissionDeniedError("Cannot evaluate another student's draft.")
 
         if version_number:
@@ -60,10 +63,11 @@ class EvaluationService:
         findings_payload = [f.model_dump(mode="json") for f in eval_result.findings]
         saved_findings = self.evidence_repo.create_batch(eval_record["id"], findings_payload)
 
-        # 3. Update student skill graph in PostgreSQL and Neo4j Aura
+        # 3. Update student skill graph in PostgreSQL and Neo4j Aura for the draft owner
+        draft_owner_id = draft.get("user_id", user_id)
         try:
             self.skill_pipeline.process_evaluation_skills(
-                user_id=user_id,
+                user_id=draft_owner_id,
                 evaluation_id=eval_record["id"],
                 findings=eval_result.findings
             )
@@ -87,6 +91,9 @@ class EvaluationService:
             formatting_score=eval_record["formatting_score"],
             gap_penalty=eval_record["gap_penalty"],
             rubric_version=eval_record["rubric_version"],
+            llm_explanation=eval_record.get("llm_explanation"),
+            is_overridden=eval_record.get("is_overridden", False),
+            overridden_score=eval_record.get("overridden_score"),
             created_at=eval_record.get("created_at"),
             evidence_items=evidence_items,
         )

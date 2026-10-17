@@ -126,6 +126,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
       setIsCreatingNew(false);
       await fetchDrafts();
       selectDraftItem(res.data);
+      window.dispatchEvent(new CustomEvent('draftforge:metric_update'));
     } catch (err: any) {
       showToast(err.response?.data?.detail || 'Draft creation failed', 'error');
     } finally {
@@ -144,6 +145,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
       setCurrentVersionNumber(res.data.version_number);
       const updatedList = drafts.map((d) => (d.id === updatedDraft.data.id ? updatedDraft.data : d));
       setDrafts(updatedList);
+      window.dispatchEvent(new CustomEvent('draftforge:metric_update'));
     } catch (err: any) {
       showToast(err.response?.data?.detail || 'Failed to save revision', 'error');
     } finally {
@@ -159,6 +161,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
       const res = await api.evaluateDraft(selectedDraft.id, currentVersionNumber);
       setEvaluationResult(res.data);
       showToast('Deterministic RAG Evaluation Completed!', 'success');
+      window.dispatchEvent(new CustomEvent('draftforge:metric_update'));
     } catch (err: any) {
       showToast(err.response?.data?.detail || 'Evaluation failed to complete', 'error');
       setIsAiEvalModalOpen(false);
@@ -193,6 +196,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
       showToast(`Parsed "${file.name}" and created Version 1`, 'success');
       await fetchDrafts();
       selectDraftItem(res.data);
+      window.dispatchEvent(new CustomEvent('draftforge:metric_update'));
     } catch (err: any) {
       showToast(err.response?.data?.detail || 'File upload and extraction failed', 'error');
     } finally {
@@ -256,23 +260,23 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Top Workspace Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl glass-panel-glow border border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl tactile-card bg-[#FAF8F5] border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8]">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold text-white tracking-tight">Legal Drafting Workspace</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-primary-500/10 text-primary-400 border border-primary-500/20 font-mono">
+            <h1 className="text-2xl font-serif font-bold text-[#0B192C] tracking-tight">Legal Drafting Workspace</h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#1E3E62]/10 text-[#1E3E62] border border-[#1E3E62]/30 font-mono">
               Live Editor
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#0B192C]/70 mt-1">
             Author, revise, and verify statutory compliance with automated RAG evidence grounding.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Upload Button */}
-          <label className="flex items-center gap-2 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-200 rounded-xl text-xs font-semibold cursor-pointer transition-all shadow-sm group">
-            <Upload className="w-3.5 h-3.5 text-primary-400 group-hover:-translate-y-0.5 transition-transform" />
+          <label className="tactile-btn flex items-center gap-2 px-3.5 py-2 bg-[#FAF8F5] hover:bg-[#F3F0EA] border-2 border-[#E6E2D8] text-[#0B192C] rounded-xl text-xs font-bold cursor-pointer transition-all shadow-[0_2px_#E6E2D8] group">
+            <Upload className="w-3.5 h-3.5 text-[#1E3E62] group-hover:-translate-y-0.5 transition-transform" />
             <span>Upload Document</span>
             <input type="file" accept=".pdf,.docx,.txt" onChange={handleFileUpload} className="hidden" />
           </label>
@@ -280,26 +284,26 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
           {/* AI Assist Drawer Toggle */}
           <button
             onClick={() => setActiveSidePanel(activeSidePanel === 'ai_assist' ? null : 'ai_assist')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all ${
+            className={`tactile-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all ${
               activeSidePanel === 'ai_assist'
-                ? 'bg-indigo-600 text-white border-indigo-500 shadow-lg shadow-indigo-500/25'
-                : 'bg-slate-900 hover:bg-slate-800 border-slate-700/80 text-slate-200'
+                ? 'bg-[#1E3E62] text-white border-[#0B192C] shadow-[0_3px_#0B192C]'
+                : 'bg-[#FAF8F5] hover:bg-[#F3F0EA] border-[#E6E2D8] text-[#0B192C] shadow-[0_2px_#E6E2D8]'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-accent-cyan" />
+            <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
             <span>AI Copilot</span>
           </button>
 
           {/* RAG Precedent Search Drawer Toggle */}
           <button
             onClick={() => setActiveSidePanel(activeSidePanel === 'rag_search' ? null : 'rag_search')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all ${
+            className={`tactile-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all ${
               activeSidePanel === 'rag_search'
-                ? 'bg-primary-600 text-white border-primary-500 shadow-lg shadow-primary-500/25'
-                : 'bg-slate-900 hover:bg-slate-800 border-slate-700/80 text-slate-200'
+                ? 'bg-[#F59E0B] text-[#0B192C] border-[#0B192C] shadow-[0_3px_#0B192C]'
+                : 'bg-[#FAF8F5] hover:bg-[#F3F0EA] border-[#E6E2D8] text-[#0B192C] shadow-[0_2px_#E6E2D8]'
             }`}
           >
-            <BookOpen className="w-3.5 h-3.5 text-accent-emerald" />
+            <BookOpen className="w-3.5 h-3.5 text-[#1E3E62]" />
             <span>RAG Search</span>
           </button>
 
@@ -307,7 +311,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
           <button
             onClick={handleEvaluate}
             disabled={evaluating || !selectedDraft || isCreatingNew}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-primary-500/25 transition-all disabled:opacity-50"
+            className="tactile-btn flex items-center gap-2 px-4 py-2 bg-[#1E3E62] hover:bg-[#152e4a] text-white rounded-xl text-xs font-bold border-b-4 border-[#0B192C] shadow-[0_3px_#0B192C] transition-all disabled:opacity-50"
           >
             {evaluating ? (
               <>
@@ -329,10 +333,10 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
         {/* Left Column: Drafts Inventory & Version History */}
         <div className="col-span-12 lg:col-span-3 space-y-4">
           {/* Drafts List Card */}
-          <div className="glass-panel p-4 rounded-2xl space-y-3.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-primary-400" />
+          <div className="tactile-card bg-[#FAF8F5] p-4 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3.5">
+            <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#0B192C]/70 flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-[#1E3E62]" />
                 <span>Drafts ({drafts.length})</span>
               </span>
               <button
@@ -342,7 +346,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                   setTitle('');
                   setRawContent('');
                 }}
-                className="p-1.5 rounded-lg bg-primary-500/10 hover:bg-primary-500/20 text-primary-400 transition-colors"
+                className="tactile-btn p-1.5 rounded-lg bg-[#1E3E62]/10 hover:bg-[#1E3E62]/20 text-[#1E3E62] border border-[#1E3E62]/30 transition-colors"
                 title="Initialize New Blank Draft"
               >
                 <Plus className="w-4 h-4" />
@@ -352,20 +356,20 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
             {/* Search & Filter */}
             <div className="space-y-2">
               <div className="relative">
-                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5" />
+                <Search className="w-3.5 h-3.5 text-[#0B192C]/40 absolute left-3 top-2.5" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search drafts..."
-                  className="w-full bg-slate-900/90 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus-ring"
+                  className="w-full bg-[#F3F0EA] border-2 border-[#E6E2D8] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none"
                 />
               </div>
 
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-2.5 py-1.5 text-[11px] text-slate-300 focus-ring"
+                className="w-full bg-[#F3F0EA] border-2 border-[#E6E2D8] rounded-xl px-2.5 py-1.5 text-[11px] text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
               >
                 <option value="ALL">All Document Types</option>
                 <option value="AFFIDAVIT_OF_CHARACTER">Affidavit of Character</option>
@@ -382,11 +386,11 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                   <LoadingSpinner size="sm" />
                 </div>
               ) : filteredDrafts.length === 0 ? (
-                <div className="text-center py-6 text-slate-500 text-xs">
+                <div className="text-center py-6 text-[#0B192C]/50 text-xs">
                   <p>No drafts found.</p>
                   <button
                     onClick={() => setIsCreatingNew(true)}
-                    className="mt-2 text-primary-400 hover:underline font-semibold"
+                    className="mt-2 text-[#1E3E62] hover:underline font-bold"
                   >
                     + Create First Draft
                   </button>
@@ -398,19 +402,19 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                     <div
                       key={d.id}
                       onClick={() => selectDraftItem(d)}
-                      className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                      className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
                         isSelected
-                          ? 'bg-primary-500/15 border-primary-500/50 shadow-md shadow-primary-500/10'
-                          : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900 text-slate-300'
+                          ? 'bg-[#1E3E62]/10 border-[#1E3E62] text-[#0B192C] shadow-[0_2px_#1E3E62]'
+                          : 'bg-[#F3F0EA] border-[#E6E2D8] hover:border-[#1E3E62]/40 text-[#0B192C] shadow-[0_1px_#E6E2D8]'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-1">
-                        <span className="font-semibold text-xs text-white truncate">{d.title}</span>
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 shrink-0">
+                        <span className="font-serif font-bold text-xs text-[#0B192C] truncate">{d.title}</span>
+                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#FAF8F5] text-[#1E3E62] border border-[#E6E2D8] shrink-0">
                           v{d.versions?.length || 1}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between mt-1.5 text-[10px] text-slate-400">
+                      <div className="flex items-center justify-between mt-1.5 text-[10px] text-[#0B192C]/60">
                         <span className="truncate max-w-[120px]">{d.document_type.replace(/_/g, ' ')}</span>
                         <span>{new Date(d.updated_at).toLocaleDateString()}</span>
                       </div>
@@ -423,13 +427,13 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
 
           {/* Versions Timeline & Diff Trigger */}
           {selectedDraft && !isCreatingNew && (
-            <div className="glass-panel p-4 rounded-2xl space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-accent-amber" />
+            <div className="tactile-card bg-[#FAF8F5] p-4 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#0B192C]/70 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-[#D97706]" />
                   <span>Version Timeline</span>
                 </span>
-                <span className="text-[10px] text-slate-400 font-mono">
+                <span className="text-[10px] text-[#0B192C]/60 font-mono font-bold">
                   {selectedDraft.versions.length} Revisions
                 </span>
               </div>
@@ -441,20 +445,20 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                     <div
                       key={v.id}
                       onClick={() => handleSelectVersion(v.version_number)}
-                      className={`flex items-center justify-between p-2 rounded-xl text-xs cursor-pointer transition-all border ${
+                      className={`flex items-center justify-between p-2 rounded-xl text-xs cursor-pointer transition-all border-2 ${
                         isCurrent
-                          ? 'bg-primary-500/20 border-primary-500/40 text-white'
-                          : 'bg-slate-900/40 border-slate-800 hover:border-slate-700 text-slate-300'
+                          ? 'bg-[#1E3E62]/10 border-[#1E3E62] text-[#0B192C] shadow-[0_2px_#1E3E62]'
+                          : 'bg-[#F3F0EA] border-[#E6E2D8] hover:border-[#1E3E62]/40 text-[#0B192C]'
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold">Version {v.version_number}</span>
-                        <span className="text-[10px] text-slate-500 font-mono">
+                        <span className="font-bold">Version {v.version_number}</span>
+                        <span className="text-[10px] text-[#0B192C]/50 font-mono">
                           {new Date(v.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                       {isCurrent && (
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary-500 text-white uppercase tracking-wider">
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#1E3E62] text-white uppercase tracking-wider">
                           Active
                         </span>
                       )}
@@ -465,13 +469,13 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
 
               {/* Version Comparison Selector */}
               {selectedDraft.versions.length > 1 && (
-                <div className="pt-2 border-t border-slate-800/80 space-y-2">
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 font-medium">
+                <div className="pt-2 border-t-2 border-[#E6E2D8] space-y-2">
+                  <div className="flex items-center justify-between text-[11px] text-[#0B192C]/70 font-semibold">
                     <span>Compare Diff</span>
                     <button
                       onClick={handleCompareDiff}
                       disabled={diffLoading}
-                      className="text-accent-cyan hover:underline text-xs font-semibold flex items-center gap-1"
+                      className="text-[#1E3E62] hover:underline text-xs font-bold flex items-center gap-1"
                     >
                       <GitCompare className="w-3 h-3" />
                       <span>Inspect</span>
@@ -482,7 +486,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                     <select
                       value={diffVersion1}
                       onChange={(e) => setDiffVersion1(Number(e.target.value))}
-                      className="bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-xs text-slate-200"
+                      className="bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-lg p-1.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
                     >
                       {selectedDraft.versions.map((v) => (
                         <option key={v.id} value={v.version_number}>
@@ -493,7 +497,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                     <select
                       value={diffVersion2}
                       onChange={(e) => setDiffVersion2(Number(e.target.value))}
-                      className="bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-xs text-slate-200"
+                      className="bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-lg p-1.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
                     >
                       {selectedDraft.versions.map((v) => (
                         <option key={v.id} value={v.version_number}>
@@ -514,23 +518,23 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
             activeSidePanel ? 'col-span-12 lg:col-span-6' : 'col-span-12 lg:col-span-9'
           } space-y-4 transition-all duration-300`}
         >
-          <div className="glass-panel p-5 sm:p-6 rounded-2xl border border-slate-800 space-y-4">
+          <div className="tactile-card bg-[#FAF8F5] p-5 sm:p-6 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
             {/* Editor Top Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-slate-800">
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b-2 border-[#E6E2D8]">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center text-primary-400">
+                <div className="w-8 h-8 rounded-xl bg-[#1E3E62]/10 border border-[#1E3E62]/20 flex items-center justify-center text-[#1E3E62]">
                   <FileText className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-white">
+                  <h3 className="font-serif font-bold text-base text-[#0B192C]">
                     {isCreatingNew ? 'Initialize New Legal Draft' : selectedDraft?.title}
                   </h3>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#F3F0EA] text-[#1E3E62] border border-[#E6E2D8]">
                       {isCreatingNew ? docType : selectedDraft?.document_type}
                     </span>
                     {!isCreatingNew && (
-                      <span className="text-[10px] font-mono text-slate-400">
+                      <span className="text-[10px] font-mono text-[#0B192C]/60">
                         Editing Version {currentVersionNumber}
                       </span>
                     )}
@@ -540,7 +544,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
 
               {/* Editor Right Controls */}
               <div className="flex items-center gap-2">
-                <div className="hidden sm:flex items-center gap-3 text-[11px] font-mono text-slate-400 pr-2 border-r border-slate-800">
+                <div className="hidden sm:flex items-center gap-3 text-[11px] font-mono text-[#0B192C]/60 pr-2 border-r-2 border-[#E6E2D8]">
                   <span>{wordCount} words</span>
                   <span>{lineCount} lines</span>
                 </div>
@@ -549,9 +553,9 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                   <button
                     onClick={handleSaveRevision}
                     disabled={loading}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl text-xs font-semibold border border-slate-700 transition-all"
+                    className="tactile-btn flex items-center gap-1.5 px-3.5 py-1.5 bg-[#F59E0B] hover:bg-[#d97706] text-[#0B192C] rounded-xl text-xs font-bold border-b-2 border-[#0B192C] shadow-[0_2px_#0B192C] transition-all"
                   >
-                    <Save className="w-3.5 h-3.5 text-primary-400" />
+                    <Save className="w-3.5 h-3.5 text-[#0B192C]" />
                     <span>Save Version</span>
                   </button>
                 )}
@@ -560,9 +564,9 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
 
             {/* If creating new, show title and doc type form */}
             {isCreatingNew && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl bg-[#F3F0EA] border-2 border-[#E6E2D8]">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-[#0B192C] mb-1.5">
                     Draft Title
                   </label>
                   <input
@@ -570,17 +574,17 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g., Employment Agreement - Software Engineer 2026"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-ring"
+                    className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-[#0B192C] mb-1.5">
                     Document Category
                   </label>
                   <select
                     value={docType}
                     onChange={(e) => setDocType(e.target.value as DocumentType)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-ring"
+                    className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
                   >
                     <option value="AFFIDAVIT_OF_CHARACTER">Affidavit of Character (India)</option>
                     <option value="EMPLOYMENT_AGREEMENT">Employment Agreement (India)</option>
@@ -592,13 +596,13 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
             )}
 
             {/* Monospace Legal Editor */}
-            <div className="relative rounded-xl border border-slate-800/80 bg-slate-950/90 overflow-hidden focus-within:border-primary-500/50 transition-colors">
+            <div className="relative rounded-xl border-2 border-[#E6E2D8] bg-[#FDFBF7] shadow-inner overflow-hidden focus-within:border-[#1E3E62] transition-colors">
               <textarea
                 value={rawContent}
                 onChange={(e) => setRawContent(e.target.value)}
                 rows={18}
                 placeholder="Type or paste the complete legal draft here (including title, parties recitals, operative covenants, statutory jurisdiction, and deponent verification jurat)..."
-                className="w-full bg-transparent p-4 font-mono text-xs text-slate-100 leading-relaxed focus:outline-none resize-none"
+                className="w-full bg-transparent p-4 font-mono text-xs text-[#0B192C] leading-relaxed focus:outline-none resize-none"
               />
             </div>
 
@@ -608,14 +612,14 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsCreatingNew(false)}
-                  className="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white"
+                  className="px-4 py-2 text-xs font-semibold text-[#0B192C]/60 hover:text-[#0B192C]"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCreateDraft}
                   disabled={loading || !title.trim() || !rawContent.trim()}
-                  className="px-5 py-2 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-primary-500/20 transition-all disabled:opacity-50"
+                  className="tactile-btn px-5 py-2 bg-[#1E3E62] hover:bg-[#152e4a] text-white text-xs font-bold rounded-xl border-b-4 border-[#0B192C] shadow-[0_3px_#0B192C] transition-all disabled:opacity-50"
                 >
                   {loading ? 'Initializing...' : 'Create Draft & Version 1'}
                 </button>
@@ -629,17 +633,17 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
           <div className="col-span-12 lg:col-span-3 space-y-4 animate-slide-in-right">
             {/* Tab 1: Version Diff Inspector */}
             {activeSidePanel === 'diff' && (
-              <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-3.5">
-                <div className="flex items-center justify-between">
+              <div className="tactile-card bg-[#FAF8F5] p-5 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3.5">
+                <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
                   <div className="flex items-center gap-2">
-                    <GitCompare className="w-4 h-4 text-accent-cyan" />
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+                    <GitCompare className="w-4 h-4 text-[#1E3E62]" />
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#0B192C]">
                       Unified Diff (v{diffVersion1} vs v{diffVersion2})
                     </h4>
                   </div>
                   <button
                     onClick={() => setActiveSidePanel(null)}
-                    className="text-slate-400 hover:text-white text-xs"
+                    className="text-[#0B192C]/50 hover:text-[#0B192C] text-xs font-bold"
                   >
                     ✕
                   </button>
@@ -647,38 +651,38 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
 
                 {diffResult ? (
                   <div className="space-y-2.5">
-                    <div className="flex items-center justify-between text-[11px] font-mono p-2 rounded-xl bg-slate-900 border border-slate-800">
-                      <span className="text-emerald-400 font-semibold">
+                    <div className="flex items-center justify-between text-[11px] font-mono p-2 rounded-xl bg-[#F3F0EA] border-2 border-[#E6E2D8]">
+                      <span className="text-emerald-700 font-bold">
                         +{diffResult.additions} additions
                       </span>
-                      <span className="text-rose-400 font-semibold">
+                      <span className="text-red-700 font-bold">
                         -{diffResult.deletions} deletions
                       </span>
                     </div>
 
-                    <div className="p-3 bg-slate-950/90 rounded-xl border border-slate-800/80 font-mono text-[11px] text-slate-300 max-h-96 overflow-y-auto whitespace-pre-wrap leading-relaxed">
+                    <div className="p-3 bg-[#FDFBF7] rounded-xl border-2 border-[#E6E2D8] font-mono text-[11px] text-[#0B192C] max-h-96 overflow-y-auto whitespace-pre-wrap leading-relaxed">
                       {diffResult.diff_summary || 'No changes between selected versions.'}
                     </div>
                   </div>
                 ) : (
-                  <p className="text-xs text-slate-400">Click inspect to compute version diff.</p>
+                  <p className="text-xs text-[#0B192C]/60">Click inspect to compute version diff.</p>
                 )}
               </div>
             )}
 
             {/* Tab 2: AI Drafting Copilot */}
             {activeSidePanel === 'ai_assist' && (
-              <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
-                <div className="flex items-center justify-between">
+              <div className="tactile-card bg-[#FAF8F5] p-5 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-accent-cyan" />
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+                    <Sparkles className="w-4 h-4 text-[#F59E0B]" />
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#0B192C]">
                       AI Legal Copilot
                     </h4>
                   </div>
                   <button
                     onClick={() => setActiveSidePanel(null)}
-                    className="text-slate-400 hover:text-white text-xs"
+                    className="text-[#0B192C]/50 hover:text-[#0B192C] text-xs font-bold"
                   >
                     ✕
                   </button>
@@ -686,13 +690,13 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
 
                 <form onSubmit={handleAiAssist} className="space-y-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">
+                    <label className="block text-[11px] font-semibold text-[#0B192C] mb-1">
                       Target Legal Clause
                     </label>
                     <select
                       value={targetClause}
                       onChange={(e) => setTargetClause(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white focus-ring"
+                      className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl p-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
                     >
                       <option value="Verification & Perjury Jurat">Verification & Perjury Jurat</option>
                       <option value="Section 27 Compliant Restrictive Covenants">
@@ -711,7 +715,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">
+                    <label className="block text-[11px] font-semibold text-[#0B192C] mb-1">
                       Custom Instructions / Facts
                     </label>
                     <textarea
@@ -719,29 +723,29 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                       onChange={(e) => setUserInstructions(e.target.value)}
                       placeholder="e.g. Add 30-day notice with written registered post requirement..."
                       rows={3}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus-ring resize-none"
+                      className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl p-2.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={aiGenerating || !selectedDraft}
-                    className="w-full py-2 bg-gradient-to-r from-indigo-600 to-primary-600 hover:from-indigo-500 hover:to-primary-500 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+                    className="tactile-btn w-full py-2 bg-[#1E3E62] hover:bg-[#152e4a] text-white text-xs font-bold rounded-xl border-b-2 border-[#0B192C] shadow-[0_2px_#0B192C] transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
                   >
-                    {aiGenerating ? <LoadingSpinner size="sm" /> : <Sparkles className="w-3.5 h-3.5" />}
+                    {aiGenerating ? <LoadingSpinner size="sm" /> : <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />}
                     <span>Generate Grounded Clause</span>
                   </button>
                 </form>
 
                 {aiAssistResult && (
-                  <div className="space-y-2.5 pt-2 border-t border-slate-800 animate-fade-in-up">
-                    <div className="p-3 rounded-xl bg-slate-900/80 border border-indigo-500/30 text-xs font-mono text-indigo-200">
+                  <div className="space-y-2.5 pt-2 border-t-2 border-[#E6E2D8] animate-fade-in-up">
+                    <div className="p-3 rounded-xl bg-[#F3F0EA] border-2 border-[#1E3E62]/30 text-xs font-mono text-[#0B192C]">
                       {aiAssistResult.drafted_clause || aiAssistResult.generated_draft}
                     </div>
 
                     {aiAssistResult.commentary && (
-                      <p className="text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded-lg border border-slate-800 leading-relaxed">
-                        <span className="font-semibold text-slate-200">Statutory Note: </span>
+                      <p className="text-[11px] text-[#0B192C]/80 bg-[#FDFBF7] p-2.5 rounded-lg border-2 border-[#E6E2D8] leading-relaxed">
+                        <span className="font-bold text-[#1E3E62]">Statutory Note: </span>
                         {aiAssistResult.commentary}
                       </p>
                     )}
@@ -752,9 +756,9 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                           aiAssistResult.drafted_clause || aiAssistResult.generated_draft || ''
                         )
                       }
-                      className="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl border border-slate-700 flex items-center justify-center gap-1.5 transition-colors"
+                      className="tactile-btn w-full py-2 bg-[#FAF8F5] hover:bg-[#F3F0EA] text-[#0B192C] text-xs font-bold rounded-xl border-2 border-[#E6E2D8] shadow-[0_2px_#E6E2D8] flex items-center justify-center gap-1.5 transition-colors"
                     >
-                      <Plus className="w-3.5 h-3.5 text-emerald-400" />
+                      <Plus className="w-3.5 h-3.5 text-emerald-600" />
                       <span>Insert Clause into Editor</span>
                     </button>
                   </div>
@@ -764,17 +768,17 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
 
             {/* Tab 3: RAG Precedent & Evidence Search */}
             {activeSidePanel === 'rag_search' && (
-              <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
-                <div className="flex items-center justify-between">
+              <div className="tactile-card bg-[#FAF8F5] p-5 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
                   <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-accent-emerald" />
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+                    <BookOpen className="w-4 h-4 text-[#1E3E62]" />
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#0B192C]">
                       RAG Precedent Search
                     </h4>
                   </div>
                   <button
                     onClick={() => setActiveSidePanel(null)}
-                    className="text-slate-400 hover:text-white text-xs"
+                    className="text-[#0B192C]/50 hover:text-[#0B192C] text-xs font-bold"
                   >
                     ✕
                   </button>
@@ -787,14 +791,14 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                       value={ragQuery}
                       onChange={(e) => setRagQuery(e.target.value)}
                       placeholder="e.g., verification under oath bar council"
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white focus-ring"
+                      className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl p-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={ragLoading || !ragQuery.trim()}
-                    className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl border border-slate-700 flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+                    className="tactile-btn w-full py-2 bg-[#1E3E62] hover:bg-[#152e4a] text-white text-xs font-bold rounded-xl border-b-2 border-[#0B192C] shadow-[0_2px_#0B192C] flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
                   >
                     {ragLoading ? <LoadingSpinner size="sm" /> : <Search className="w-3.5 h-3.5" />}
                     <span>Query Qdrant Vector Corpus</span>
@@ -803,20 +807,20 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
 
                 <div className="space-y-2.5 max-h-96 overflow-y-auto pr-1">
                   {ragResults.length === 0 ? (
-                    <p className="text-center py-6 text-[11px] text-slate-500">
+                    <p className="text-center py-6 text-[11px] text-[#0B192C]/50">
                       Enter legal terms to retrieve dense vector and statutory citations.
                     </p>
                   ) : (
                     ragResults.map((chunk, idx) => (
                       <div
                         key={idx}
-                        className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 space-y-1.5 text-xs"
+                        className="p-3 rounded-xl bg-[#F3F0EA] border-2 border-[#E6E2D8] hover:border-[#1E3E62]/40 space-y-1.5 text-xs"
                       >
-                        <div className="flex items-center justify-between text-[10px] text-accent-emerald font-semibold">
+                        <div className="flex items-center justify-between text-[10px] text-[#1E3E62] font-bold font-mono">
                           <span>{chunk.source_document}</span>
                           <span>Page {chunk.page_number}</span>
                         </div>
-                        <p className="font-mono text-[11px] text-slate-300 leading-relaxed">
+                        <p className="font-mono text-[11px] text-[#0B192C] leading-relaxed bg-[#FAF8F5] p-2 rounded border border-[#E6E2D8]">
                           "{chunk.content}"
                         </p>
                         <button
@@ -824,7 +828,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                             setRawContent((prev) => `${prev}\n\n${chunk.content}`);
                             showToast('Citation inserted into editor', 'info');
                           }}
-                          className="text-[10px] text-primary-400 hover:underline font-semibold flex items-center gap-1"
+                          className="text-[10px] text-[#1E3E62] hover:underline font-bold flex items-center gap-1"
                         >
                           <Plus className="w-3 h-3" />
                           Insert citation

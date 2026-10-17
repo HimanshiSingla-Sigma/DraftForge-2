@@ -7,8 +7,11 @@ logger = get_logger("conversation_repo")
 
 class ConversationRepository:
     def __init__(self):
-        self.supabase = get_supabase_admin_client()
         self._messages_table = "messages"
+
+    @property
+    def supabase(self):
+        return get_supabase_admin_client()
 
     def create_conversation(self, user_id: str, title: str) -> Dict[str, Any]:
         payload = {"user_id": user_id, "title": title}

@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { UserRole } from '../types';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { useToast } from '../components/common/Toast';
 import {
   Scale,
   Lock,
   Mail,
-  User,
-  GraduationCap,
   ArrowRight,
   Eye,
   EyeOff,
   ChevronLeft,
+  KeyRound,
+  Building,
 } from 'lucide-react';
 
 interface AuthPageProps {
@@ -23,45 +22,30 @@ interface AuthPageProps {
 export const AuthPage: React.FC<AuthPageProps> = ({ onBackToLanding }) => {
   const { login } = useAuth();
   const { showToast } = useToast();
-  const [isLogin, setIsLogin] = useState(true);
+  const [activeTab, setActiveTab] = useState<'signin' | 'invitation'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [role, setRole] = useState<UserRole>('STUDENT');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Invitation token redeem input
+  const [invitationInput, setInvitationInput] = useState('');
+
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      if (isLogin) {
-        const res = await api.login({ email, password });
-        login(res.data.access_token, {
-          id: res.data.user_id,
-          email: res.data.email,
-          role: res.data.role,
-          full_name: res.data.full_name,
-        });
-        showToast(`Welcome back, ${res.data.full_name || 'Legal Scholar'}!`, 'success');
-      } else {
-        const res = await api.register({
-          email,
-          password,
-          full_name: fullName,
-          role,
-        });
-        login(res.data.access_token, {
-          id: res.data.user_id,
-          email: res.data.email,
-          role: res.data.role,
-          full_name: res.data.full_name,
-        });
-        showToast('Account registered successfully!', 'success');
-      }
+      const res = await api.login({ email, password });
+      login(res.data.access_token, {
+        id: res.data.user_id,
+        email: res.data.email,
+        role: res.data.role,
+        full_name: res.data.full_name,
+      });
+      showToast(`Welcome back, ${res.data.full_name || 'Legal Scholar'}!`, 'success');
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Authentication failed. Please verify credentials.');
       showToast('Authentication failed', 'error');
@@ -70,32 +54,29 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onBackToLanding }) => {
     }
   };
 
-  const handleQuickFill = (demoRole: 'student' | 'teacher') => {
-    if (demoRole === 'student') {
-      setEmail('student@draftforge.ai');
-      setPassword('Password123!');
-      setFullName('Aditya Verma');
-      setRole('STUDENT');
-    } else {
-      setEmail('teacher@draftforge.ai');
-      setPassword('Password123!');
-      setFullName('Prof. Vikram Seth');
-      setRole('TEACHER');
+  const handleRedeemInvitation = (e: React.FormEvent) => {
+    e.preventDefault();
+    const input = invitationInput.trim();
+    if (!input) return;
+
+    let token = input;
+    if (input.includes('token=')) {
+      const parsed = new URL(input, window.location.origin);
+      token = parsed.searchParams.get('token') || input;
     }
+
+    window.location.href = `/accept-invitation?token=${encodeURIComponent(token)}`;
   };
 
-  return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 bg-background relative overflow-hidden font-sans">
-      {/* Background Decorative Glows */}
-      <div className="absolute w-[500px] h-[500px] bg-primary-600/10 rounded-full blur-3xl -top-32 -left-32 pointer-events-none" />
-      <div className="absolute w-[500px] h-[500px] bg-accent-cyan/10 rounded-full blur-3xl -bottom-32 -right-32 pointer-events-none" />
 
-      <div className="w-full max-w-md glass-panel-glow p-8 rounded-3xl border border-slate-800 shadow-2xl relative z-10 space-y-6 animate-scale-in">
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 bg-[#FAF8F5] relative overflow-hidden font-sans">
+      <div className="w-full max-w-md bg-white p-8 rounded-3xl border-2 border-[#0B192C] shadow-[0_8px_#0B192C] relative z-10 space-y-6 animate-scale-in">
         {/* Back to Landing Page Link */}
         {onBackToLanding && (
           <button
             onClick={onBackToLanding}
-            className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
+            className="flex items-center gap-1 text-xs text-[#0B192C]/70 hover:text-[#0B192C] transition-colors cursor-pointer font-medium"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             <span>Back to Home</span>
@@ -104,29 +85,29 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onBackToLanding }) => {
 
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary-600 via-indigo-600 to-accent-cyan p-0.5 mx-auto shadow-xl shadow-primary-500/25">
-            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-              <Scale className="w-7 h-7 text-primary-400" />
-            </div>
+          <div className="w-14 h-14 rounded-2xl bg-[#1E3E62] border-2 border-[#0B192C] p-0.5 mx-auto shadow-[0_4px_#0B192C] flex items-center justify-center">
+            <Scale className="w-7 h-7 text-[#F59E0B]" />
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">
-            Draft<span className="text-primary-400">Forge</span>
+          <h1 className="font-serif text-2xl font-bold text-[#0B192C] tracking-tight">
+            Draft<span className="text-[#1E3E62] underline decoration-[#F59E0B] decoration-2">Forge</span>
           </h1>
-          <p className="text-xs text-slate-400">
-            Evidence-Grounded Legal Drafting Education & Evaluation
+          <p className="text-xs text-[#0B192C]/70 font-sans">
+            The NorthCap University Legal Studio
           </p>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex p-1 bg-slate-900 rounded-2xl border border-slate-800">
+        <div className="flex p-1 bg-[#F3F0EA] rounded-2xl border-2 border-[#E6E2D8]">
           <button
             type="button"
             onClick={() => {
-              setIsLogin(true);
+              setActiveTab('signin');
               setError(null);
             }}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
-              isLogin ? 'bg-primary-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === 'signin'
+                ? 'tactile-btn bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
+                : 'text-[#0B192C]/70 hover:text-[#0B192C]'
             }`}
           >
             Sign In
@@ -134,156 +115,122 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onBackToLanding }) => {
           <button
             type="button"
             onClick={() => {
-              setIsLogin(false);
+              setActiveTab('invitation');
               setError(null);
             }}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
-              !isLogin ? 'bg-primary-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === 'invitation'
+                ? 'tactile-btn bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
+                : 'text-[#0B192C]/70 hover:text-[#0B192C]'
             }`}
           >
-            Create Account
+            Invitation Access
           </button>
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 font-medium text-center animate-fade-in">
+          <div className="p-3.5 rounded-xl bg-[#FEF2F2] border-2 border-[#DC2626]/40 text-xs text-[#DC2626] font-medium text-center animate-fade-in font-mono">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
+        {/* Tab 1: Sign In Form */}
+        {activeTab === 'signin' ? (
+          <form onSubmit={handleLoginSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Full Legal Name
+              <label className="block text-xs font-serif font-bold text-[#0B192C] mb-1.5">
+                Email Address
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                <Mail className="w-4 h-4 text-[#0B192C]/50 absolute left-3.5 top-3" />
                 <input
-                  type="text"
+                  type="email"
                   required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="e.g. Adv. Rohit Deshmukh"
-                  className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus-ring"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@ncuindia.edu"
+                  className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl pl-10 pr-4 py-2.5 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none transition-colors"
                 />
               </div>
             </div>
-          )}
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-              Email Address
-            </label>
-            <div className="relative">
-              <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@institution.edu"
-                className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus-ring"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-              Password
-            </label>
-            <div className="relative">
-              <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
-                className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-10 pr-10 py-2.5 text-xs text-white placeholder-slate-500 focus-ring"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-
-          {!isLogin && (
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Portal Role Selection
+              <label className="block text-xs font-serif font-bold text-[#0B192C] mb-1.5">
+                Password
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="relative">
+                <Lock className="w-4 h-4 text-[#0B192C]/50 absolute left-3.5 top-3" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••••••"
+                  className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl pl-10 pr-10 py-2.5 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none transition-colors font-mono"
+                />
                 <button
                   type="button"
-                  onClick={() => setRole('STUDENT')}
-                  className={`p-3 rounded-xl border text-xs font-semibold text-left transition-all flex items-center gap-2.5 ${
-                    role === 'STUDENT'
-                      ? 'bg-primary-600/20 text-white border-primary-500 shadow-md shadow-primary-500/10'
-                      : 'bg-slate-900 border-slate-800 text-slate-400'
-                  }`}
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-2.5 text-[#0B192C]/50 hover:text-[#0B192C] cursor-pointer"
                 >
-                  <User className="w-4 h-4 text-primary-400 shrink-0" />
-                  <div>
-                    <span className="block text-xs font-bold text-white">Student</span>
-                    <span className="text-[10px] text-slate-400">Draft & Learn</span>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setRole('TEACHER')}
-                  className={`p-3 rounded-xl border text-xs font-semibold text-left transition-all flex items-center gap-2.5 ${
-                    role === 'TEACHER'
-                      ? 'bg-primary-600/20 text-white border-primary-500 shadow-md shadow-primary-500/10'
-                      : 'bg-slate-900 border-slate-800 text-slate-400'
-                  }`}
-                >
-                  <GraduationCap className="w-4 h-4 text-accent-cyan shrink-0" />
-                  <div>
-                    <span className="block text-xs font-bold text-white">Faculty</span>
-                    <span className="text-[10px] text-slate-400">Grade & Ingest</span>
-                  </div>
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-primary-500/25 transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
-          >
-            {loading ? <LoadingSpinner size="sm" /> : <ArrowRight className="w-4 h-4" />}
-            <span>{isLogin ? 'Sign In to Portal' : 'Register & Enter'}</span>
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="tactile-btn w-full py-3 bg-[#1E3E62] hover:bg-[#152C46] text-white font-bold text-xs rounded-xl border-b-4 border-[#0B192C] shadow-md transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2 cursor-pointer"
+            >
+              {loading ? <LoadingSpinner size="sm" /> : <ArrowRight className="w-4 h-4 text-[#F59E0B]" />}
+              <span>Sign In to Portal</span>
+            </button>
+          </form>
+        ) : (
+          /* Tab 2: Invitation Access Information & Token Paste */
+          <div className="space-y-4">
+            <div className="p-4 rounded-xl bg-[#F3F0EA] border-2 border-[#E6E2D8] text-xs text-[#0B192C] space-y-2">
+              <div className="flex items-center gap-1.5 font-bold text-[#1E3E62]">
+                <Building className="w-4 h-4 text-[#F59E0B]" />
+                <span>NCU Invitation Policy</span>
+              </div>
+              <p className="text-[11px] text-[#5A6A80] leading-relaxed">
+                Public self-registration is closed. Faculty accounts require an invitation sent to your official <span className="font-semibold text-[#0B192C]">@ncuindia.edu</span> email by the administrator. Students receive section invitation links directly from their assigned professor.
+              </p>
+            </div>
 
-        {/* Demo Fast Autofill */}
-        <div className="pt-3 border-t border-slate-800 text-center space-y-2">
-          <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold block">
-            Demo Sandbox Autofill:
-          </span>
-          <div className="flex justify-center gap-2">
-            <button
-              type="button"
-              onClick={() => handleQuickFill('student')}
-              className="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 text-[11px] font-semibold rounded-lg border border-slate-800 transition-colors"
-            >
-              Demo Student
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('teacher')}
-              className="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 text-[11px] font-semibold rounded-lg border border-slate-800 transition-colors"
-            >
-              Demo Faculty
-            </button>
+            <form onSubmit={handleRedeemInvitation} className="space-y-3">
+              <div>
+                <label className="block text-xs font-serif font-bold text-[#0B192C] mb-1.5">
+                  Have an Invitation Token or Link?
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={invitationInput}
+                  onChange={(e) => setInvitationInput(e.target.value)}
+                  placeholder="Paste your invitation token or link here"
+                  className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl px-3 py-2.5 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none transition-colors font-mono"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="tactile-btn w-full py-2.5 bg-[#1E3E62] hover:bg-[#152C46] text-white font-bold text-xs rounded-xl border-b-4 border-[#0B192C] shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <KeyRound className="w-4 h-4 text-[#F59E0B]" />
+                <span>Verify & Activate Account</span>
+              </button>
+            </form>
           </div>
+        )}
+
+        {/* Institutional Security Notice */}
+        <div className="pt-3 border-t-2 border-[#E6E2D8] text-center">
+          <p className="text-[11px] text-[#0B192C]/50 font-sans">
+            DraftForge Legal Studio &bull; Protected Institutional Environment
+          </p>
         </div>
       </div>
     </div>

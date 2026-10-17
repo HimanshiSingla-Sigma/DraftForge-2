@@ -38,22 +38,22 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`pointer-events-auto p-4 rounded-2xl shadow-2xl border backdrop-blur-2xl flex items-center justify-between gap-3 animate-slide-in-right transform-gpu transition-all ${
+            className={`pointer-events-auto p-4 rounded-2xl shadow-[0_4px_#0B192C] border-2 bg-white flex items-center justify-between gap-3 animate-slide-in-right transform-gpu transition-all ${
               toast.type === 'success'
-                ? 'bg-slate-950/95 border-emerald-500/40 text-emerald-100 shadow-emerald-500/10'
+                ? 'border-[#059669]'
                 : toast.type === 'error'
-                ? 'bg-slate-950/95 border-rose-500/40 text-rose-100 shadow-rose-500/10'
-                : 'bg-slate-950/95 border-primary-500/40 text-slate-100 shadow-primary-500/10'
+                ? 'border-[#DC2626]'
+                : 'border-[#0B192C]'
             }`}
           >
             <div className="flex items-center gap-3">
               <div
-                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border-2 ${
                   toast.type === 'success'
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                    ? 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]'
                     : toast.type === 'error'
-                    ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                    : 'bg-primary-500/20 text-accent-cyan border border-primary-500/30'
+                    ? 'bg-rose-50 text-rose-600 border-rose-200'
+                    : 'bg-[#FAF8F5] text-[#1E3E62] border-[#E6E2D8]'
                 }`}
               >
                 {toast.type === 'success' && <CheckCircle2 className="w-4 h-4" />}
@@ -61,15 +61,16 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 {toast.type === 'info' && <Sparkles className="w-4 h-4" />}
               </div>
               <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 block">
-                  {toast.type === 'success' ? '✦ DraftForge Intelligence' : toast.type === 'error' ? '⚠ System Advisory' : '◆ AI Event Notification'}
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5A6A80] block">
+                  {toast.type === 'success' ? '✦ DraftForge Intelligence' : toast.type === 'error' ? '⚠ System Advisory' : '◆ Studio Event'}
                 </span>
-                <p className="text-xs font-semibold leading-relaxed text-white">{toast.message}</p>
+                <p className="text-xs font-bold leading-relaxed text-[#0B192C]">{toast.message}</p>
               </div>
             </div>
             <button
               onClick={() => removeToast(toast.id)}
-              className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors shrink-0"
+              className="p-1.5 rounded-lg text-[#5A6A80] hover:text-[#0B192C] hover:bg-[#F3F0EA] transition-colors shrink-0"
+              aria-label="Dismiss toast"
             >
               <X className="w-4 h-4" />
             </button>

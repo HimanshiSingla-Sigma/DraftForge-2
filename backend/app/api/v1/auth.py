@@ -1,64 +1,42 @@
-from fastapi import APIRouter, status
-from app.core.exceptions import AuthenticationError
+from fastapi import APIRouter, Depends, status
+from supabase import create_client
+from app.config import get_settings
+from app.core.exceptions import AuthenticationError, PermissionDeniedError
 from app.db.repositories.user_repository import UserRepository
-from app.db.supabase import get_supabase_anon_client
+from app.dependencies import get_current_user
+from app.models.database.models import UserProfileDB
 from app.models.schemas.auth import AuthTokenResponse, UserLoginRequest, UserRegisterRequest
 from app.core.logging import get_logger
 
 logger = get_logger("auth_router")
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 user_repo = UserRepository()
+settings = get_settings()
 
 
 @router.post("/register", response_model=AuthTokenResponse, status_code=status.HTTP_201_CREATED)
 async def register(payload: UserRegisterRequest):
     """
-    Registers a new student or teacher account via Supabase Auth and registers profile in PostgreSQL.
+    Public self-registration is strictly disabled to prevent unauthorized role creation.
+    Accounts must be provisioned via an authorized university invitation link.
     """
-    supabase = get_supabase_anon_client()
-    try:
-        auth_response = supabase.auth.sign_up({
-            "email": payload.email,
-            "password": payload.password,
-            "options": {
-                "data": {
-                    "role": payload.role.value,
-                    "full_name": payload.full_name,
-                }
-            }
-        })
-    except Exception as exc:
-        logger.error(f"Supabase registration error: {exc}")
-        raise AuthenticationError(f"Registration failed: {str(exc)}") from exc
-
-    if not auth_response.user or not auth_response.session:
-        raise AuthenticationError("User created but authentication session could not be established.")
-
-    user_id = str(auth_response.user.id)
-    profile = user_repo.upsert_profile(
-        user_id=user_id,
-        email=payload.email,
-        role=payload.role.value,
-        full_name=payload.full_name
+    logger.warning(f"Rejected public registration attempt for email: {payload.email}")
+    raise PermissionDeniedError(
+        "Public self-registration is disabled. An authorized university invitation is required to register. "
+        "Please check your email for an invitation link or contact your academic administrator."
     )
 
-    return AuthTokenResponse(
-        access_token=auth_response.session.access_token,
-        user_id=user_id,
-        email=profile["email"],
-        role=profile["role"],
-        full_name=profile.get("full_name"),
-    )
 
 
 @router.post("/login", response_model=AuthTokenResponse)
 async def login(payload: UserLoginRequest):
     """
     Authenticates an existing user with Supabase Auth and returns JWT token.
+    Uses an isolated ephemeral client to avoid state/token pollution.
     """
-    supabase = get_supabase_anon_client()
+    auth_client = create_client(settings.SUPABASE_URL, settings.SUPABASE_ANON_KEY)
     try:
-        auth_response = supabase.auth.sign_in_with_password({
+        auth_response = auth_client.auth.sign_in_with_password({
             "email": payload.email,
             "password": payload.password,
         })
@@ -86,3 +64,18 @@ async def login(payload: UserLoginRequest):
         role=profile["role"],
         full_name=profile.get("full_name"),
     )
+
+
+@router.get("/me")
+async def get_my_profile(
+    current_user: UserProfileDB = Depends(get_current_user),
+):
+    """
+    Returns the authenticated user's verified database profile and role.
+    """
+    return {
+        "id": current_user.id,
+        "email": current_user.email,
+        "role": current_user.role.value if hasattr(current_user.role, "value") else current_user.role,
+        "full_name": current_user.full_name,
+    }

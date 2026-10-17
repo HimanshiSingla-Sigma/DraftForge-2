@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Evaluation } from '../../types';
 import { AICoreOrb } from './AICoreOrb';
 import {
@@ -82,6 +83,25 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
     }
   }, [evaluation, evaluating]);
 
+  const handleModalClose = () => {
+    window.dispatchEvent(new CustomEvent('draftforge:metric_update'));
+    onClose();
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleModalClose();
+    };
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const effectiveScore = evaluation
@@ -89,13 +109,6 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
       ? evaluation.overridden_score
       : evaluation.overall_score
     : 0;
-
-  const scoreColor =
-    effectiveScore >= 75
-      ? 'text-emerald-400'
-      : effectiveScore >= 50
-      ? 'text-amber-400'
-      : 'text-rose-400';
 
   const strokeColor =
     effectiveScore >= 75
@@ -112,40 +125,34 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
   const warningCount = evaluation?.evidence_items?.filter((i) => i.status === 'WARNING' || i.status === 'PARTIAL').length || 0;
   const failCount = evaluation?.evidence_items?.filter((i) => i.status === 'FAIL').length || 0;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/90 backdrop-blur-2xl animate-fade-in overflow-y-auto">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-[#0B192C]/85 backdrop-blur-md animate-fade-in overflow-y-auto font-sans">
       {/* Modal Container */}
-      <div className="relative w-full max-w-5xl glass-panel-glow p-6 sm:p-10 rounded-[2.5rem] border border-slate-700/80 shadow-2xl space-y-8 my-auto overflow-hidden animate-scale-in">
-        {/* Ambient Radial Background Glows */}
-        <div className="absolute -top-32 -left-32 w-80 h-80 bg-primary-600/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-accent-cyan/20 rounded-full blur-3xl pointer-events-none" />
-
+      <div className="relative w-full max-w-5xl bg-white p-6 sm:p-10 rounded-[2.5rem] border-2 border-[#0B192C] shadow-[0_12px_#0B192C] space-y-8 my-auto overflow-hidden animate-scale-in">
         {/* Top Modal Chrome */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800/80 relative z-10">
+        <div className="flex items-center justify-between pb-4 border-b-2 border-[#E6E2D8] relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-primary-600 to-accent-cyan p-0.5 shadow-lg shadow-primary-500/25">
-              <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-accent-cyan" />
-              </div>
+            <div className="w-10 h-10 rounded-2xl bg-[#1E3E62] border-2 border-[#0B192C] flex items-center justify-center shadow-sm">
+              <Sparkles className="w-5 h-5 text-[#F59E0B]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-base sm:text-lg text-white tracking-tight">
+                <h3 className="font-serif font-bold text-base sm:text-lg text-[#0B192C] tracking-tight">
                   Deterministic AI Evaluation Engine
                 </h3>
-                <span className="px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold bg-primary-500/10 text-primary-300 border border-primary-500/20">
+                <span className="px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold bg-[#F3F0EA] text-[#1E3E62] border border-[#E6E2D8]">
                   Rubric v1.0
                 </span>
               </div>
-              <p className="text-xs text-slate-400 font-mono">
+              <p className="text-xs text-[#0B192C]/60 font-mono">
                 {draftTitle} • Grounded in Qdrant & Neo4j
               </p>
             </div>
           </div>
 
           <button
-            onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors"
+            onClick={handleModalClose}
+            className="p-2 rounded-xl text-[#0B192C]/70 hover:text-[#0B192C] bg-[#F3F0EA] border-2 border-[#E6E2D8] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -168,13 +175,13 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
                       key={idx}
                       className={`flex items-center gap-2.5 text-xs font-mono transition-all ${
                         isDone
-                          ? 'text-emerald-400'
+                          ? 'text-[#059669]'
                           : isCurrent
-                          ? 'text-accent-cyan font-bold scale-105'
-                          : 'text-slate-600'
+                          ? 'text-[#1E3E62] font-bold scale-105'
+                          : 'text-[#0B192C]/40'
                       }`}
                     >
-                      <span className={`w-2 h-2 rounded-full ${isDone ? 'bg-emerald-400' : isCurrent ? 'bg-accent-cyan animate-ping' : 'bg-slate-800'}`} />
+                      <span className={`w-2 h-2 rounded-full ${isDone ? 'bg-[#10B981]' : isCurrent ? 'bg-[#F59E0B] animate-ping' : 'bg-[#E6E2D8]'}`} />
                       <span className="truncate">{stage}</span>
                     </div>
                   );
@@ -182,35 +189,35 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
               </div>
             </div>
 
-            {/* Right 6 Cols: 3D Document with Sweeping Laser Scan Line */}
+            {/* Right 6 Cols: Document with Sweeping Laser Scan Line */}
             <div className="lg:col-span-6">
-              <div className="relative rounded-3xl bg-slate-950/95 border border-slate-800 p-6 font-mono text-xs text-slate-300 leading-relaxed overflow-hidden shadow-2xl perspective-1000 hero-3d-card max-h-[360px]">
+              <div className="relative rounded-3xl bg-[#FAF8F5] border-2 border-[#E6E2D8] p-6 font-mono text-xs text-[#0B192C] leading-relaxed overflow-hidden shadow-[0_4px_#E6E2D8] max-h-[360px]">
                 {/* Active Laser Scanning Beam */}
                 <div className="laser-scan-line animate-scan" />
 
-                <div className="text-center pb-2 mb-3 border-b border-slate-800/80">
-                  <span className="text-[10px] font-bold text-primary-400 uppercase tracking-widest block">
+                <div className="text-center pb-2 mb-3 border-b-2 border-[#E6E2D8]">
+                  <span className="text-[10px] font-bold text-[#F59E0B] uppercase tracking-widest block font-mono">
                     ACTIVE STATUTORY SCAN
                   </span>
-                  <p className="text-xs text-white font-bold truncate">{draftTitle}</p>
+                  <p className="font-serif text-xs text-[#0B192C] font-bold truncate">{draftTitle}</p>
                 </div>
 
-                <div className="space-y-2 text-[11px] text-slate-400 leading-relaxed max-h-[240px] overflow-hidden opacity-80 select-none">
+                <div className="space-y-2 text-[11px] text-[#0B192C]/80 leading-relaxed max-h-[240px] overflow-hidden select-none">
                   {draftContent ? (
                     <p className="whitespace-pre-wrap">{draftContent.slice(0, 500)}...</p>
                   ) : (
                     <>
-                      <p className="text-slate-300">1. IDENTIFICATION & AGE: I, the deponent, solemnly affirm...</p>
-                      <p className="text-slate-300">2. OPERATIVE COVENANTS: That all declarations made herein are true...</p>
-                      <p className="text-slate-300">3. VERIFICATION JURAT: Verified under the Indian Evidence Act...</p>
-                      <p className="text-slate-400">4. DISPUTE RESOLUTION: Subject to competent jurisdiction...</p>
+                      <p className="text-[#0B192C]">1. IDENTIFICATION & AGE: I, the deponent, solemnly affirm...</p>
+                      <p className="text-[#0B192C]">2. OPERATIVE COVENANTS: That all declarations made herein are true...</p>
+                      <p className="text-[#0B192C]">3. VERIFICATION JURAT: Verified under the Indian Evidence Act...</p>
+                      <p className="text-[#0B192C]/60">4. DISPUTE RESOLUTION: Subject to competent jurisdiction...</p>
                     </>
                   )}
                 </div>
 
-                <div className="mt-4 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                <div className="mt-4 pt-2 border-t-2 border-[#E6E2D8] flex items-center justify-between text-[10px] text-[#0B192C]/60 font-mono">
                   <span>FastEmbed Tokenizer</span>
-                  <span className="text-emerald-400 animate-pulse">Scanning Active</span>
+                  <span className="text-[#059669] font-bold animate-pulse">Scanning Active</span>
                 </div>
               </div>
             </div>
@@ -219,15 +226,15 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
           /* Real Evaluation Results: Cinematic Score Reveal */
           <div className="space-y-8 relative z-10 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Left 5 Cols: 3D Animated Score Reveal Gauge */}
-              <div className="lg:col-span-5 glass-panel p-8 rounded-3xl border border-slate-800 text-center space-y-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block font-mono">
+              {/* Left 5 Cols: Score Reveal Gauge */}
+              <div className="lg:col-span-5 tactile-card bg-[#FAF8F5] p-8 rounded-3xl border-2 border-[#E6E2D8] text-center space-y-4 shadow-[0_4px_#E6E2D8]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#0B192C]/60 block font-mono">
                   Deterministic Score Result
                 </span>
 
                 <div className="relative w-40 h-40 mx-auto flex items-center justify-center">
                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 108 108">
-                    <circle cx="54" cy="54" r="46" stroke="#1e293b" strokeWidth="8" fill="transparent" />
+                    <circle cx="54" cy="54" r="46" stroke="#E6E2D8" strokeWidth="8" fill="transparent" />
                     <circle
                       cx="54"
                       cy="54"
@@ -242,10 +249,10 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className={`text-4xl font-extrabold font-mono tracking-tight ${scoreColor}`}>
+                    <span className="text-4xl font-serif font-extrabold tracking-tight text-[#0B192C]">
                       {animatedScore}
                     </span>
-                    <span className="text-xs text-slate-400 font-bold uppercase">
+                    <span className="text-xs text-[#0B192C]/60 font-bold uppercase font-mono">
                       / {maxScore} pts
                     </span>
                   </div>
@@ -253,12 +260,12 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
 
                 <div className="pt-2">
                   <span
-                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono ${
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono border-2 ${
                       effectiveScore >= 75
-                        ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30'
+                        ? 'bg-[#F0FDF4] text-[#059669] border-[#10B981]/40'
                         : effectiveScore >= 50
-                        ? 'bg-amber-500/10 text-amber-300 border border-amber-500/30'
-                        : 'bg-rose-500/10 text-rose-300 border border-rose-500/30'
+                        ? 'bg-[#FFFBEB] text-[#B45309] border-[#F59E0B]/40'
+                        : 'bg-[#FEF2F2] text-[#DC2626] border-[#DC2626]/40'
                     }`}
                   >
                     <ShieldCheck className="w-3.5 h-3.5" />
@@ -270,51 +277,51 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
               {/* Right 7 Cols: 4-Pillar Score Breakdown & Summary */}
               <div className="lg:col-span-7 space-y-4">
                 <div className="grid grid-cols-2 gap-3.5">
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-1">
-                    <span className="text-[11px] font-semibold text-slate-400">Structure & Demarcation</span>
-                    <p className="text-xl font-extrabold text-white font-mono">{evaluation.structure_score} / 25 pts</p>
-                    <span className="text-[10px] text-emerald-400 font-mono">Title, recitals & numbering</span>
+                  <div className="p-4 rounded-2xl bg-white border-2 border-[#E6E2D8] space-y-1 shadow-[0_2px_#E6E2D8]">
+                    <span className="text-[11px] font-semibold text-[#0B192C]/70">Structure & Demarcation</span>
+                    <p className="text-xl font-serif font-extrabold text-[#0B192C]">{evaluation.structure_score} / 25 pts</p>
+                    <span className="text-[10px] text-[#059669] font-mono">Title, recitals & numbering</span>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-1">
-                    <span className="text-[11px] font-semibold text-slate-400">Clause Coverage</span>
-                    <p className="text-xl font-extrabold text-primary-400 font-mono">{evaluation.clause_score} / 50 pts</p>
-                    <span className="text-[10px] text-primary-300 font-mono">Semantic precedent matching</span>
+                  <div className="p-4 rounded-2xl bg-white border-2 border-[#E6E2D8] space-y-1 shadow-[0_2px_#E6E2D8]">
+                    <span className="text-[11px] font-semibold text-[#0B192C]/70">Clause Coverage</span>
+                    <p className="text-xl font-serif font-extrabold text-[#1E3E62]">{evaluation.clause_score} / 50 pts</p>
+                    <span className="text-[10px] text-[#1E3E62]/80 font-mono">Semantic precedent matching</span>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-1">
-                    <span className="text-[11px] font-semibold text-slate-400">Formatting & Jurats</span>
-                    <p className="text-xl font-extrabold text-accent-cyan font-mono">{evaluation.formatting_score} / 25 pts</p>
-                    <span className="text-[10px] text-accent-cyan font-mono">Oath affirmation & stamps</span>
+                  <div className="p-4 rounded-2xl bg-white border-2 border-[#E6E2D8] space-y-1 shadow-[0_2px_#E6E2D8]">
+                    <span className="text-[11px] font-semibold text-[#0B192C]/70">Formatting & Jurats</span>
+                    <p className="text-xl font-serif font-extrabold text-[#F59E0B]">{evaluation.formatting_score} / 25 pts</p>
+                    <span className="text-[10px] text-[#B45309] font-mono">Oath affirmation & stamps</span>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-1">
-                    <span className="text-[11px] font-semibold text-slate-400">Contradiction Penalty</span>
-                    <p className="text-xl font-extrabold text-rose-400 font-mono">-{evaluation.gap_penalty} pts</p>
-                    <span className="text-[10px] text-rose-300 font-mono">Restraints & statutory gaps</span>
+                  <div className="p-4 rounded-2xl bg-white border-2 border-[#E6E2D8] space-y-1 shadow-[0_2px_#E6E2D8]">
+                    <span className="text-[11px] font-semibold text-[#0B192C]/70">Contradiction Penalty</span>
+                    <p className="text-xl font-serif font-extrabold text-[#DC2626]">-{evaluation.gap_penalty} pts</p>
+                    <span className="text-[10px] text-[#DC2626] font-mono">Restraints & statutory gaps</span>
                   </div>
                 </div>
 
                 {/* Evidence Summary Counters */}
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center justify-around text-center text-xs font-mono">
+                <div className="p-4 rounded-2xl bg-[#F3F0EA] border-2 border-[#E6E2D8] flex items-center justify-around text-center text-xs font-mono">
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Validated Items</span>
-                    <span className="text-emerald-400 font-bold text-base flex items-center justify-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> {passCount} PASS
+                    <span className="text-[#0B192C]/60 block text-[10px]">Validated Items</span>
+                    <span className="text-[#059669] font-bold text-base flex items-center justify-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" /> {passCount} PASS
                     </span>
                   </div>
-                  <div className="h-8 w-px bg-slate-800" />
+                  <div className="h-8 w-0.5 bg-[#E6E2D8]" />
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Advisory Warnings</span>
-                    <span className="text-amber-400 font-bold text-base flex items-center justify-center gap-1">
-                      <AlertTriangle className="w-3.5 h-3.5" /> {warningCount} WARN
+                    <span className="text-[#0B192C]/60 block text-[10px]">Advisory Warnings</span>
+                    <span className="text-[#B45309] font-bold text-base flex items-center justify-center gap-1">
+                      <AlertTriangle className="w-3.5 h-3.5 text-[#F59E0B]" /> {warningCount} WARN
                     </span>
                   </div>
-                  <div className="h-8 w-px bg-slate-800" />
+                  <div className="h-8 w-0.5 bg-[#E6E2D8]" />
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Critical Gaps</span>
-                    <span className="text-rose-400 font-bold text-base flex items-center justify-center gap-1">
-                      <XCircle className="w-3.5 h-3.5" /> {failCount} FAIL
+                    <span className="text-[#0B192C]/60 block text-[10px]">Critical Gaps</span>
+                    <span className="text-[#DC2626] font-bold text-base flex items-center justify-center gap-1">
+                      <XCircle className="w-3.5 h-3.5 text-[#DC2626]" /> {failCount} FAIL
                     </span>
                   </div>
                 </div>
@@ -322,15 +329,15 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
             </div>
 
             {/* Next Action Gateway Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-slate-800/80">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t-2 border-[#E6E2D8]">
               <button
                 onClick={() => {
-                  onClose();
+                  handleModalClose();
                   if (onViewDetailedEvidence) onViewDetailedEvidence();
                 }}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs font-bold border border-slate-800 transition-all flex items-center justify-center gap-2"
+                className="tactile-btn w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white hover:bg-[#F3F0EA] text-[#0B192C] text-xs font-bold border-2 border-[#E6E2D8] transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <FileText className="w-4 h-4 text-primary-400" />
+                <FileText className="w-4 h-4 text-[#1E3E62]" />
                 <span>Inspect Evidence Findings ({evaluation.evidence_items?.length || 0})</span>
               </button>
 
@@ -338,12 +345,12 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
                 {onNavigateToLoopholes && (
                   <button
                     onClick={() => {
-                      onClose();
+                      handleModalClose();
                       onNavigateToLoopholes(evaluation.id);
                     }}
-                    className="flex-1 sm:flex-none px-5 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-bold rounded-xl border border-rose-500/30 transition-all flex items-center justify-center gap-2"
+                    className="tactile-btn flex-1 sm:flex-none px-5 py-2.5 bg-[#FEF2F2] hover:bg-[#FEE2E2] text-[#DC2626] text-xs font-bold rounded-xl border-2 border-[#DC2626]/40 transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Network className="w-4 h-4 text-rose-400" />
+                    <Network className="w-4 h-4 text-[#DC2626]" />
                     <span>Neo4j Graph Loopholes</span>
                   </button>
                 )}
@@ -351,14 +358,14 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
                 {onNavigateToRoadmap && (
                   <button
                     onClick={() => {
-                      onClose();
+                      handleModalClose();
                       onNavigateToRoadmap();
                     }}
-                    className="flex-1 sm:flex-none px-6 py-2.5 bg-gradient-to-r from-primary-600 via-indigo-600 to-accent-cyan hover:from-primary-500 hover:to-accent-cyan text-white text-xs font-bold rounded-xl shadow-lg shadow-primary-500/25 transition-all flex items-center justify-center gap-2"
+                    className="tactile-btn flex-1 sm:flex-none px-6 py-2.5 bg-[#1E3E62] hover:bg-[#152C46] text-white text-xs font-bold rounded-xl border-b-4 border-[#0B192C] shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <GraduationCap className="w-4 h-4" />
+                    <GraduationCap className="w-4 h-4 text-[#F59E0B]" />
                     <span>Synthesize 5-Phase Roadmap</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5 text-[#F59E0B]" />
                   </button>
                 )}
               </div>
@@ -366,6 +373,7 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
           </div>
         ) : null}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

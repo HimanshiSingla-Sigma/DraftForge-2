@@ -4,6 +4,7 @@ import {
   FileEdit,
   ClipboardCheck,
   ShieldAlert,
+  Shield,
   GraduationCap,
   HelpCircle,
   TrendingUp,
@@ -15,6 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
+  Layers,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -35,7 +37,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setIsMobileMenuOpen,
 }) => {
   const { user } = useAuth();
-  const isTeacher = user?.role === 'TEACHER' || user?.role === 'ADMIN';
+  const isAdmin = user?.role === 'ADMIN';
+  const isTeacher = user?.role === 'TEACHER' || isAdmin;
 
   const studentNavItems = [
     {
@@ -112,6 +115,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       color: 'text-accent-emerald',
     },
     {
+      id: 'teacher_sections',
+      label: 'Sections & Rosters',
+      icon: Layers,
+      badge: 'Sections',
+      color: 'text-[#1E3E62]',
+    },
+    {
       id: 'teacher_reference',
       label: 'Ingest Reference Corpus',
       icon: UploadCloud,
@@ -125,9 +135,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
       badge: 'Analytics',
       color: 'text-accent-amber',
     },
+    {
+      id: 'workspace',
+      label: 'Student Studio View',
+      icon: FileEdit,
+      badge: 'Student',
+      color: 'text-[#1E3E62]',
+    },
   ];
 
-  const navItems = isTeacher ? teacherNavItems : studentNavItems;
+  const adminNavItems = [
+    {
+      id: 'admin_dashboard',
+      label: 'Admin Command Center',
+      icon: Shield,
+      badge: 'NCU Admin',
+      color: 'text-[#F59E0B]',
+    },
+    ...teacherNavItems,
+  ];
+
+  const navItems = isAdmin ? adminNavItems : isTeacher ? teacherNavItems : studentNavItems;
 
   const handleSelectTab = (id: string) => {
     setActiveTab(id);
@@ -139,32 +167,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Backdrop Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-30 lg:hidden animate-fade-in"
+          className="fixed inset-0 bg-[#0B192C]/40 backdrop-blur-sm z-30 lg:hidden animate-fade-in"
           onClick={() => setIsMobileMenuOpen && setIsMobileMenuOpen(false)}
         />
       )}
 
       <aside
-        className={`fixed lg:static top-16 bottom-0 left-0 z-30 bg-slate-950/90 backdrop-blur-xl border-r border-slate-800/80 flex flex-col justify-between transition-all duration-300 ${
+        className={`fixed lg:static top-16 bottom-0 left-0 z-30 bg-[#FAF8F5] border-r-2 border-[#E6E2D8] flex flex-col justify-between transition-all duration-300 ${
           isMobileMenuOpen
             ? 'translate-x-0 w-64'
             : ' -translate-x-full lg:translate-x-0 ' + (isCollapsed ? 'w-20' : 'w-64')
         }`}
       >
         {/* Nav Items */}
-        <div className="p-3.5 space-y-1.5 overflow-y-auto">
+        <div className="p-3 space-y-1.5 overflow-y-auto">
           <div className="px-3 py-2 flex items-center justify-between">
             <span
-              className={`text-[10px] font-bold text-slate-500 uppercase tracking-wider ${
+              className={`text-[10px] font-bold text-[#5A6A80] uppercase tracking-wider font-mono ${
                 isCollapsed ? 'hidden' : 'block'
               }`}
             >
-              {isTeacher ? 'Faculty Portal' : 'Student Studio'}
+              {isAdmin ? 'Root Administration' : isTeacher ? 'Faculty Portal' : 'Student Studio'}
             </span>
             {setIsCollapsed && (
               <button
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="hidden lg:flex p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                className="hidden lg:flex p-1 rounded-lg text-[#5A6A80] hover:text-[#0B192C] hover:bg-[#F3F0EA] transition-colors"
                 title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               >
                 {isCollapsed ? (
@@ -183,21 +211,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 key={item.id}
                 onClick={() => handleSelectTab(item.id)}
-                className={`w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all relative group ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-xs font-bold transition-all relative group ${
                   isActive
-                    ? 'bg-gradient-to-r from-primary-600/20 to-primary-600/5 text-white border border-primary-500/30 shadow-lg shadow-primary-500/10'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/60'
+                    ? 'tactile-btn bg-[#1E3E62] text-white border-2 border-[#0B192C] border-b-4 border-b-[#0B192C] shadow-[0_3px_#0B192C]'
+                    : 'text-[#0B192C] hover:bg-white border-2 border-transparent hover:border-[#E6E2D8]'
                 }`}
                 title={isCollapsed ? item.label : undefined}
               >
                 <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                  className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                     isActive
-                      ? 'bg-primary-500 text-white shadow-md shadow-primary-500/30'
-                      : 'bg-slate-900 group-hover:bg-slate-800 ' + item.color
+                      ? 'bg-[#F59E0B] text-[#0B192C] font-black shadow-sm'
+                      : 'bg-[#F3F0EA] text-[#1E3E62] group-hover:bg-[#E6E2D8]'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-3.5 h-3.5" />
                 </div>
 
                 {!isCollapsed && (
@@ -205,21 +233,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <span className="truncate">{item.label}</span>
                     {item.badge && (
                       <span
-                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider ${
+                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider font-mono ${
                           isActive
-                            ? 'bg-primary-500/20 text-primary-300 border border-primary-500/30'
-                            : 'bg-slate-800/80 text-slate-500 border border-slate-700/40'
+                            ? 'bg-white/20 text-white'
+                            : 'bg-[#F3F0EA] text-[#5A6A80] border border-[#E6E2D8]'
                         }`}
                       >
                         {item.badge}
                       </span>
                     )}
                   </div>
-                )}
-
-                {/* Active Indicator Bar */}
-                {isActive && (
-                  <span className="absolute left-0 top-2 bottom-2 w-1 bg-primary-500 rounded-r-full shadow-glow" />
                 )}
               </button>
             );
@@ -228,17 +251,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Bottom System Pro Card */}
         {!isCollapsed && (
-          <div className="p-3.5 m-3 rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-950/40 border border-slate-800/80 shadow-lg">
-            <div className="flex items-center gap-2 mb-1.5">
-              <Sparkles className="w-4 h-4 text-accent-cyan" />
-              <p className="text-xs font-semibold text-white">Hybrid Reasoning</p>
+          <div className="p-3.5 m-3 rounded-2xl bg-white border-2 border-[#E6E2D8] shadow-[0_3px_#E6E2D8]">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
+              <p className="font-serif text-xs font-black text-[#0B192C]">Hybrid Reasoning</p>
             </div>
-            <p className="text-[10px] text-slate-400 leading-relaxed mb-2.5">
+            <p className="text-[10px] text-[#5A6A80] leading-relaxed mb-2">
               Deterministic rubrics verified against Qdrant RAG and Neo4j Aura graphs.
             </p>
-            <div className="flex items-center justify-between text-[9px] font-mono text-slate-400 pt-2 border-t border-slate-800/80">
+            <div className="flex items-center justify-between text-[9px] font-mono text-[#5A6A80] pt-2 border-t border-[#E6E2D8]">
               <span>FastEmbed (384-dim)</span>
-              <span className="text-emerald-400 font-semibold">Ready</span>
+              <span className="text-[#059669] font-bold">Ready</span>
             </div>
           </div>
         )}

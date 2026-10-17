@@ -6,7 +6,11 @@ class AnalyticsRepository:
     """Computes cross-sectional cohort intelligence and weak-skill distributions for teachers."""
 
     def __init__(self):
-        self.client = get_supabase_admin_client()
+        pass
+
+    @property
+    def client(self):
+        return get_supabase_admin_client()
 
     def get_cohort_overview(self) -> Dict[str, Any]:
         # 1. Total Student Count

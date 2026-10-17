@@ -78,35 +78,35 @@ export const AssignmentManager: React.FC<{ onSelectAssignment: (id: string) => v
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl glass-panel-glow border border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl tactile-card bg-[#FAF8F5] border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8]">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold text-white tracking-tight">Assignment Management</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/20 font-mono">
+            <h1 className="text-2xl font-serif font-bold text-[#0B192C] tracking-tight">Assignment Management</h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#1E3E62]/10 text-[#1E3E62] border border-[#1E3E62]/30 font-mono">
               Faculty Studio
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#0B192C]/70 mt-1">
             Publish drafting briefs, enforce statutory constraints, and track student submissions in real-time.
           </p>
         </div>
 
-        <div className="px-4 py-2 bg-slate-900 border border-slate-800 rounded-2xl text-xs font-mono text-slate-300">
-          Active Assignments: <span className="text-accent-cyan font-bold">{assignments.length}</span>
+        <div className="px-4 py-2 bg-[#F3F0EA] border-2 border-[#E6E2D8] rounded-2xl text-xs font-mono text-[#0B192C]">
+          Active Assignments: <span className="text-[#1E3E62] font-bold">{assignments.length}</span>
         </div>
       </div>
 
       <div className="grid grid-cols-12 gap-6">
         {/* Create Assignment Form (Left 5 Cols) */}
-        <div className="col-span-12 lg:col-span-5 glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-          <div className="flex items-center gap-2 pb-2 border-b border-slate-800">
-            <Plus className="w-4 h-4 text-primary-400" />
-            <h3 className="font-bold text-sm text-white">Create New Assignment</h3>
+        <div className="col-span-12 lg:col-span-5 tactile-card bg-[#FAF8F5] p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
+          <div className="flex items-center gap-2 pb-2 border-b-2 border-[#E6E2D8]">
+            <Plus className="w-4 h-4 text-[#1E3E62]" />
+            <h3 className="font-serif font-bold text-base text-[#0B192C]">Create New Assignment</h3>
           </div>
 
           <form onSubmit={handleCreate} className="space-y-3.5">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-[#0B192C] mb-1">
                 Assignment Title
               </label>
               <input
@@ -114,12 +114,12 @@ export const AssignmentManager: React.FC<{ onSelectAssignment: (id: string) => v
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Executive Employment Agreement Drafting"
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-ring"
+                className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-[#0B192C] mb-1">
                 Short Description (Optional)
               </label>
               <input
@@ -127,18 +127,18 @@ export const AssignmentManager: React.FC<{ onSelectAssignment: (id: string) => v
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="e.g. Focus on restrictive covenants and termination notice"
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-ring"
+                className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-[#0B192C] mb-1">
                 Target Legal Document Category
               </label>
               <select
                 value={docType}
                 onChange={(e) => setDocType(e.target.value as DocumentType)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-ring"
+                className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
               >
                 <option value="AFFIDAVIT_OF_CHARACTER">Affidavit of Character (India)</option>
                 <option value="EMPLOYMENT_AGREEMENT">Employment Agreement (India)</option>
@@ -148,7 +148,7 @@ export const AssignmentManager: React.FC<{ onSelectAssignment: (id: string) => v
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-[#0B192C] mb-1">
                 Instructions & Rubric Constraints
               </label>
               <textarea
@@ -156,26 +156,26 @@ export const AssignmentManager: React.FC<{ onSelectAssignment: (id: string) => v
                 onChange={(e) => setInstructions(e.target.value)}
                 rows={4}
                 placeholder="Specify mandatory party clauses, consideration terms, notice periods, and statutory references..."
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus-ring resize-none font-mono"
+                className="w-full bg-[#F3F0EA] border-2 border-[#E6E2D8] rounded-xl p-3 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none resize-none font-mono"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-[#0B192C] mb-1">
                 Submission Deadline
               </label>
               <input
                 type="datetime-local"
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus-ring"
+                className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none font-mono"
               />
             </div>
 
             <button
               type="submit"
               disabled={creating || !title.trim() || !instructions.trim()}
-              className="w-full py-2.5 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-primary-500/25 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="tactile-btn w-full py-2.5 bg-[#1E3E62] hover:bg-[#152e4a] text-white font-bold text-xs rounded-xl border-b-4 border-[#0B192C] shadow-[0_3px_#0B192C] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {creating ? <LoadingSpinner size="sm" /> : <FileCheck className="w-4 h-4" />}
               <span>Publish Assignment</span>
@@ -184,17 +184,17 @@ export const AssignmentManager: React.FC<{ onSelectAssignment: (id: string) => v
         </div>
 
         {/* Existing Assignments (Right 7 Cols) */}
-        <div className="col-span-12 lg:col-span-7 glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-800">
-            <h3 className="font-bold text-sm text-white">Active Classroom Assignments</h3>
+        <div className="col-span-12 lg:col-span-7 tactile-card bg-[#FAF8F5] p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b-2 border-[#E6E2D8]">
+            <h3 className="font-serif font-bold text-base text-[#0B192C]">Active Classroom Assignments</h3>
             <div className="relative">
-              <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5" />
+              <Search className="w-3.5 h-3.5 text-[#0B192C]/40 absolute left-3 top-2.5" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search..."
-                className="bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 focus-ring"
+                className="bg-[#F3F0EA] border-2 border-[#E6E2D8] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none"
               />
             </div>
           </div>
@@ -204,8 +204,8 @@ export const AssignmentManager: React.FC<{ onSelectAssignment: (id: string) => v
               <LoadingSpinner size="lg" label="Loading faculty assignments..." />
             </div>
           ) : filtered.length === 0 ? (
-            <div className="py-12 text-center text-xs text-slate-500 space-y-2">
-              <BookOpen className="w-10 h-10 text-slate-700 mx-auto" />
+            <div className="py-12 text-center text-xs text-[#0B192C]/50 space-y-2">
+              <BookOpen className="w-10 h-10 text-[#0B192C]/30 mx-auto" />
               <p>No assignments published yet. Create one on the left.</p>
             </div>
           ) : (
@@ -214,35 +214,35 @@ export const AssignmentManager: React.FC<{ onSelectAssignment: (id: string) => v
                 <div
                   key={a.id}
                   onClick={() => onSelectAssignment(a.id)}
-                  className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-accent-cyan/50 cursor-pointer transition-all space-y-3 group"
+                  className="p-5 rounded-2xl bg-[#F3F0EA] border-2 border-[#E6E2D8] hover:border-[#1E3E62] hover:bg-[#FAF8F5] shadow-[0_2px_#E6E2D8] cursor-pointer transition-all space-y-3 group"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-900 text-primary-400 border border-primary-500/20">
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FAF8F5] text-[#1E3E62] border border-[#E6E2D8]">
                         {a.document_type.replace(/_/g, ' ')}
                       </span>
-                      <h4 className="font-bold text-sm text-white mt-1.5 group-hover:text-accent-cyan transition-colors">
+                      <h4 className="font-serif font-bold text-base text-[#0B192C] mt-1.5 group-hover:text-[#1E3E62] transition-colors">
                         {a.title}
                       </h4>
                     </div>
 
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 uppercase tracking-wider font-mono">
                       {a.status}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-[#0B192C]/70 line-clamp-2 leading-relaxed">
                     {a.instructions}
                   </p>
 
-                  <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800">
-                    <div className="flex items-center gap-1.5 text-accent-cyan font-semibold">
+                  <div className="flex items-center justify-between text-xs text-[#0B192C]/60 pt-2 border-t-2 border-[#E6E2D8]">
+                    <div className="flex items-center gap-1.5 text-[#1E3E62] font-bold">
                       <Users className="w-3.5 h-3.5" />
                       <span>{a.submissions_count || 0} Submissions</span>
                     </div>
 
-                    <div className="flex items-center gap-1 text-[11px] text-slate-500">
-                      <Clock className="w-3 h-3 text-accent-amber" />
+                    <div className="flex items-center gap-1 text-[11px] text-[#0B192C]/60 font-mono">
+                      <Clock className="w-3 h-3 text-[#D97706]" />
                       <span>
                         {a.deadline ? new Date(a.deadline).toLocaleDateString() : 'No Deadline'}
                       </span>

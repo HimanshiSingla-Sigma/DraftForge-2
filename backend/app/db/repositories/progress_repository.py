@@ -6,12 +6,16 @@ class ProgressRepository:
     """Aggregates multi-table analytics for student mastery, draft evaluations, and leaderboards."""
 
     def __init__(self):
-        self.client = get_supabase_admin_client()
+        pass
+
+    @property
+    def client(self):
+        return get_supabase_admin_client()
 
     def get_student_evaluation_stats(self, user_id: str) -> Dict[str, Any]:
         res = (
             self.client.table("drafts")
-            .select("id, document_type, draft_versions(evaluations(overall_score, created_at))")
+            .select("id, document_type, draft_versions(evaluations(overall_score, is_overridden, overridden_score, created_at))")
             .eq("user_id", user_id)
             .execute()
         )
@@ -23,8 +27,13 @@ class ProgressRepository:
             dtype = d.get("document_type") or "UNSPECIFIED"
             for v in d.get("draft_versions", []):
                 for e in v.get("evaluations", []):
-                    if e.get("overall_score") is not None:
-                        sc = float(e["overall_score"])
+                    effective_score = (
+                        e.get("overridden_score")
+                        if e.get("is_overridden") and e.get("overridden_score") is not None
+                        else e.get("overall_score")
+                    )
+                    if effective_score is not None:
+                        sc = float(effective_score)
                         scores.append(sc)
                         doc_performance.setdefault(dtype, []).append(sc)
 
@@ -45,7 +54,7 @@ class ProgressRepository:
         # Fetch students and their evaluations
         res = (
             self.client.table("profiles")
-            .select("id, full_name, role, drafts(draft_versions(evaluations(overall_score)))")
+            .select("id, full_name, role, drafts(draft_versions(evaluations(overall_score, is_overridden, overridden_score)))")
             .eq("role", "STUDENT")
             .execute()
         )
@@ -57,7 +66,13 @@ class ProgressRepository:
             for d in st.get("drafts", []):
                 for v in d.get("draft_versions", []):
                     for e in v.get("evaluations", []):
-                        scores.append(float(e["overall_score"]))
+                        effective_score = (
+                            e.get("overridden_score")
+                            if e.get("is_overridden") and e.get("overridden_score") is not None
+                            else e.get("overall_score")
+                        )
+                        if effective_score is not None:
+                            scores.append(float(effective_score))
 
             if scores:
                 avg = round(sum(scores) / len(scores), 2)

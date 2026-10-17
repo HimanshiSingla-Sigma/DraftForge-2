@@ -72,6 +72,7 @@ export const LoopholeViewer: React.FC<LoopholeViewerProps> = ({
       const evalRes = await api.evaluateDraft(draftId);
       await fetchLoopholes(evalRes.data.id);
       showToast('Neo4j Graph Traversal & Risk Audit Completed!', 'success');
+      window.dispatchEvent(new CustomEvent('draftforge:metric_update'));
     } catch (err: any) {
       showToast(err.response?.data?.detail || 'Graph analysis failed', 'error');
     } finally {
@@ -154,48 +155,48 @@ export const LoopholeViewer: React.FC<LoopholeViewerProps> = ({
   return (
     <div className="space-y-6 animate-fade-in font-sans">
       {/* Top Banner */}
-      <div className="glass-panel-glow p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+      <div className="tactile-card bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-[#FEF2F2] border-2 border-[#DC2626]/30 flex items-center justify-center text-[#DC2626] shrink-0">
               <Network className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono">
+                <span className="text-[10px] font-bold text-[#0B192C]/60 uppercase tracking-wider font-mono">
                   Neo4j Graph Reasoning
                 </span>
-                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20 font-mono">
+                <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#DC2626]/30 font-mono">
                   {report.document_type}
                 </span>
               </div>
-              <h2 className="text-xl font-extrabold text-white tracking-tight mt-0.5">
+              <h2 className="font-serif text-2xl font-extrabold text-[#0B192C] tracking-tight mt-0.5">
                 GraphRAG Structural Loophole Analysis
               </h2>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="px-4 py-2 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-xs font-bold text-rose-300 font-mono">
+            <div className="px-4 py-2 bg-[#FEF2F2] border-2 border-[#DC2626]/30 rounded-2xl text-xs font-bold text-[#DC2626] font-mono shadow-sm">
               {report.high_severity_count} High Severity Risks
             </div>
-            <div className="px-4 py-2 bg-slate-900 border border-slate-800 rounded-2xl text-xs font-bold text-slate-200 font-mono">
+            <div className="px-4 py-2 bg-[#F3F0EA] border-2 border-[#E6E2D8] rounded-2xl text-xs font-bold text-[#0B192C] font-mono">
               {report.total_loopholes} Total Gaps
             </div>
           </div>
         </div>
 
         {/* Severity Filter Tabs */}
-        <div className="flex items-center gap-2 pt-2 border-t border-slate-800/80">
-          <span className="text-xs text-slate-400 font-medium mr-2">Filter Severity:</span>
+        <div className="flex items-center gap-2 pt-2 border-t-2 border-[#E6E2D8]">
+          <span className="text-xs text-[#0B192C]/70 font-semibold mr-2 font-mono">Filter Severity:</span>
           {(['ALL', 'HIGH', 'MEDIUM', 'LOW'] as const).map((sev) => (
             <button
               key={sev}
               onClick={() => setSeverityFilter(sev)}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all ${
+              className={`tactile-btn px-3.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 severityFilter === sev
-                  ? 'bg-primary-600 text-white shadow-md'
-                  : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800'
+                  ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
+                  : 'bg-[#F3F0EA] text-[#0B192C]/70 hover:text-[#0B192C] border-2 border-[#E6E2D8]'
               }`}
             >
               {sev}
@@ -204,77 +205,76 @@ export const LoopholeViewer: React.FC<LoopholeViewerProps> = ({
         </div>
       </div>
 
-      {/* Interactive 3D Graph Topology Visualizer (Only if loopholes exist) */}
+      {/* Interactive Graph Topology Visualizer (Only if loopholes exist) */}
       {report.loopholes.length > 0 && activeLoophole && (
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div className="tactile-card bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] space-y-6">
+          <div className="flex items-center justify-between border-b-2 border-[#E6E2D8] pb-3">
             <div className="flex items-center gap-2">
-              <Share2 className="w-4 h-4 text-accent-cyan" />
-              <h3 className="font-bold text-sm text-white tracking-tight">
+              <Share2 className="w-4 h-4 text-[#1E3E62]" />
+              <h3 className="font-serif font-bold text-sm sm:text-base text-[#0B192C] tracking-tight">
                 Interactive Graph Knowledge Topology
               </h3>
             </div>
-            <span className="text-[10px] font-mono text-slate-400">
+            <span className="text-[10px] font-mono text-[#0B192C]/60">
               Traversed from Neo4j Aura Graph Database
             </span>
           </div>
 
           {/* SVG Knowledge Graph Visualizer */}
-          <div className="relative rounded-2xl bg-slate-950 p-6 border border-slate-800/80 overflow-x-auto">
+          <div className="relative rounded-2xl bg-[#FAF8F5] p-6 border-2 border-[#E6E2D8] overflow-x-auto shadow-inner">
             <div className="min-w-[650px] flex items-center justify-between gap-4 relative py-8">
               {/* SVG Connecting Curves */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
                 <path
                   d="M 100 70 C 180 70, 180 70, 260 70"
-                  stroke="#6366f1"
+                  stroke="#1E3E62"
                   strokeWidth="2"
                   strokeDasharray="4 4"
                   fill="none"
-                  className="animate-pulse"
                 />
                 <path
                   d="M 370 70 C 440 70, 440 70, 520 70"
-                  stroke="#f43f5e"
+                  stroke="#DC2626"
                   strokeWidth="2"
                   fill="none"
                 />
               </svg>
 
               {/* Node 1: Contract Document Node */}
-              <div className="relative z-10 p-4 rounded-2xl bg-slate-900 border border-primary-500/40 text-center shadow-lg w-44">
-                <span className="text-[9px] font-mono font-bold text-primary-400 block uppercase">
+              <div className="relative z-10 p-4 rounded-2xl bg-white border-2 border-[#1E3E62] text-center shadow-[0_3px_#1E3E62] w-44">
+                <span className="text-[9px] font-mono font-bold text-[#1E3E62] block uppercase">
                   DOCUMENT NODE
                 </span>
-                <span className="text-xs font-bold text-white block truncate mt-1">
+                <span className="text-xs font-serif font-bold text-[#0B192C] block truncate mt-1">
                   {report.document_type.replace(/_/g, ' ')}
                 </span>
-                <span className="text-[9px] font-mono text-emerald-400 mt-1 block">
+                <span className="text-[9px] font-mono text-[#059669] mt-1 block font-bold">
                   ● Tested Draft
                 </span>
               </div>
 
               {/* Node 2: Missing Prerequisite Node */}
-              <div className="relative z-10 p-4 rounded-2xl bg-rose-950/40 border border-rose-500/60 text-center shadow-xl w-48 animate-pulse-glow">
-                <span className="text-[9px] font-mono font-bold text-rose-400 block uppercase">
+              <div className="relative z-10 p-4 rounded-2xl bg-[#FEF2F2] border-2 border-[#DC2626] text-center shadow-[0_3px_#DC2626] w-48 animate-pulse-glow">
+                <span className="text-[9px] font-mono font-bold text-[#DC2626] block uppercase">
                   MISSING PREREQUISITE
                 </span>
-                <span className="text-xs font-extrabold text-white block truncate mt-1">
+                <span className="text-xs font-serif font-extrabold text-[#0B192C] block truncate mt-1">
                   {activeLoophole.prerequisite_clause_name || activeLoophole.related_clause_name || 'Clause Boundary'}
                 </span>
-                <span className="text-[9px] font-mono text-rose-300 mt-1 block">
+                <span className="text-[9px] font-mono text-[#DC2626] mt-1 block font-bold">
                   ⚠ Unmet Dependency
                 </span>
               </div>
 
               {/* Node 3: Risk Exposure & Skill Target Node */}
-              <div className="relative z-10 p-4 rounded-2xl bg-slate-900 border border-amber-500/40 text-center shadow-lg w-48">
-                <span className="text-[9px] font-mono font-bold text-amber-400 block uppercase">
+              <div className="relative z-10 p-4 rounded-2xl bg-white border-2 border-[#F59E0B] text-center shadow-[0_3px_#F59E0B] w-48">
+                <span className="text-[9px] font-mono font-bold text-[#B45309] block uppercase">
                   EXPOSED RISK
                 </span>
-                <span className="text-xs font-bold text-white block truncate mt-1">
+                <span className="text-xs font-serif font-bold text-[#0B192C] block truncate mt-1">
                   {activeLoophole.risk_name || 'Unmitigated Liability'}
                 </span>
-                <span className="text-[9px] font-mono text-indigo-300 mt-1 block truncate">
+                <span className="text-[9px] font-mono text-[#1E3E62] mt-1 block truncate font-bold">
                   🎯 {activeLoophole.skill_name || 'Remedial Drafting'}
                 </span>
               </div>
@@ -285,10 +285,10 @@ export const LoopholeViewer: React.FC<LoopholeViewerProps> = ({
 
       {/* Loopholes Cards Grid */}
       {filteredLoopholes.length === 0 ? (
-        <div className="glass-panel p-12 text-center rounded-3xl border border-slate-800 space-y-3">
-          <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
-          <h3 className="text-base font-bold text-white">No Gaps Detected</h3>
-          <p className="text-xs text-slate-400 max-w-md mx-auto">
+        <div className="tactile-card bg-white p-12 text-center rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3">
+          <CheckCircle2 className="w-12 h-12 text-[#059669] mx-auto" />
+          <h3 className="font-serif text-base font-bold text-[#0B192C]">No Gaps Detected</h3>
+          <p className="text-xs text-[#0B192C]/70 max-w-md mx-auto font-sans">
             The draft satisfies all prerequisite structural nodes and unmitigated risk relationships in the knowledge graph.
           </p>
         </div>
@@ -303,59 +303,59 @@ export const LoopholeViewer: React.FC<LoopholeViewerProps> = ({
               <div
                 key={idx}
                 onClick={() => setSelectedNodeIndex(idx)}
-                className={`glass-panel p-6 rounded-3xl border transition-all space-y-4 cursor-pointer ${
+                className={`tactile-card bg-white p-6 rounded-3xl border-2 transition-all space-y-4 cursor-pointer ${
                   isSelected
-                    ? 'ring-2 ring-primary-500 border-primary-500/50 shadow-2xl'
+                    ? 'border-[#1E3E62] shadow-[0_6px_#1E3E62]'
                     : isHigh
-                    ? 'border-rose-500/30 bg-rose-950/10 hover:border-rose-500/50'
+                    ? 'border-[#DC2626]/40 shadow-[0_4px_#E6E2D8] hover:border-[#DC2626]'
                     : isMedium
-                    ? 'border-amber-500/30 bg-amber-950/10 hover:border-amber-500/50'
-                    : 'border-slate-800 bg-slate-900/40 hover:border-slate-700'
+                    ? 'border-[#F59E0B]/40 shadow-[0_4px_#E6E2D8] hover:border-[#F59E0B]'
+                    : 'border-[#E6E2D8] shadow-[0_4px_#E6E2D8] hover:border-[#1E3E62]'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border-2 ${
                         isHigh
-                          ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                          : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                          ? 'bg-[#FEF2F2] text-[#DC2626] border-[#DC2626]/30'
+                          : 'bg-[#FFFBEB] text-[#B45309] border-[#F59E0B]/30'
                       }`}
                     >
                       <ShieldAlert className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-white">{lh.title}</h4>
-                      <span className="text-[10px] font-mono text-slate-400">
+                      <h4 className="font-serif font-bold text-sm text-[#0B192C]">{lh.title}</h4>
+                      <span className="text-[10px] font-mono text-[#0B192C]/60">
                         Gap Type: {lh.gap_type}
                       </span>
                     </div>
                   </div>
 
                   <span
-                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider font-mono self-start sm:self-auto ${
+                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider font-mono self-start sm:self-auto border-2 ${
                       isHigh
-                        ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                        ? 'bg-[#FEF2F2] text-[#DC2626] border-[#DC2626]/40'
                         : isMedium
-                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                        : 'bg-slate-800 text-slate-300 border border-slate-700'
+                        ? 'bg-[#FFFBEB] text-[#B45309] border-[#F59E0B]/40'
+                        : 'bg-[#F3F0EA] text-[#0B192C] border-[#E6E2D8]'
                     }`}
                   >
                     {lh.severity} RISK
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-200 leading-relaxed bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+                <p className="text-xs text-[#0B192C]/80 leading-relaxed bg-[#FAF8F5] p-4 rounded-2xl border-2 border-[#E6E2D8] font-sans">
                   {lh.educational_observation}
                 </p>
 
                 {/* Missing Dependency Graph Flow */}
                 {lh.prerequisite_clause_name && (
-                  <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono">
-                    <span className="text-rose-400 font-semibold">{lh.related_clause_name}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
-                    <span className="text-slate-400">Missing Prerequisite Node:</span>
-                    <span className="text-emerald-400 font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                  <div className="flex flex-wrap items-center gap-2 p-3 bg-[#F3F0EA] rounded-xl border-2 border-[#E6E2D8] text-xs font-mono">
+                    <span className="text-[#DC2626] font-bold">{lh.related_clause_name}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#0B192C]/50" />
+                    <span className="text-[#0B192C]/70">Missing Prerequisite Node:</span>
+                    <span className="text-[#059669] font-bold px-2 py-0.5 rounded bg-[#F0FDF4] border border-[#10B981]/30">
                       {lh.prerequisite_clause_name}
                     </span>
                   </div>
@@ -364,27 +364,27 @@ export const LoopholeViewer: React.FC<LoopholeViewerProps> = ({
                 {/* Risk & Skill Meta */}
                 <div className="flex flex-wrap items-center gap-3 text-[11px]">
                   {lh.risk_name && (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FEF2F2] border-2 border-[#DC2626]/30 text-[#DC2626] font-mono">
                       <AlertOctagon className="w-3.5 h-3.5" />
                       <span>Exposes: {lh.risk_name}</span>
                     </div>
                   )}
 
                   {lh.skill_name && (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary-500/10 border border-primary-500/20 text-primary-300">
-                      <Sparkles className="w-3.5 h-3.5" />
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EFF6FF] border-2 border-[#1E3E62]/30 text-[#1E3E62] font-mono">
+                      <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
                       <span>Skill Target: {lh.skill_name}</span>
                     </div>
                   )}
                 </div>
 
                 {/* Actionable Reference Recommendation */}
-                <div className="p-4 bg-primary-950/20 rounded-2xl border border-primary-500/20 text-xs space-y-1.5">
-                  <div className="flex items-center gap-2 text-primary-300 font-bold text-[11px] uppercase tracking-wider font-mono">
+                <div className="p-4 bg-[#FFFBEB] rounded-2xl border-2 border-[#F59E0B]/30 text-xs space-y-1.5">
+                  <div className="flex items-center gap-2 text-[#B45309] font-bold text-[11px] uppercase tracking-wider font-mono">
                     <BookOpen className="w-3.5 h-3.5" />
                     <span>Statutory Remediation Advice:</span>
                   </div>
-                  <p className="text-slate-200 leading-relaxed font-sans">
+                  <p className="text-[#0B192C]/80 leading-relaxed font-sans">
                     {lh.reference_recommendation}
                   </p>
                 </div>

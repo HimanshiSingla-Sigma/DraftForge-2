@@ -44,7 +44,10 @@ class SkillRepository(BaseRepository):
             "confidence_level": confidence_level,
             "updated_at": datetime.now(timezone.utc).isoformat(),
         }
-        res = self.client.table("student_skills").upsert(payload).execute()
+        existing = self.get_student_skill(user_id, skill_id)
+        if existing:
+            payload["id"] = existing["id"]
+        res = self.client.table("student_skills").upsert(payload, on_conflict="user_id,skill_id").execute()
         return res.data[0] if res.data else {}
 
     def log_skill_history(

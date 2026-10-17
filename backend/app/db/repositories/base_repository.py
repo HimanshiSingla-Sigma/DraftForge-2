@@ -8,7 +8,10 @@ ModelType = TypeVar("ModelType", bound=BaseModel)
 class BaseRepository(Generic[ModelType]):
     def __init__(self, table_name: str):
         self.table_name = table_name
-        self.client = get_supabase_admin_client()
+
+    @property
+    def client(self):
+        return get_supabase_admin_client()
 
     def get_by_id(self, entity_id: str) -> Optional[Dict[str, Any]]:
         response = self.client.table(self.table_name).select("*").eq("id", entity_id).execute()

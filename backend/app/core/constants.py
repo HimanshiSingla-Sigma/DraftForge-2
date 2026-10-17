@@ -28,3 +28,10 @@ class FindingStatus(str, Enum):
     PARTIAL = "PARTIAL"
     FAIL = "FAIL"
     WARNING = "WARNING"
+
+
+class InvitationStatus(str, Enum):
+    PENDING = "PENDING"
+    ACCEPTED = "ACCEPTED"
+    EXPIRED = "EXPIRED"
+    REVOKED = "REVOKED"

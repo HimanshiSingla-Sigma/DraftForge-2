@@ -17,6 +17,7 @@ import {
   MessageSquare,
   FolderArchive,
   Sparkles,
+  RefreshCw,
 } from 'lucide-react';
 
 interface StudentDashboardProps {
@@ -37,26 +38,53 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   const [draftsCount, setDraftsCount] = useState<number>(0);
   const [skillsCount, setSkillsCount] = useState<number>(0);
   const [assignmentsCount, setAssignmentsCount] = useState<number>(0);
+  const [metricsLoading, setMetricsLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchQuickMetrics = async () => {
-      try {
-        const [progRes, draftRes, skillRes, assignRes] = await Promise.allSettled([
-          api.getProgress(),
-          api.getDrafts(),
-          api.getSkills(),
-          api.getAssignments(),
-        ]);
+  const fetchQuickMetrics = async () => {
+    setMetricsLoading(true);
+    try {
+      const [progRes, draftRes, skillRes, assignRes] = await Promise.allSettled([
+        api.getProgress(),
+        api.getDrafts(),
+        api.getSkills(),
+        api.getAssignments(),
+      ]);
 
-        if (progRes.status === 'fulfilled') setProgress(progRes.value.data);
-        if (draftRes.status === 'fulfilled') setDraftsCount(draftRes.value.data?.length || 0);
-        if (skillRes.status === 'fulfilled') setSkillsCount(skillRes.value.data?.length || 0);
-        if (assignRes.status === 'fulfilled') setAssignmentsCount(assignRes.value.data?.length || 0);
-      } catch {
-        // graceful fallback to zero metrics
+      if (progRes.status === 'fulfilled' && progRes.value.data) {
+        setProgress(progRes.value.data);
       }
-    };
+      if (draftRes.status === 'fulfilled' && draftRes.value.data) {
+        setDraftsCount(draftRes.value.data.length || 0);
+      }
+      if (skillRes.status === 'fulfilled' && skillRes.value.data) {
+        setSkillsCount(skillRes.value.data.length || 0);
+      }
+      if (assignRes.status === 'fulfilled' && assignRes.value.data) {
+        setAssignmentsCount(assignRes.value.data.length || 0);
+      }
+    } catch {
+      // graceful fallback to zero metrics
+    } finally {
+      setMetricsLoading(false);
+    }
+  };
+
+  // Re-fetch on tab switch
+  useEffect(() => {
     fetchQuickMetrics();
+  }, [activeTab]);
+
+  // Re-fetch on custom draftforge events and window focus
+  useEffect(() => {
+    const handleMetricUpdate = () => {
+      fetchQuickMetrics();
+    };
+    window.addEventListener('draftforge:metric_update', handleMetricUpdate);
+    window.addEventListener('focus', handleMetricUpdate);
+    return () => {
+      window.removeEventListener('draftforge:metric_update', handleMetricUpdate);
+      window.removeEventListener('focus', handleMetricUpdate);
+    };
   }, []);
 
   const getGreeting = () => {
@@ -81,32 +109,28 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
       {/* ========================================================================= */}
       {/* 1. STUDENT EXECUTIVE HERO BANNER */}
       {/* ========================================================================= */}
-      <div className="relative glass-panel-glow p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden">
-        {/* Background Ambient Glows */}
-        <div className="absolute -right-16 -top-16 w-64 h-64 bg-primary-600/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-accent-cyan/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div className="relative tactile-card bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] overflow-hidden">
+        <div className="relative z-0 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           {/* Left Title & Status */}
           <div className="space-y-2">
             <div className="flex items-center gap-2.5">
-              <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-primary-500/10 text-primary-300 border border-primary-500/20 uppercase tracking-wider font-mono">
+              <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-[#F3F0EA] text-[#1E3E62] border border-[#E6E2D8] uppercase tracking-wider font-mono">
                 Legal Drafting Studio
               </span>
-              <span className="flex items-center gap-1 text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="flex items-center gap-1.5 text-[10px] font-mono text-[#059669] bg-[#F0FDF4] px-2.5 py-0.5 rounded-full border border-[#10B981]/30">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
                 <span>Qdrant & Neo4j Active</span>
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#0B192C] tracking-tight">
               {getGreeting()},{' '}
-              <span className="gradient-text-primary">
+              <span className="text-[#1E3E62] underline decoration-[#F59E0B] decoration-2">
                 {user?.full_name || 'Legal Scholar'}
               </span>
             </h1>
 
-            <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
+            <p className="text-xs text-[#0B192C]/70 max-w-xl leading-relaxed font-sans">
               Continue crafting evidence-grounded legal drafts. Review automated 100-point rubric evaluations, explore graph loopholes, and elevate your statutory drafting proficiency.
             </p>
 
@@ -114,25 +138,25 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             <div className="flex flex-wrap items-center gap-2 pt-2">
               <button
                 onClick={() => setActiveTab('workspace')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                className={`tactile-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   activeTab === 'workspace'
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
+                    : 'bg-[#F3F0EA] hover:bg-white text-[#0B192C] border-2 border-[#E6E2D8]'
                 }`}
               >
-                <FileEdit className="w-3.5 h-3.5 text-primary-400" />
+                <FileEdit className="w-3.5 h-3.5 text-[#F59E0B]" />
                 <span>Open Workspace</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('assignments')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                className={`tactile-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   activeTab === 'assignments'
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
+                    : 'bg-[#F3F0EA] hover:bg-white text-[#0B192C] border-2 border-[#E6E2D8]'
                 }`}
               >
-                <FolderArchive className="w-3.5 h-3.5 text-accent-cyan" />
+                <FolderArchive className="w-3.5 h-3.5 text-[#1E3E62]" />
                 <span>Coursework ({assignmentsCount})</span>
               </button>
 
@@ -141,66 +165,79 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                   setLearningSubtab('roadmap');
                   setActiveTab('learning');
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                className={`tactile-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   activeTab === 'learning'
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
+                    : 'bg-[#F3F0EA] hover:bg-white text-[#0B192C] border-2 border-[#E6E2D8]'
                 }`}
               >
-                <GraduationCap className="w-3.5 h-3.5 text-accent-amber" />
+                <GraduationCap className="w-3.5 h-3.5 text-[#B45309]" />
                 <span>5-Phase Roadmap</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('quizzes')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                className={`tactile-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   activeTab === 'quizzes'
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
+                    : 'bg-[#F3F0EA] hover:bg-white text-[#0B192C] border-2 border-[#E6E2D8]'
                 }`}
               >
-                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                <Sparkles className="w-3.5 h-3.5 text-[#7C3AED]" />
                 <span>Quizzes</span>
               </button>
             </div>
           </div>
 
           {/* Right Real Metrics Ribbon */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950/70 p-4 rounded-2xl border border-slate-800/80 shadow-inner">
-            <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-center space-y-1">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold font-mono block">
-                Total Drafts
-              </span>
-              <span className="text-xl font-extrabold text-white font-mono">{draftsCount}</span>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#F3F0EA] p-4 rounded-2xl border-2 border-[#E6E2D8] shadow-sm flex-1">
+              <div className="p-2.5 rounded-xl bg-white border-2 border-[#E6E2D8] text-center space-y-1 shadow-[0_2px_#E6E2D8]">
+                <span className="text-[10px] text-[#0B192C]/60 uppercase font-semibold font-mono block">
+                  Total Drafts
+                </span>
+                <span className="text-xl font-serif font-extrabold text-[#0B192C]">
+                  {draftsCount || (progress && progress.total_evaluations > 0 ? progress.total_evaluations : 0)}
+                </span>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-white border-2 border-[#E6E2D8] text-center space-y-1 shadow-[0_2px_#E6E2D8]">
+                <span className="text-[10px] text-[#0B192C]/60 uppercase font-semibold font-mono block">
+                  Evaluations
+                </span>
+                <span className="text-xl font-serif font-extrabold text-[#1E3E62]">
+                  {progress?.total_evaluations ?? 0}
+                </span>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-white border-2 border-[#E6E2D8] text-center space-y-1 shadow-[0_2px_#E6E2D8]">
+                <span className="text-[10px] text-[#0B192C]/60 uppercase font-semibold font-mono block">
+                  Average Score
+                </span>
+                <span className="text-xl font-serif font-extrabold text-[#059669]">
+                  {progress ? Math.round(progress.average_score) : 0}
+                  <span className="text-[10px] font-normal text-[#0B192C]/60">/100</span>
+                </span>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-white border-2 border-[#E6E2D8] text-center space-y-1 shadow-[0_2px_#E6E2D8]">
+                <span className="text-[10px] text-[#0B192C]/60 uppercase font-semibold font-mono block">
+                  Skills Active
+                </span>
+                <span className="text-xl font-serif font-extrabold text-[#7C3AED]">
+                  {skillsCount || (progress ? ((progress.mastered_skills_count || 0) + (progress.weak_skills_count || 0)) : 0)}
+                </span>
+              </div>
             </div>
 
-            <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-center space-y-1">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold font-mono block">
-                Evaluations
-              </span>
-              <span className="text-xl font-extrabold text-primary-400 font-mono">
-                {progress?.total_evaluations ?? 0}
-              </span>
-            </div>
-
-            <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-center space-y-1">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold font-mono block">
-                Average Score
-              </span>
-              <span className="text-xl font-extrabold text-emerald-400 font-mono">
-                {progress ? Math.round(progress.average_score) : 0}
-                <span className="text-[10px] font-normal text-slate-400">/100</span>
-              </span>
-            </div>
-
-            <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-center space-y-1">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold font-mono block">
-                Skills Active
-              </span>
-              <span className="text-xl font-extrabold text-accent-cyan font-mono">
-                {skillsCount}
-              </span>
-            </div>
+            <button
+              onClick={() => fetchQuickMetrics()}
+              disabled={metricsLoading}
+              title="Sync metrics with server"
+              className="tactile-btn self-end sm:self-center p-2.5 rounded-xl bg-white hover:bg-[#F3F0EA] border-2 border-[#E6E2D8] text-[#0B192C] shadow-[0_2px_#E6E2D8] cursor-pointer transition-all disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 text-[#1E3E62] ${metricsLoading ? 'animate-spin' : ''}`} />
+            </button>
           </div>
         </div>
       </div>
@@ -246,27 +283,27 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
         {activeTab === 'learning' && (
           <div className="space-y-6">
             {/* Subtab Bar */}
-            <div className="flex items-center gap-2 p-1 bg-slate-900/90 rounded-2xl border border-slate-800 w-fit">
+            <div className="flex items-center gap-2 p-1.5 bg-[#F3F0EA] rounded-2xl border-2 border-[#E6E2D8] w-fit shadow-sm">
               <button
                 onClick={() => setLearningSubtab('roadmap')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`tactile-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   learningSubtab === 'roadmap'
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
+                    : 'text-[#0B192C]/70 hover:text-[#0B192C] hover:bg-white'
                 }`}
               >
-                <GraduationCap className="w-3.5 h-3.5" />
+                <GraduationCap className="w-3.5 h-3.5 text-[#F59E0B]" />
                 <span>5-Phase Learning Roadmap</span>
               </button>
               <button
                 onClick={() => setLearningSubtab('tutor')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`tactile-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   learningSubtab === 'tutor'
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
+                    : 'text-[#0B192C]/70 hover:text-[#0B192C] hover:bg-white'
                 }`}
               >
-                <MessageSquare className="w-3.5 h-3.5" />
+                <MessageSquare className="w-3.5 h-3.5 text-[#1E3E62]" />
                 <span>Socratic AI Tutor Chat</span>
               </button>
             </div>

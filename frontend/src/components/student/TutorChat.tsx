@@ -114,30 +114,30 @@ export const TutorChat: React.FC = () => {
   ];
 
   return (
-    <div className="grid grid-cols-12 gap-6 h-[calc(100vh-140px)] animate-fade-in">
+    <div className="grid grid-cols-12 gap-6 h-[calc(100vh-140px)] animate-fade-in font-sans">
       {/* Left Column: Conversation Threads */}
-      <div className="col-span-12 lg:col-span-4 glass-panel p-5 rounded-3xl border border-slate-800 flex flex-col justify-between overflow-hidden">
+      <div className="col-span-12 lg:col-span-4 tactile-card bg-white p-5 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] flex flex-col justify-between overflow-hidden">
         <div className="space-y-4 overflow-hidden flex flex-col flex-1">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div className="flex items-center justify-between pb-3 border-b-2 border-[#E6E2D8]">
             <div className="flex items-center gap-2">
-              <MessageSquare className="w-4 h-4 text-primary-400" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-white">
+              <MessageSquare className="w-4 h-4 text-[#1E3E62]" />
+              <h3 className="font-serif font-bold text-xs uppercase tracking-wider text-[#0B192C]">
                 Tutoring Threads ({conversations.length})
               </h3>
             </div>
             <button
               onClick={handleCreateNewThread}
-              className="p-1.5 rounded-xl bg-primary-600 hover:bg-primary-500 text-white transition-colors"
+              className="tactile-btn p-1.5 rounded-xl bg-[#1E3E62] hover:bg-[#152C46] text-white border-b-4 border-[#0B192C] transition-all cursor-pointer"
               title="New Tutoring Session"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 text-[#F59E0B]" />
             </button>
           </div>
 
           {/* Conversation List */}
           <div className="space-y-2 overflow-y-auto pr-1 flex-1">
             {conversations.length === 0 ? (
-              <p className="text-xs text-slate-500 p-4 text-center">
+              <p className="text-xs text-[#0B192C]/50 p-4 text-center font-sans">
                 No past threads. Start a conversation with the Socratic AI tutor.
               </p>
             ) : (
@@ -147,17 +147,17 @@ export const TutorChat: React.FC = () => {
                   <div
                     key={c.id}
                     onClick={() => setActiveConv(c)}
-                    className={`p-3.5 rounded-2xl cursor-pointer text-xs font-semibold transition-all border ${
+                    className={`p-3.5 rounded-2xl cursor-pointer text-xs font-semibold transition-all border-2 ${
                       isActive
-                        ? 'bg-primary-600/15 border-primary-500/40 text-white shadow-md shadow-primary-500/10'
-                        : 'bg-slate-900/40 border-slate-800/80 text-slate-300 hover:bg-slate-900 hover:border-slate-700'
+                        ? 'bg-white border-[#1E3E62] text-[#0B192C] shadow-[0_3px_#1E3E62]'
+                        : 'bg-[#FAF8F5] border-[#E6E2D8] text-[#0B192C]/80 hover:bg-white hover:border-[#1E3E62]/40'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="truncate max-w-[190px]">{c.title}</span>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                      <span className="truncate max-w-[190px] font-serif">{c.title}</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-[#0B192C]/40 shrink-0" />
                     </div>
-                    <span className="block text-[10px] text-slate-500 font-mono mt-1">
+                    <span className="block text-[10px] text-[#0B192C]/50 font-mono mt-1">
                       {new Date(c.updated_at).toLocaleDateString()}
                     </span>
                   </div>
@@ -168,14 +168,14 @@ export const TutorChat: React.FC = () => {
         </div>
 
         {/* Document Context Selector */}
-        <div className="pt-4 border-t border-slate-800 space-y-1.5">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+        <div className="pt-4 border-t-2 border-[#E6E2D8] space-y-1.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#0B192C]/60 font-mono">
             Active RAG Subject Context:
           </span>
           <select
             value={docType}
             onChange={(e) => setDocType(e.target.value as DocumentType)}
-            className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-white focus-ring"
+            className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
           >
             <option value="AFFIDAVIT_OF_CHARACTER">Affidavit of Character (India)</option>
             <option value="EMPLOYMENT_AGREEMENT">Employment Agreement (India)</option>
@@ -186,7 +186,7 @@ export const TutorChat: React.FC = () => {
       </div>
 
       {/* Right Column: Chat Stream */}
-      <div className="col-span-12 lg:col-span-8 glass-panel rounded-3xl border border-slate-800 flex flex-col overflow-hidden">
+      <div className="col-span-12 lg:col-span-8 tactile-card bg-white rounded-3xl border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] flex flex-col overflow-hidden">
         {/* Chat Messages Body */}
         <div className="flex-1 p-6 overflow-y-auto space-y-4">
           {loadingHistory ? (
@@ -195,29 +195,29 @@ export const TutorChat: React.FC = () => {
             </div>
           ) : messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto my-auto py-8">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary-600 to-indigo-600 flex items-center justify-center shadow-xl shadow-primary-500/20 text-white">
-                <Scale className="w-7 h-7" />
+              <div className="w-14 h-14 rounded-2xl bg-[#1E3E62] border-2 border-[#0B192C] flex items-center justify-center shadow-md text-white">
+                <Scale className="w-7 h-7 text-[#F59E0B]" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">Socratic Legal Drafting Tutor</h3>
-                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                <h3 className="font-serif text-lg font-bold text-[#0B192C]">Socratic Legal Drafting Tutor</h3>
+                <p className="text-xs text-[#0B192C]/70 mt-1 leading-relaxed font-sans">
                   Ask conceptual or structural drafting questions. Responses are guided by the Socratic method and grounded in verified legal reference precedents.
                 </p>
               </div>
 
               {/* Quick Prompts */}
               <div className="space-y-2 w-full text-left pt-2">
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                <span className="text-[10px] font-bold text-[#0B192C]/60 uppercase tracking-wider block font-mono">
                   Suggested Prompts:
                 </span>
                 {quickPrompts.map((q, idx) => (
                   <button
                     key={idx}
                     onClick={() => setInputMsg(q)}
-                    className="w-full p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 text-left transition-colors flex items-center justify-between group"
+                    className="w-full p-2.5 rounded-xl bg-[#FAF8F5] hover:bg-[#F3F0EA] border-2 border-[#E6E2D8] text-xs text-[#0B192C] text-left transition-colors flex items-center justify-between group cursor-pointer"
                   >
-                    <span className="truncate">{q}</span>
-                    <Sparkles className="w-3.5 h-3.5 text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                    <span className="truncate font-sans">{q}</span>
+                    <Sparkles className="w-3.5 h-3.5 text-[#F59E0B] opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                   </button>
                 ))}
               </div>
@@ -231,7 +231,7 @@ export const TutorChat: React.FC = () => {
                   className={`flex items-start gap-3.5 ${isUser ? 'justify-end' : 'justify-start'}`}
                 >
                   {!isUser && (
-                    <div className="w-8 h-8 rounded-xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center shrink-0 text-primary-400 mt-1">
+                    <div className="w-8 h-8 rounded-xl bg-[#1E3E62] border-2 border-[#0B192C] flex items-center justify-center shrink-0 text-[#F59E0B] mt-1 shadow-sm">
                       <Bot className="w-4 h-4" />
                     </div>
                   )}
@@ -239,24 +239,24 @@ export const TutorChat: React.FC = () => {
                   <div
                     className={`max-w-2xl p-4 sm:p-5 rounded-2xl text-xs leading-relaxed space-y-2.5 ${
                       isUser
-                        ? 'bg-gradient-to-r from-primary-600 to-indigo-600 text-white rounded-tr-none shadow-lg shadow-primary-500/10'
-                        : 'bg-slate-900/90 text-slate-200 border border-slate-800 rounded-tl-none'
+                        ? 'bg-[#1E3E62] text-white border-2 border-[#0B192C] shadow-[0_3px_#0B192C] rounded-tr-none'
+                        : 'bg-[#FAF8F5] text-[#0B192C] border-2 border-[#E6E2D8] shadow-[0_2px_#E6E2D8] rounded-tl-none'
                     }`}
                   >
                     <p className="whitespace-pre-wrap font-sans">{m.content}</p>
 
                     {/* Grounded Sources Drawer */}
                     {m.retrieved_sources && m.retrieved_sources.length > 0 && (
-                      <div className="pt-2.5 border-t border-slate-700/60 text-[10px] space-y-1.5">
-                        <div className="flex items-center gap-1.5 text-accent-cyan font-semibold">
-                          <BookOpen className="w-3.5 h-3.5" />
-                          <span>Grounded Legal Precedent Citations:</span>
+                      <div className="pt-2.5 border-t-2 border-[#E6E2D8] text-[10px] space-y-1.5">
+                        <div className="flex items-center gap-1.5 text-[#1E3E62] font-semibold">
+                          <BookOpen className="w-3.5 h-3.5 text-[#F59E0B]" />
+                          <span className="font-serif">Grounded Legal Precedent Citations:</span>
                         </div>
                         <div className="space-y-1">
                           {m.retrieved_sources.map((s, i) => (
                             <div
                               key={i}
-                              className="font-mono text-slate-300 bg-slate-950/60 p-1.5 rounded-lg border border-slate-800/80"
+                              className="font-mono text-[#0B192C] bg-white p-2 rounded-lg border border-[#E6E2D8]"
                             >
                               • {s.source_document} (Page {s.page_number || 1}) — {s.section}
                             </div>
@@ -267,7 +267,7 @@ export const TutorChat: React.FC = () => {
                   </div>
 
                   {isUser && (
-                    <div className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0 text-slate-300 mt-1">
+                    <div className="w-8 h-8 rounded-xl bg-[#F3F0EA] border-2 border-[#E6E2D8] flex items-center justify-center shrink-0 text-[#0B192C] mt-1">
                       <User className="w-4 h-4" />
                     </div>
                   )}
@@ -277,9 +277,9 @@ export const TutorChat: React.FC = () => {
           )}
 
           {sending && (
-            <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800 w-fit">
+            <div className="flex items-center gap-3 p-4 rounded-2xl bg-[#FAF8F5] border-2 border-[#E6E2D8] w-fit shadow-sm">
               <LoadingSpinner size="sm" />
-              <span className="text-xs text-slate-300 animate-pulse">
+              <span className="text-xs text-[#0B192C]/70 animate-pulse font-sans">
                 Socratic tutor is retrieving statutory evidence and reasoning...
               </span>
             </div>
@@ -290,21 +290,21 @@ export const TutorChat: React.FC = () => {
         {/* Input Bar */}
         <form
           onSubmit={handleSendMessage}
-          className="p-4 border-t border-slate-800 bg-slate-950/90 flex gap-3"
+          className="p-4 border-t-2 border-[#E6E2D8] bg-[#F3F0EA] flex gap-3"
         >
           <input
             type="text"
             value={inputMsg}
             onChange={(e) => setInputMsg(e.target.value)}
             placeholder="Ask your legal drafting tutor a question (e.g., How do I draft a valid verification in an Affidavit?)..."
-            className="flex-1 bg-slate-900 border border-slate-700/80 rounded-2xl px-4 py-3 text-xs text-white focus-ring placeholder-slate-500 font-sans"
+            className="flex-1 bg-white border-2 border-[#E6E2D8] rounded-2xl px-4 py-3 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none placeholder-[#0B192C]/40 font-sans"
           />
           <button
             type="submit"
             disabled={sending || !inputMsg.trim()}
-            className="px-5 py-3 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white rounded-2xl text-xs font-bold transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-primary-500/20"
+            className="tactile-btn px-5 py-3 bg-[#1E3E62] hover:bg-[#152C46] text-white rounded-2xl text-xs font-bold border-b-4 border-[#0B192C] transition-all disabled:opacity-50 flex items-center gap-2 shadow-sm cursor-pointer"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-4 h-4 text-[#F59E0B]" />
             <span className="hidden sm:inline">Send</span>
           </button>
         </form>

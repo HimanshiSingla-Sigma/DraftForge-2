@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status
-from app.dependencies import get_current_user, require_student
+from app.dependencies import get_current_user, require_authenticated
 from app.models.database.models import UserProfileDB
 from app.models.schemas.evaluation import EvaluateDraftRequest, EvaluationResponse
 from app.services.evaluation_service import EvaluationService
@@ -8,7 +8,7 @@ router = APIRouter(prefix="/evaluations", tags=["Evaluation & Scoring Engine"])
 eval_service = EvaluationService()
 
 
-@router.post("", response_model=EvaluationResponse, status_code=status.HTTP_201_CREATED, dependencies=[Depends(require_student)])
+@router.post("", response_model=EvaluationResponse, status_code=status.HTTP_201_CREATED, dependencies=[Depends(require_authenticated)])
 async def evaluate_draft(
     payload: EvaluateDraftRequest,
     current_user: UserProfileDB = Depends(get_current_user)
@@ -19,7 +19,8 @@ async def evaluate_draft(
     return eval_service.evaluate_draft(
         user_id=current_user.id,
         draft_id=payload.draft_id,
-        version_number=payload.version_number
+        version_number=payload.version_number,
+        user_role=current_user.role,
     )
 
 

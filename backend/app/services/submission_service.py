@@ -47,11 +47,12 @@ class SubmissionService:
 
         return self._format_submission(sub_record)
 
-    def list_assignment_submissions(self, assignment_id: str, teacher_id: str) -> List[SubmissionResponse]:
+    def list_assignment_submissions(self, assignment_id: str, teacher_id: str, user_role: str = "TEACHER") -> List[SubmissionResponse]:
         assignment = self.assign_repo.get_by_id(assignment_id)
         if not assignment:
             raise NotFoundError("Assignment", assignment_id)
-        if assignment["teacher_id"] != teacher_id:
+        role_str = str(user_role.value if hasattr(user_role, "value") else user_role).upper()
+        if assignment["teacher_id"] != teacher_id and role_str != "ADMIN":
             raise PermissionDeniedError("Unauthorized to view submissions for another instructor's assignment.")
 
         records = self.sub_repo.list_by_assignment(assignment_id)
@@ -61,11 +62,17 @@ class SubmissionService:
         self,
         submission_id: str,
         teacher_id: str,
-        payload: ScoreOverrideRequest
+        payload: ScoreOverrideRequest,
+        user_role: str = "TEACHER"
     ) -> SubmissionResponse:
         submission = self.sub_repo.get_by_id(submission_id)
         if not submission:
             raise NotFoundError("Submission", submission_id)
+
+        assignment = self.assign_repo.get_by_id(submission["assignment_id"])
+        role_str = str(user_role.value if hasattr(user_role, "value") else user_role).upper()
+        if assignment and assignment.get("teacher_id") != teacher_id and role_str != "ADMIN":
+            raise PermissionDeniedError("Unauthorized to override scores for another instructor's assignment.")
 
         eval_id = submission.get("evaluation_id")
         if eval_id:

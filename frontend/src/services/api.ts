@@ -25,6 +25,13 @@ import {
   ExplainEvaluationResponse,
   RAGQueryResponse,
   HealthCheckResponse,
+  Section,
+  Invitation,
+  VerifyInvitationResponse,
+  AdminOverviewStats,
+  TeacherOverview,
+  StudentOverview,
+  AuditLog,
 } from '../types';
 
 const getBaseUrl = (): string => {
@@ -171,4 +178,46 @@ export const api = {
   // Health
   checkHealth: () =>
     apiClient.get<HealthCheckResponse>('/health'),
+
+  // Invitations
+  verifyInvitation: (token: string) =>
+    apiClient.get<VerifyInvitationResponse>(`/invitations/verify?token=${encodeURIComponent(token)}`),
+  acceptInvitation: (data: { token: string; password: string; full_name?: string }) =>
+    apiClient.post<AuthResponse>('/invitations/accept', data),
+  resendInvitation: (invitationId: string) =>
+    apiClient.post<{ status: string; message: string; invitation: Invitation }>(`/invitations/${invitationId}/resend`),
+  revokeInvitation: (invitationId: string) =>
+    apiClient.post<{ status: string; message: string; invitation: Invitation }>(`/invitations/${invitationId}/revoke`),
+
+  // Admin Portal
+  getAdminStats: () =>
+    apiClient.get<AdminOverviewStats>('/admin/stats'),
+  getAdminTeachers: () =>
+    apiClient.get<TeacherOverview[]>('/admin/teachers'),
+  inviteTeacher: (data: { email: string; section_ids?: string[]; full_name?: string }) =>
+    apiClient.post<{ status: string; message: string; invitation: Invitation }>('/admin/teachers/invite', data),
+  getAdminStudents: () =>
+    apiClient.get<StudentOverview[]>('/admin/students'),
+  createSection: (data: { name: string; code: string; academic_year?: string; description?: string }) =>
+    apiClient.post<Section>('/admin/sections', data),
+  getAdminSections: () =>
+    apiClient.get<Section[]>('/admin/sections'),
+  assignTeacherSections: (teacherId: string, sectionIds: string[]) =>
+    apiClient.post<{ status: string; teacher_id: string; assigned_sections: string[] }>(`/admin/teachers/${teacherId}/sections`, { teacher_id: teacherId, section_ids: sectionIds }),
+  getAdminInvitations: (role?: string, status?: string) =>
+    apiClient.get<Invitation[]>(`/admin/invitations${role || status ? `?${role ? `role=${role}&` : ''}${status ? `status=${status}` : ''}` : ''}`),
+  getAuditLogs: (limit: number = 100, action?: string) =>
+    apiClient.get<AuditLog[]>(`/admin/audit-logs?limit=${limit}${action ? `&action=${action}` : ''}`),
+  transferAdmin: (data: { new_admin_email: string; confirm_email: string; reason: string }) =>
+    apiClient.post<{ status: string; message: string }>('/admin/transfer', data),
+
+  // Teacher Section Management
+  getTeacherSections: () =>
+    apiClient.get<Section[]>('/teachers/sections'),
+  getSectionStudents: (sectionId: string) =>
+    apiClient.get<Array<{ id: string; email: string; full_name: string | null; enrolled_at: string }>>(`/teachers/sections/${sectionId}/students`),
+  inviteStudentToSection: (sectionId: string, data: { email: string; full_name?: string }) =>
+    apiClient.post<{ status: string; message: string; invitation: Invitation }>(`/teachers/sections/${sectionId}/invite-student`, data),
+  getTeacherInvitations: () =>
+    apiClient.get<Invitation[]>('/teachers/invitations'),
 };

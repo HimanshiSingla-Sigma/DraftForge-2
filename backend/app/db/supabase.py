@@ -26,6 +26,8 @@ def get_supabase_admin_client() -> Client:
         except Exception as exc:
             logger.error(f"Failed to initialize Supabase Admin Client: {exc}")
             raise DatabaseConnectionError("Supabase Admin", str(exc)) from exc
+    # Guarantee the PostgREST client is always authenticated with the service role key
+    _supabase_admin_client.postgrest.auth(settings.SUPABASE_SERVICE_ROLE_KEY)
     return _supabase_admin_client
 
 

@@ -25,7 +25,14 @@ class LoopholeService:
             raise NotFoundError("DraftVersion", version_id)
 
         draft = self.draft_repo.get_by_id(res.data[0]["draft_id"])
-        doc_type = DocumentType(draft["document_type"])
+        raw_doc_type = draft.get("document_type") if draft else None
+        if isinstance(raw_doc_type, DocumentType):
+            doc_type = raw_doc_type
+        else:
+            try:
+                doc_type = DocumentType(str(raw_doc_type).upper())
+            except (ValueError, KeyError, TypeError):
+                doc_type = DocumentType.AFFIDAVIT_OF_CHARACTER
 
         # Convert DB evidence records to EvaluationFinding objects
         raw_evidence = evaluation.get("evaluation_evidence") or []

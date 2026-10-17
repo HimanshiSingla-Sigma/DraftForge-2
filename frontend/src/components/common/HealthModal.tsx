@@ -61,41 +61,41 @@ export const HealthModal: React.FC<HealthModalProps> = ({ isOpen, onClose }) => 
             <LoadingSpinner size="lg" label="Querying cloud infrastructure status..." />
           </div>
         ) : error ? (
-          <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm flex items-start gap-3">
-            <XCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+          <div className="p-4 rounded-2xl bg-rose-50 border-2 border-rose-300 text-rose-900 text-sm flex items-start gap-3">
+            <XCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold">Health Verification Failed</p>
-              <p className="text-xs text-rose-300/80 mt-1">{error}</p>
+              <p className="font-bold">Health Verification Failed</p>
+              <p className="text-xs text-rose-700 mt-1">{error}</p>
             </div>
           </div>
         ) : health ? (
           <>
             {/* Top Status Banner */}
             <div
-              className={`p-4 rounded-xl border flex items-center justify-between ${
+              className={`p-4 rounded-2xl border-2 flex items-center justify-between ${
                 health.status === 'healthy'
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                  : 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+                  ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46]'
+                  : 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E]'
               }`}
             >
               <div className="flex items-center gap-3">
                 {health.status === 'healthy' ? (
-                  <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                  <CheckCircle2 className="w-6 h-6 text-[#059669]" />
                 ) : (
-                  <XCircle className="w-6 h-6 text-amber-400" />
+                  <XCircle className="w-6 h-6 text-[#D97706]" />
                 )}
                 <div>
-                  <h4 className="font-semibold text-sm capitalize">
+                  <h4 className="font-serif font-black text-sm capitalize text-[#0B192C]">
                     System State: {health.status}
                   </h4>
-                  <p className="text-xs opacity-80">
+                  <p className="text-xs font-mono opacity-80">
                     DraftForge API Runtime v{health.app_version}
                   </p>
                 </div>
               </div>
               <button
                 onClick={fetchHealth}
-                className="p-2 rounded-lg bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+                className="p-2 rounded-xl bg-white hover:bg-[#F3F0EA] text-[#0B192C] border-2 border-[#E6E2D8] border-b-4 border-b-[#D5CEBE] tactile-btn transition-colors"
                 title="Refresh telemetry"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -104,7 +104,7 @@ export const HealthModal: React.FC<HealthModalProps> = ({ isOpen, onClose }) => 
 
             {/* Services List */}
             <div className="space-y-3">
-              <h5 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              <h5 className="text-[10px] font-bold text-[#5A6A80] uppercase tracking-wider font-mono">
                 Managed Cloud Nodes
               </h5>
               {Object.entries(health.services).map(([key, s]) => {
@@ -112,27 +112,27 @@ export const HealthModal: React.FC<HealthModalProps> = ({ isOpen, onClose }) => 
                 return (
                   <div
                     key={key}
-                    className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/50 flex items-center justify-between"
+                    className="p-3.5 rounded-2xl bg-[#FAF8F5] border-2 border-[#E6E2D8] flex items-center justify-between"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center">
+                      <div className="w-9 h-9 rounded-xl bg-white border border-[#E6E2D8] flex items-center justify-center shadow-sm">
                         {getServiceIcon(key)}
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-white">
+                        <p className="text-sm font-bold text-[#0B192C]">
                           {getServiceLabel(key)}
                         </p>
-                        <p className="text-xs text-slate-400">{s.details}</p>
+                        <p className="text-xs text-[#5A6A80] font-mono">{s.details}</p>
                       </div>
                     </div>
                     <div>
                       {s.reachable ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] font-mono">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping" />
                           ONLINE
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 font-mono">
                           OFFLINE
                         </span>
                       )}
@@ -147,7 +147,7 @@ export const HealthModal: React.FC<HealthModalProps> = ({ isOpen, onClose }) => 
         <div className="flex justify-end pt-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors"
+            className="px-5 py-2.5 text-xs font-bold text-[#0B192C] bg-white hover:bg-[#F3F0EA] rounded-xl border-2 border-[#E6E2D8] border-b-4 border-b-[#D5CEBE] tactile-btn transition-colors"
           >
             Close
           </button>

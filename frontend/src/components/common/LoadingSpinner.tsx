@@ -22,15 +22,15 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     <div className={`flex flex-col items-center justify-center gap-3 ${className}`}>
       <div className="relative">
         <div
-          className={`${sizeClasses[size]} rounded-full border-primary-500/20 border-t-primary-500 animate-spin`}
+          className={`${sizeClasses[size]} rounded-full border-[#E6E2D8] border-t-[#1E3E62] animate-spin`}
         />
         <div
-          className={`absolute inset-0 ${sizeClasses[size]} rounded-full border-accent-cyan/10 border-b-accent-cyan animate-spin`}
+          className={`absolute inset-0 ${sizeClasses[size]} rounded-full border-transparent border-b-[#F59E0B] animate-spin`}
           style={{ animationDirection: 'reverse', animationDuration: '1.2s' }}
         />
       </div>
       {label && (
-        <p className="text-xs text-slate-400 font-medium tracking-wide animate-pulse">
+        <p className="text-xs text-[#5A6A80] font-mono font-bold tracking-wide animate-pulse">
           {label}
         </p>
       )}
@@ -47,11 +47,11 @@ export const CardSkeleton: React.FC<{ count?: number; className?: string }> = ({
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="glass-panel p-5 rounded-2xl space-y-3 skeleton-shimmer"
+          className="bg-white border-2 border-[#E6E2D8] p-5 rounded-3xl space-y-3 shadow-sm skeleton-shimmer"
         >
-          <div className="h-4 bg-slate-700/50 rounded w-1/3" />
-          <div className="h-3 bg-slate-700/30 rounded w-2/3" />
-          <div className="h-3 bg-slate-700/20 rounded w-1/2" />
+          <div className="h-4 bg-[#E6E2D8] rounded w-1/3" />
+          <div className="h-3 bg-[#F3F0EA] rounded w-2/3" />
+          <div className="h-3 bg-[#F3F0EA] rounded w-1/2" />
         </div>
       ))}
     </div>

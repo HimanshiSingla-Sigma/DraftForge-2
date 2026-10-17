@@ -353,3 +353,85 @@ export interface HealthCheckResponse {
     [key: string]: ServiceStatus | undefined;
   };
 }
+
+// ============================================================================
+// Access Control, Invitations & Admin Types
+// ============================================================================
+
+export interface Section {
+  id: string;
+  name: string;
+  code: string;
+  academic_year: string;
+  description?: string | null;
+  is_active: boolean;
+  teachers_count: number;
+  students_count: number;
+  created_at?: string;
+}
+
+export interface Invitation {
+  id: string;
+  email: string;
+  role: UserRole;
+  inviter_id: string;
+  inviter_email?: string | null;
+  inviter_name?: string | null;
+  section_ids: string[];
+  section_names: string[];
+  status: 'PENDING' | 'ACCEPTED' | 'EXPIRED' | 'REVOKED';
+  expires_at: string;
+  accepted_at?: string | null;
+  created_at?: string;
+}
+
+export interface VerifyInvitationResponse {
+  valid: boolean;
+  email?: string;
+  role?: UserRole;
+  section_ids: string[];
+  section_names: string[];
+  inviter_name?: string | null;
+  expires_at?: string | null;
+  message?: string | null;
+}
+
+export interface AdminOverviewStats {
+  total_teachers: number;
+  total_students: number;
+  total_sections: number;
+  pending_invitations: number;
+  accepted_invitations: number;
+  expired_invitations: number;
+}
+
+export interface TeacherOverview {
+  id: string;
+  email: string;
+  full_name: string | null;
+  assigned_sections: Array<{ id: string; name: string; code: string }>;
+  is_active: boolean;
+  created_at?: string;
+}
+
+export interface StudentOverview {
+  id: string;
+  email: string;
+  full_name: string | null;
+  enrolled_sections: Array<{ id: string; name: string; code: string }>;
+  drafts_count: number;
+  submissions_count: number;
+  created_at?: string;
+}
+
+export interface AuditLog {
+  id: string;
+  actor_id?: string | null;
+  actor_email?: string | null;
+  action: string;
+  target_type?: string | null;
+  target_id?: string | null;
+  details: Record<string, any>;
+  ip_address?: string | null;
+  created_at?: string;
+}

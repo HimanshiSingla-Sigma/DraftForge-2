@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 interface ModalProps {
@@ -46,42 +47,44 @@ export const Modal: React.FC<ModalProps> = ({
     '5xl': 'max-w-5xl',
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity animate-fade-in"
+        className="fixed inset-0 bg-[#0B192C]/60 backdrop-blur-sm transition-opacity animate-fade-in"
         onClick={onClose}
       />
 
       {/* Modal Container */}
       <div
-        className={`relative w-full ${maxWidthClasses[maxWidth]} glass-panel-glow bg-slate-900/95 rounded-2xl shadow-2xl border border-slate-700/60 overflow-hidden z-10 animate-scale-in my-8 max-h-[90vh] flex flex-col`}
+        className={`relative w-full ${maxWidthClasses[maxWidth]} bg-white rounded-3xl shadow-[0_8px_#0B192C] border-2 border-[#0B192C] overflow-hidden z-10 animate-scale-in my-8 max-h-[90vh] flex flex-col`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-800/80 bg-slate-900/40">
+        <div className="flex items-center justify-between p-5 sm:p-6 border-b-2 border-[#E6E2D8] bg-[#FAF8F5]">
           <div className="flex items-center gap-3">
             {icon && (
-              <div className="w-10 h-10 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center text-primary-400">
+              <div className="w-10 h-10 rounded-2xl bg-[#1E3E62] border-2 border-[#0B192C] flex items-center justify-center text-[#F59E0B] shadow-[0_2px_#0B192C]">
                 {icon}
               </div>
             )}
             <div>
-              <h3 className="text-lg font-semibold text-white tracking-tight">{title}</h3>
-              {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
+              <h3 className="font-serif text-lg sm:text-xl font-black text-[#0B192C] tracking-tight">{title}</h3>
+              {subtitle && <p className="text-xs text-[#5A6A80] mt-0.5">{subtitle}</p>}
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition-colors"
+            className="p-2 rounded-xl text-[#5A6A80] hover:text-rose-600 hover:bg-rose-50 transition-colors border-2 border-[#E6E2D8] border-b-4 border-b-[#D5CEBE] bg-white tactile-btn"
+            aria-label="Close modal"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto flex-1">{children}</div>
+        <div className="p-5 sm:p-6 overflow-y-auto flex-1 bg-white text-[#0B192C]">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

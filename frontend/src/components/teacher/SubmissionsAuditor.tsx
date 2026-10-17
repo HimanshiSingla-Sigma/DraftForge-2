@@ -94,26 +94,26 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header & Assignment Selector */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl glass-panel-glow border border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl tactile-card bg-[#FAF8F5] border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8]">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold text-white tracking-tight">Submissions Auditor</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+            <h1 className="text-2xl font-serif font-bold text-[#0B192C] tracking-tight">Submissions Auditor</h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono">
               Grading & Score Overrides
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#0B192C]/70 mt-1">
             Review student draft submissions, verify automated RAG evaluations, and submit score overrides.
           </p>
         </div>
 
         {/* Assignment Switcher */}
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-slate-400">Assignment:</span>
+          <span className="text-xs font-bold text-[#0B192C]/70">Assignment:</span>
           <select
             value={selectedAssignmentId}
             onChange={(e) => setSelectedAssignmentId(e.target.value)}
-            className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-ring min-w-[220px]"
+            className="bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none min-w-[220px]"
           >
             {assignments.map((a) => (
               <option key={a.id} value={a.id}>
@@ -126,9 +126,9 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
 
       <div className="grid grid-cols-12 gap-6">
         {/* Left 4 Cols: Submissions List */}
-        <div className="col-span-12 lg:col-span-4 glass-panel p-5 rounded-3xl border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-            <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400">
+        <div className="col-span-12 lg:col-span-4 tactile-card bg-[#FAF8F5] p-5 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
+            <h3 className="font-bold text-xs uppercase tracking-wider text-[#0B192C]/70 font-mono">
               Student Submissions ({submissions.length})
             </h3>
           </div>
@@ -138,8 +138,8 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
               <LoadingSpinner size="md" />
             </div>
           ) : submissions.length === 0 ? (
-            <div className="p-8 text-center text-xs text-slate-500 space-y-2">
-              <FileText className="w-8 h-8 text-slate-700 mx-auto" />
+            <div className="p-8 text-center text-xs text-[#0B192C]/50 space-y-2">
+              <FileText className="w-8 h-8 text-[#0B192C]/30 mx-auto" />
               <p>No student submissions received yet for this assignment.</p>
             </div>
           ) : (
@@ -152,29 +152,29 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
                   <div
                     key={s.id}
                     onClick={() => handleSelectSubmission(s)}
-                    className={`p-4 rounded-2xl border cursor-pointer transition-all space-y-2 ${
+                    className={`p-4 rounded-2xl border-2 cursor-pointer transition-all space-y-2 ${
                       isSelected
-                        ? 'bg-primary-600/15 border-primary-500/50 text-white shadow-md'
-                        : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:border-slate-700'
+                        ? 'bg-[#1E3E62]/10 border-[#1E3E62] text-[#0B192C] shadow-[0_2px_#1E3E62]'
+                        : 'bg-[#F3F0EA] border-[#E6E2D8] text-[#0B192C] hover:border-[#1E3E62]/40 shadow-[0_1px_#E6E2D8]'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-200">
+                        <div className="w-7 h-7 rounded-lg bg-[#FAF8F5] border border-[#E6E2D8] flex items-center justify-center text-xs font-bold text-[#1E3E62]">
                           {s.student_name ? s.student_name[0].toUpperCase() : 'S'}
                         </div>
-                        <span className="font-bold text-xs text-white truncate max-w-[140px]">
+                        <span className="font-bold text-xs text-[#0B192C] truncate max-w-[140px]">
                           {s.student_name || s.student_email || 'Student Submission'}
                         </span>
                       </div>
 
-                      <span className="font-mono text-xs font-extrabold text-emerald-400">
+                      <span className="font-mono text-xs font-extrabold text-emerald-700">
                         {score} pts
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px] text-slate-500">
-                      <span className="uppercase">{s.status}</span>
+                    <div className="flex items-center justify-between text-[10px] text-[#0B192C]/60 font-mono">
+                      <span className="uppercase font-bold">{s.status}</span>
                       <span>{new Date(s.submitted_at).toLocaleDateString()}</span>
                     </div>
                   </div>
@@ -185,20 +185,20 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
         </div>
 
         {/* Right 8 Cols: Audit & Score Override Card */}
-        <div className="col-span-12 lg:col-span-8 glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+        <div className="col-span-12 lg:col-span-8 tactile-card bg-[#FAF8F5] p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-6">
           {selectedSub ? (
             <>
               {/* Submission Meta Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-2 border-[#E6E2D8]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-primary-700 flex items-center justify-center text-white font-bold text-sm">
+                  <div className="w-10 h-10 rounded-2xl bg-[#1E3E62] border-2 border-[#0B192C] flex items-center justify-center text-white font-bold text-sm shadow-sm">
                     {selectedSub.student_name ? selectedSub.student_name[0].toUpperCase() : 'U'}
                   </div>
                   <div>
-                    <h3 className="font-bold text-base text-white">
+                    <h3 className="font-serif font-bold text-lg text-[#0B192C]">
                       {selectedSub.student_name || selectedSub.student_email}
                     </h3>
-                    <p className="text-xs text-slate-400 font-mono">
+                    <p className="text-xs text-[#0B192C]/60 font-mono">
                       Submitted on {new Date(selectedSub.submitted_at).toLocaleString()}
                     </p>
                   </div>
@@ -206,10 +206,10 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
 
                 <div className="flex items-center gap-3">
                   <div className="text-right">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    <span className="text-[10px] font-bold text-[#0B192C]/60 uppercase tracking-wider block font-mono">
                       Effective Score
                     </span>
-                    <span className="text-2xl font-extrabold text-emerald-400 font-mono">
+                    <span className="text-3xl font-serif font-extrabold text-emerald-700 font-mono">
                       {selectedSub.final_score ?? selectedSub.evaluation?.overall_score ?? 0} pts
                     </span>
                   </div>
@@ -218,32 +218,32 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
 
               {/* Automated Evaluation Summary If Present */}
               {selectedSub.evaluation && (
-                <div className="p-5 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
+                <div className="p-5 rounded-2xl bg-[#F3F0EA] border-2 border-[#E6E2D8] space-y-3">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-xs uppercase tracking-wider text-slate-300">
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-[#0B192C]">
                       Automated RAG Evaluation Breakdown
                     </h4>
-                    <span className="text-[10px] font-mono text-slate-400">
+                    <span className="text-[10px] font-mono text-[#0B192C]/60">
                       Rubric {selectedSub.evaluation.rubric_version}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
-                    <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs">
-                      <span className="text-slate-400 text-[10px] block">Structure:</span>
-                      <strong className="text-white text-sm">
+                    <div className="p-3 bg-[#FAF8F5] rounded-xl border-2 border-[#E6E2D8] text-xs shadow-sm">
+                      <span className="text-[#0B192C]/60 text-[10px] block font-mono">Structure:</span>
+                      <strong className="text-[#1E3E62] font-serif text-base font-bold">
                         {selectedSub.evaluation.structure_score} pts
                       </strong>
                     </div>
-                    <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs">
-                      <span className="text-slate-400 text-[10px] block">Clause Coverage:</span>
-                      <strong className="text-white text-sm">
+                    <div className="p-3 bg-[#FAF8F5] rounded-xl border-2 border-[#E6E2D8] text-xs shadow-sm">
+                      <span className="text-[#0B192C]/60 text-[10px] block font-mono">Clause Coverage:</span>
+                      <strong className="text-[#1E3E62] font-serif text-base font-bold">
                         {selectedSub.evaluation.clause_score} pts
                       </strong>
                     </div>
-                    <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs">
-                      <span className="text-slate-400 text-[10px] block">Formatting / Jurats:</span>
-                      <strong className="text-white text-sm">
+                    <div className="p-3 bg-[#FAF8F5] rounded-xl border-2 border-[#E6E2D8] text-xs shadow-sm">
+                      <span className="text-[#0B192C]/60 text-[10px] block font-mono">Formatting / Jurats:</span>
+                      <strong className="text-[#1E3E62] font-serif text-base font-bold">
                         {selectedSub.evaluation.formatting_score} pts
                       </strong>
                     </div>
@@ -254,16 +254,16 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
               {/* Faculty Score Override Form */}
               <form
                 onSubmit={handleOverride}
-                className="p-5 sm:p-6 rounded-2xl bg-amber-950/15 border border-amber-500/30 space-y-4"
+                className="p-5 sm:p-6 rounded-2xl bg-[#FAF8F5] border-2 border-[#F59E0B] shadow-[0_3px_#F59E0B] space-y-4"
               >
-                <div className="flex items-center gap-2 text-amber-300 font-bold text-xs uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-[#D97706] font-bold text-xs uppercase tracking-wider font-mono">
                   <ShieldAlert className="w-4 h-4" />
                   <span>Audited Score Override & Feedback</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-[#0B192C] mb-1">
                       New Total Score
                     </label>
                     <input
@@ -272,12 +272,12 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
                       max={100}
                       value={overrideScore}
                       onChange={(e) => setOverrideScore(Number(e.target.value))}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-ring font-mono font-bold"
+                      className="w-full bg-[#FDFBF7] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none font-mono font-bold"
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-[#0B192C] mb-1">
                       Audit Rationale / Reason
                     </label>
                     <input
@@ -285,13 +285,13 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
                       value={overrideReason}
                       onChange={(e) => setOverrideReason(e.target.value)}
                       placeholder="e.g. Approved creative dispute resolution clause structure"
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus-ring"
+                      className="w-full bg-[#FDFBF7] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-[#0B192C] mb-1">
                     Qualitative Feedback for Student (Optional)
                   </label>
                   <textarea
@@ -299,7 +299,7 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
                     onChange={(e) => setTeacherNotes(e.target.value)}
                     placeholder="Provide constructive drafting guidance..."
                     rows={3}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus-ring resize-none"
+                    className="w-full bg-[#FDFBF7] border-2 border-[#E6E2D8] rounded-xl p-2.5 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none resize-none"
                   />
                 </div>
 
@@ -307,7 +307,7 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
                   <button
                     type="submit"
                     disabled={savingOverride || !overrideReason.trim()}
-                    className="px-5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 flex items-center gap-2"
+                    className="tactile-btn px-6 py-2.5 bg-[#F59E0B] hover:bg-[#d97706] text-[#0B192C] font-bold text-xs rounded-xl border-b-4 border-[#0B192C] shadow-[0_3px_#0B192C] transition-all disabled:opacity-50 flex items-center gap-2"
                   >
                     {savingOverride ? <LoadingSpinner size="sm" /> : <Save className="w-3.5 h-3.5" />}
                     <span>Persist Score Override</span>
@@ -316,8 +316,8 @@ export const SubmissionsAuditor: React.FC<{ assignmentId?: string }> = ({
               </form>
             </>
           ) : (
-            <div className="p-16 text-center text-xs text-slate-500 space-y-2">
-              <FileCheck className="w-10 h-10 text-slate-700 mx-auto" />
+            <div className="p-16 text-center text-xs text-[#0B192C]/50 space-y-2">
+              <FileCheck className="w-10 h-10 text-[#0B192C]/30 mx-auto" />
               <p>Select a submission from the left to inspect and audit evaluation scores.</p>
             </div>
           )}

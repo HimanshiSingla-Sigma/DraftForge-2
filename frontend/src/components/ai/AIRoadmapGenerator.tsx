@@ -73,17 +73,14 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
     <div className="space-y-8 animate-fade-in font-sans">
       {/* If Generating: 3D AI Core Universe Generation State */}
       {generating ? (
-        <div className="glass-panel-glow p-8 sm:p-12 rounded-[2.5rem] border border-primary-500/40 text-center space-y-6 shadow-2xl relative overflow-hidden">
-          <div className="absolute -top-32 -left-32 w-80 h-80 bg-primary-600/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-accent-amber/20 rounded-full blur-3xl pointer-events-none" />
-
+        <div className="tactile-card bg-white p-8 sm:p-12 rounded-[2.5rem] border-2 border-[#E6E2D8] text-center space-y-6 shadow-[0_8px_#E6E2D8] relative overflow-hidden">
           <AICoreOrb size="lg" stageText={synthesisStages[synthesisStage]} />
 
           <div className="max-w-md mx-auto space-y-3 pt-2">
-            <h3 className="text-xl font-bold text-white tracking-tight">
+            <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0B192C] tracking-tight">
               Synthesizing 5-Phase Personalized Curriculum
             </h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">
               DraftForge AI is dynamically organizing your drafting trajectory based on verified evaluation findings.
             </p>
           </div>
@@ -92,47 +89,47 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
         /* Roadmap View with 3D Progressive Nodes */
         <div className="space-y-6">
           {/* Header Card with Progress Gauge */}
-          <div className="glass-panel-glow p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6 relative overflow-hidden">
+          <div className="tactile-card bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] space-y-6 relative overflow-hidden">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider font-mono">
+                  <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-[#F3F0EA] text-[#1E3E62] border border-[#E6E2D8] uppercase tracking-wider font-mono">
                     Personalized 5-Phase Track
                   </span>
-                  <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                  <span className="text-[10px] font-mono text-[#059669] bg-[#F0FDF4] px-2.5 py-0.5 rounded-full border border-[#10B981]/30">
                     Active Curriculum
                   </span>
                 </div>
-                <h2 className="text-2xl font-extrabold text-white tracking-tight">
+                <h2 className="font-serif text-2xl font-bold text-[#0B192C] tracking-tight">
                   {roadmap.title}
                 </h2>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#0B192C]/70 font-sans">
                   Calibrated to elevate your weakest statutory clauses and jurat structures to commercial mastery.
                 </p>
               </div>
 
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <span className="text-xs text-slate-400 font-medium block">Curriculum Completion</span>
-                  <span className="text-2xl font-extrabold text-accent-cyan font-mono">
+                  <span className="text-xs text-[#0B192C]/60 font-medium block">Curriculum Completion</span>
+                  <span className="font-serif text-2xl font-extrabold text-[#1E3E62]">
                     {Math.round(progressPercent)}%
                   </span>
                 </div>
 
                 <button
                   onClick={onGenerateNew}
-                  className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs font-bold rounded-xl border border-slate-800 hover:border-slate-700 transition-all flex items-center gap-2"
+                  className="tactile-btn px-4 py-2.5 bg-[#F3F0EA] hover:bg-white text-[#0B192C] text-xs font-bold rounded-xl border-2 border-[#E6E2D8] transition-all flex items-center gap-2 cursor-pointer"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-primary-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
                   <span>Resynthesize</span>
                 </button>
               </div>
             </div>
 
             {/* Overall Progress Bar */}
-            <div className="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+            <div className="w-full h-2.5 bg-[#F3F0EA] rounded-full overflow-hidden border border-[#E6E2D8]">
               <div
-                className="h-full bg-gradient-to-r from-primary-500 via-indigo-500 to-accent-cyan rounded-full transition-all duration-700 shadow-glow"
+                className="h-full bg-[#1E3E62] rounded-full transition-all duration-700"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -140,8 +137,8 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
 
           {/* 5-Phase Progressive Materialized Nodes Timeline */}
           <div className="space-y-4 relative">
-            {/* SVG Connecting Track Line */}
-            <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-gradient-to-b from-primary-500 via-indigo-500 to-accent-cyan hidden sm:block opacity-40" />
+            {/* Connecting Track Line */}
+            <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-[#E6E2D8] hidden sm:block" />
 
             {items.map((item: RoadmapItem, idx: number) => {
               const isRevealed = idx < revealedNodesCount;
@@ -158,47 +155,47 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
                   }`}
                 >
                   <div
-                    className={`relative p-5 sm:p-6 rounded-3xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                    className={`relative p-5 sm:p-6 rounded-3xl border-2 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
                       isCompleted
-                        ? 'bg-emerald-950/20 border-emerald-500/40 shadow-md shadow-emerald-500/5'
-                        : 'glass-panel border-slate-800 hover:border-primary-500/40'
+                        ? 'bg-[#F0FDF4] border-[#10B981]/50 shadow-[0_4px_#10B981]/20'
+                        : 'tactile-card bg-white border-[#E6E2D8] shadow-[0_4px_#E6E2D8] hover:border-[#1E3E62]'
                     }`}
                   >
                     {/* Left Phase Badge & Description */}
                     <div className="flex items-start gap-4">
                       {/* Node Icon Avatar */}
                       <div
-                        className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm shrink-0 shadow-lg ${
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm shrink-0 border-2 ${
                           isCompleted
-                            ? 'bg-emerald-500 text-white shadow-emerald-500/25'
-                            : 'bg-slate-900 border border-slate-800 text-primary-400'
+                            ? 'bg-[#10B981] text-white border-[#059669]'
+                            : 'bg-[#F3F0EA] border-[#E6E2D8] text-[#1E3E62]'
                         }`}
                       >
                         {isCompleted ? (
                           <Check className="w-6 h-6 stroke-[3]" />
                         ) : (
-                          <span className="font-mono text-sm font-extrabold">{item.phase_number}</span>
+                          <span className="font-serif text-sm font-extrabold">{item.phase_number}</span>
                         )}
                       </div>
 
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0B192C]/60">
                             Phase {item.phase_number}
                           </span>
                           {isCompleted && (
-                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider font-mono">
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#F0FDF4] text-[#059669] border border-[#10B981]/30 uppercase tracking-wider font-mono">
                               ✓ Completed
                             </span>
                           )}
                         </div>
 
-                        <h3 className="font-extrabold text-base text-white tracking-tight">
+                        <h3 className="font-serif font-bold text-base text-[#0B192C] tracking-tight">
                           {item.title}
                         </h3>
 
                         {item.description && (
-                          <p className="text-xs text-slate-300 leading-relaxed max-w-2xl font-sans">
+                          <p className="text-xs text-[#0B192C]/75 leading-relaxed max-w-2xl font-sans">
                             {item.description}
                           </p>
                         )}
@@ -211,18 +208,18 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
                         <button
                           onClick={() => onCompleteItem(item.id)}
                           disabled={isCompleting}
-                          className="px-4 py-2 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-primary-500/20 transition-all disabled:opacity-50 flex items-center gap-1.5"
+                          className="tactile-btn px-4 py-2 bg-[#1E3E62] hover:bg-[#152C46] text-white text-xs font-bold rounded-xl border-b-4 border-[#0B192C] shadow-sm transition-all disabled:opacity-50 flex items-center gap-1.5 cursor-pointer"
                         >
                           {isCompleting ? (
                             <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                           ) : (
-                            <CheckCircle2 className="w-4 h-4" />
+                            <CheckCircle2 className="w-4 h-4 text-[#F59E0B]" />
                           )}
                           <span>Mark Phase Complete</span>
                         </button>
                       ) : (
-                        <div className="text-[11px] font-mono text-emerald-400 font-semibold px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-1.5">
-                          <Award className="w-3.5 h-3.5" />
+                        <div className="text-[11px] font-mono text-[#059669] font-bold px-3 py-1.5 rounded-xl bg-[#F0FDF4] border-2 border-[#10B981]/40 flex items-center gap-1.5">
+                          <Award className="w-3.5 h-3.5 text-[#059669]" />
                           <span>Milestone Achieved</span>
                         </div>
                       )}
@@ -235,28 +232,28 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
 
           {/* Bottom Skill Mastery Matrix Ribbon */}
           {skills.length > 0 && (
-            <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+            <div className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
               <div className="flex items-center gap-2">
-                <Compass className="w-4 h-4 text-accent-cyan" />
-                <h3 className="font-bold text-sm text-white">Target Skill Matrices</h3>
+                <Compass className="w-4 h-4 text-[#1E3E62]" />
+                <h3 className="font-serif font-bold text-sm text-[#0B192C]">Target Skill Matrices</h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {skills.slice(0, 6).map((sk) => (
                   <div
                     key={sk.id}
-                    className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800/80 flex items-center justify-between"
+                    className="p-3.5 rounded-2xl bg-[#F3F0EA] border-2 border-[#E6E2D8] flex items-center justify-between"
                   >
                     <div>
-                      <h4 className="font-bold text-xs text-white truncate max-w-[170px]">
+                      <h4 className="font-serif font-bold text-xs text-[#0B192C] truncate max-w-[170px]">
                         {sk.skill?.name || 'Legal Drafting'}
                       </h4>
-                      <span className="text-[10px] text-slate-400 font-mono">
+                      <span className="text-[10px] text-[#0B192C]/60 font-mono">
                         {sk.skill?.category || 'General'}
                       </span>
                     </div>
 
-                    <span className="font-mono text-xs font-bold text-emerald-400">
+                    <span className="font-mono text-xs font-bold text-[#059669]">
                       {Math.round(sk.proficiency_score)}%
                     </span>
                   </div>
@@ -267,21 +264,21 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
         </div>
       ) : (
         /* Empty Roadmap State */
-        <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-5 max-w-md mx-auto">
-          <div className="w-16 h-16 rounded-2xl bg-primary-600/10 border border-primary-500/30 flex items-center justify-center mx-auto text-primary-400 shadow-xl shadow-primary-500/10">
-            <Compass className="w-8 h-8" />
+        <div className="tactile-card bg-white p-12 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] text-center space-y-5 max-w-md mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-[#F3F0EA] border-2 border-[#E6E2D8] flex items-center justify-center mx-auto text-[#1E3E62] shadow-sm">
+            <Compass className="w-8 h-8 text-[#1E3E62]" />
           </div>
           <div className="space-y-1">
-            <h3 className="text-base font-bold text-white">No Active Learning Roadmap</h3>
-            <p className="text-xs text-slate-400">
+            <h3 className="font-serif text-base font-bold text-[#0B192C]">No Active Learning Roadmap</h3>
+            <p className="text-xs text-[#0B192C]/70 font-sans">
               Synthesize a tailored 5-phase statutory drafting trajectory based on your latest draft evaluations.
             </p>
           </div>
           <button
             onClick={onGenerateNew}
-            className="w-full py-3 bg-gradient-to-r from-primary-600 to-indigo-600 text-white font-bold text-xs rounded-xl shadow-lg shadow-primary-500/25 flex items-center justify-center gap-2"
+            className="tactile-btn w-full py-3 bg-[#1E3E62] hover:bg-[#152C46] text-white font-bold text-xs rounded-xl border-b-4 border-[#0B192C] shadow-md flex items-center justify-center gap-2 cursor-pointer"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-4 h-4 text-[#F59E0B]" />
             <span>Generate 5-Phase Roadmap</span>
           </button>
         </div>

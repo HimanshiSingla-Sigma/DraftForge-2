@@ -39,6 +39,26 @@ class NotFoundError(BaseAppException):
         )
 
 
+class ResourceNotFoundError(NotFoundError):
+    pass
+
+
+class ResourceAlreadyExistsError(BaseAppException):
+    def __init__(self, resource: str, field: str, value: Any):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"{resource} with {field} '{value}' already exists",
+        )
+
+
+class ValidationError(BaseAppException):
+    def __init__(self, detail: str = "Invalid input data"):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=detail,
+        )
+
+
 class DatabaseConnectionError(BaseAppException):
     def __init__(self, service_name: str, message: str):
         super().__init__(

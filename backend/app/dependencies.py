@@ -52,3 +52,4 @@ def require_role(allowed_roles: list[UserRole]):
 require_student = require_role([UserRole.STUDENT, UserRole.ADMIN])
 require_teacher = require_role([UserRole.TEACHER, UserRole.ADMIN])
 require_admin = require_role([UserRole.ADMIN])
+require_authenticated = require_role([UserRole.STUDENT, UserRole.TEACHER, UserRole.ADMIN])

@@ -89,9 +89,73 @@ class AIService:
         )
 
     async def explain_evaluation(self, payload: ExplainEvaluationRequest) -> ExplainEvaluationResponse:
+        from app.db.repositories.evaluation_repository import EvaluationRepository
+        eval_repo = EvaluationRepository()
+        eval_record = eval_repo.get_with_evidence(payload.evaluation_id)
+
+        if not eval_record:
+            return ExplainEvaluationResponse(
+                evaluation_id=payload.evaluation_id,
+                explanation="The drafted clause was evaluated against statutory admissibility rules under Indian Law.",
+                remedial_suggestions=["Verify deponent jurats and state stamp duty admissibility."],
+                statutory_context="Indian Evidence Act / BSA provisions."
+            )
+
+        overall_score = float(eval_record.get("overall_score", 0.0))
+        evidence_items = eval_record.get("evaluation_evidence") or []
+        failed_items = [e for e in evidence_items if e.get("status") == "FAIL"]
+        partial_items = [e for e in evidence_items if e.get("status") in ["WARNING", "PARTIAL"]]
+        passed_items = [e for e in evidence_items if e.get("status") == "PASS"]
+
+        narrative_lines = []
+        narrative_lines.append(f"Deterministic Rubric Evaluation Score: {overall_score:.1f} / 100.0.")
+
+        if overall_score >= 80.0:
+            narrative_lines.append(
+                f"Your draft demonstrates strong statutory drafting compliance. Key operative clauses "
+                f"and structural formatting ({len(passed_items)} requirements satisfied) met benchmark standards under Indian jurisprudence."
+            )
+        elif overall_score >= 60.0:
+            narrative_lines.append(
+                "Your draft demonstrates satisfactory foundational composition, but exhibits statutory omissions "
+                "or defective operative clauses that jeopardize enforceability or admissibility."
+            )
+        else:
+            narrative_lines.append(
+                "Substantial legal drafting deficiencies identified. Missing mandatory clauses, verification jurats, "
+                "or structural demarcations make the draft procedurally non-admissible in its current form."
+            )
+
+        remedial_suggestions = []
+        if failed_items:
+            narrative_lines.append("\nKey Omissions Requiring Remediation:")
+            for item in failed_items[:4]:
+                crit = item.get("criterion", "Clause Requirement")
+                expl = item.get("explanation", "")
+                narrative_lines.append(f"• {crit}: {expl}")
+                remedial_suggestions.append(f"Incorporate statutory provision for '{crit}'. {expl}")
+
+        if partial_items:
+            for item in partial_items[:3]:
+                crit = item.get("criterion", "Clause Element")
+                expl = item.get("explanation", "")
+                remedial_suggestions.append(f"Refine {crit}: {expl}")
+
+        if not remedial_suggestions:
+            remedial_suggestions.append("Verify stamp duty admissibility in your designated state jurisdiction.")
+            remedial_suggestions.append("Cross-check limitation period under Schedule I of the Limitation Act, 1963.")
+
+        narrative = "\n".join(narrative_lines)
+        statutory_context = "Benchmarking under Bharatiya Sakshya Adhiniyam, CPC Order XIX, and Indian Contract Act, 1872."
+
+        try:
+            eval_repo.update(payload.evaluation_id, {"llm_explanation": narrative})
+        except Exception:
+            pass
+
         return ExplainEvaluationResponse(
             evaluation_id=payload.evaluation_id,
-            explanation="The drafted clause was evaluated against statutory admissibility rules under Indian Law.",
-            remedial_suggestions=["Verify deponent jurats and state stamp duty admissibility."],
-            statutory_context="Indian Evidence Act / BSA provisions."
+            explanation=narrative,
+            remedial_suggestions=remedial_suggestions,
+            statutory_context=statutory_context
         )

@@ -101,12 +101,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-slate-100 font-sans selection:bg-primary-500 selection:text-white relative overflow-hidden bg-grid-pattern">
-      {/* Ambient Radial Background Glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-radial-glow pointer-events-none -z-10" />
-      <div className="absolute top-[35%] -left-64 w-[600px] h-[600px] bg-primary-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute top-[65%] -right-64 w-[600px] h-[600px] bg-accent-cyan/10 rounded-full blur-3xl pointer-events-none -z-10" />
-
+    <div className="min-h-screen bg-[#FAF8F5] text-[#0B192C] font-sans selection:bg-[#F59E0B]/30 selection:text-[#0B192C] relative overflow-hidden">
       {/* Navigation */}
       <LandingNavbar onOpenAuth={onOpenAuth} onOpenHealth={() => setIsHealthOpen(true)} />
 
@@ -116,23 +111,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center space-y-6 max-w-4xl mx-auto">
           {/* Small Premium Badge */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-900/90 border border-primary-500/30 text-primary-300 text-xs font-semibold shadow-lg shadow-primary-500/10 animate-fade-in-up">
-            <Sparkles className="w-3.5 h-3.5 text-accent-cyan animate-pulse" />
-            <span>AI-Powered Legal Drafting & Deterministic Evaluation</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan" />
-            <span className="text-[11px] font-mono text-slate-400">Grounded in Real Corpus</span>
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#F3F0EA] border-2 border-[#E6E2D8] text-[#1E3E62] text-xs font-semibold shadow-[0_2px_#E6E2D8] animate-fade-in-up">
+            <Sparkles className="w-3.5 h-3.5 text-[#F59E0B] animate-pulse" />
+            <span className="font-serif">AI-Powered Legal Drafting & Deterministic Evaluation</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+            <span className="text-[11px] font-mono text-[#0B192C]/60">Grounded in Real Corpus</span>
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12] animate-fade-in">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#0B192C] leading-[1.15] animate-fade-in">
             Draft Smarter.{' '}
-            <span className="gradient-text-primary">Learn Faster.</span>
+            <span className="text-[#1E3E62] italic underline decoration-[#F59E0B] decoration-wavy decoration-2">Learn Faster.</span>
             <br />
-            Write Better <span className="gradient-text-cyan">Legal Documents.</span>
+            Write Better <span className="text-[#B45309]">Legal Documents.</span>
           </h1>
 
           {/* Supporting Subtitle */}
-          <p className="text-sm sm:text-base lg:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-normal">
+          <p className="text-sm sm:text-base lg:text-lg text-[#0B192C]/75 max-w-2xl mx-auto leading-relaxed font-normal">
             DraftForge is the next-generation LegalTech platform empowering law students and faculty with deterministic rubric evaluations, FastEmbed vector precedent retrieval, and Neo4j GraphRAG loophole detection.
           </p>
 
@@ -140,31 +135,31 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <button
               onClick={onOpenAuth}
-              className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-primary-600 via-indigo-600 to-accent-cyan hover:from-primary-500 hover:to-accent-cyan text-white text-sm font-bold rounded-2xl shadow-xl shadow-primary-500/25 hover:shadow-primary-500/40 transition-all flex items-center justify-center gap-2 group"
+              className="tactile-btn w-full sm:w-auto px-8 py-3.5 bg-[#1E3E62] hover:bg-[#152C46] text-white text-sm font-bold rounded-2xl border-b-4 border-[#0B192C] shadow-md transition-all flex items-center justify-center gap-2 group cursor-pointer"
             >
               <span>Start Drafting Free</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#F59E0B]" />
             </button>
 
             <a
               href="#scanner"
-              className="w-full sm:w-auto px-7 py-3.5 rounded-2xl text-sm font-bold text-slate-200 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 transition-all flex items-center justify-center gap-2"
+              className="tactile-btn w-full sm:w-auto px-7 py-3.5 rounded-2xl text-sm font-bold text-[#0B192C] bg-white hover:bg-[#F3F0EA] border-2 border-[#E6E2D8] border-b-4 border-b-[#E6E2D8] shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Explore Platform Demo</span>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
+              <ChevronRight className="w-4 h-4 text-[#0B192C]/50" />
             </a>
           </div>
 
           {/* Verified Stack Telemetry Tag */}
-          <div className="pt-4 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-slate-400 font-mono">
+          <div className="pt-4 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-[#0B192C]/70 font-mono">
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> FastEmbed 384-dim Vectors
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" /> FastEmbed 384-dim Vectors
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Neo4j Aura Graph Traversal
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" /> Neo4j Aura Graph Traversal
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Deterministic 100-pt Rubrics
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" /> Deterministic 100-pt Rubrics
             </span>
           </div>
         </div>
@@ -178,54 +173,54 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
       {/* ========================================================================= */}
       {/* 2. TRUST & ARCHITECTURAL FOUNDATION SECTION */}
       {/* ========================================================================= */}
-      <section className="py-16 border-y border-slate-800/80 bg-slate-950/60">
+      <section className="py-16 border-y-2 border-[#E6E2D8] bg-[#F3F0EA]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-primary-400 font-mono">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#B45309] font-mono">
               Empirical Legal Precision
             </span>
-            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B192C] tracking-tight">
               Engineered on a Four-Pillar Legal AI Architecture
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <div className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3">
+              <div className="w-10 h-10 rounded-2xl bg-[#F0FDF4] border-2 border-[#10B981]/30 flex items-center justify-center text-[#059669]">
                 <ClipboardCheck className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-sm text-white">Deterministic Rubrics</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h3 className="font-serif font-bold text-sm text-[#0B192C]">Deterministic Rubrics</h3>
+              <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">
                 Objective scoring across Structure, Clause Matching, and Jurats without arbitrary LLM score hallucination.
               </p>
             </div>
 
-            <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
-              <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <div className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3">
+              <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] border-2 border-[#1E3E62]/30 flex items-center justify-center text-[#1E3E62]">
                 <Database className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-sm text-white">Dense Vector Retrieval</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h3 className="font-serif font-bold text-sm text-[#0B192C]">Dense Vector Retrieval</h3>
+              <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">
                 FastEmbed 384-dim embeddings match clauses against official statutory precedents and bench forms in Qdrant.
               </p>
             </div>
 
-            <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
-              <div className="w-10 h-10 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+            <div className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3">
+              <div className="w-10 h-10 rounded-2xl bg-[#FEF2F2] border-2 border-[#DC2626]/30 flex items-center justify-center text-[#DC2626]">
                 <Network className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-sm text-white">GraphRAG Reasoning</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h3 className="font-serif font-bold text-sm text-[#0B192C]">GraphRAG Reasoning</h3>
+              <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">
                 Neo4j Aura graph topology traverses dependency chains to catch missing prerequisite clauses and legal exposures.
               </p>
             </div>
 
-            <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
-              <div className="w-10 h-10 rounded-2xl bg-accent-amber/10 border border-accent-amber/20 flex items-center justify-center text-accent-amber">
+            <div className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3">
+              <div className="w-10 h-10 rounded-2xl bg-[#FFFBEB] border-2 border-[#F59E0B]/30 flex items-center justify-center text-[#B45309]">
                 <GraduationCap className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-sm text-white">Socratic Pedagogy</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h3 className="font-serif font-bold text-sm text-[#0B192C]">Socratic Pedagogy</h3>
+              <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">
                 Adaptive 5-phase roadmaps and conversational AI tutoring grounded in retrieved statutory chunks.
               </p>
             </div>
@@ -238,84 +233,84 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
       {/* ========================================================================= */}
       <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-rose-400 font-mono">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#DC2626] font-mono">
             Bridging the Legal Drafting Gap
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#0B192C] tracking-tight">
             Why Traditional Drafting Education Fails & How DraftForge Solves It
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-[#0B192C]/70">
             Legal drafting has historically suffered from subjective grading and invisible blind spots.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
           {/* Traditional Drafting (Problem) */}
-          <div className="p-8 rounded-3xl bg-rose-950/15 border border-rose-500/20 space-y-6 flex flex-col justify-between">
+          <div className="p-8 rounded-3xl bg-[#FEF2F2] border-2 border-[#DC2626]/30 shadow-[0_4px_#E6E2D8] space-y-6 flex flex-col justify-between">
             <div className="space-y-4">
-              <div className="flex items-center gap-2.5 text-rose-400 font-bold text-xs uppercase tracking-wider">
+              <div className="flex items-center gap-2.5 text-[#DC2626] font-bold text-xs uppercase tracking-wider font-mono">
                 <XCircle className="w-5 h-5" />
                 <span>The Traditional Problem</span>
               </div>
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="font-serif text-xl font-bold text-[#0B192C]">
                 Unstructured Drafting with Invisible Risk Exposures
               </h3>
-              <ul className="space-y-3 text-xs text-slate-300">
+              <ul className="space-y-3 text-xs text-[#0B192C]/80">
                 <li className="flex items-start gap-2.5">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <span className="text-[#DC2626] font-bold">✕</span>
                   <span>Students never know which prerequisite clauses are missing until a judge or adversary rejects the filing.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <span className="text-[#DC2626] font-bold">✕</span>
                   <span>Feedback is delayed, subjective, and lacks mathematical breakdown or statutory citation grounding.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <span className="text-[#DC2626] font-bold">✕</span>
                   <span>Critical contradictions (like void Section 27 non-compete clauses) slip through unverified.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <span className="text-[#DC2626] font-bold">✕</span>
                   <span>Faculty are overwhelmed with manual grading, lacking cohort-wide weak-skill intelligence.</span>
                 </li>
               </ul>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 text-[11px] text-slate-400 font-mono">
+            <div className="p-4 rounded-2xl bg-white border-2 border-[#DC2626]/20 text-[11px] text-[#DC2626] font-mono">
               Outcome: High procedural rejection rates & fragmented student learning trajectories.
             </div>
           </div>
 
           {/* DraftForge Solution */}
-          <div className="p-8 rounded-3xl bg-emerald-950/15 border border-emerald-500/20 space-y-6 flex flex-col justify-between">
+          <div className="p-8 rounded-3xl bg-[#F0FDF4] border-2 border-[#10B981]/30 shadow-[0_4px_#E6E2D8] space-y-6 flex flex-col justify-between">
             <div className="space-y-4">
-              <div className="flex items-center gap-2.5 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+              <div className="flex items-center gap-2.5 text-[#059669] font-bold text-xs uppercase tracking-wider font-mono">
                 <CheckCircle2 className="w-5 h-5" />
                 <span>The DraftForge Transformation</span>
               </div>
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="font-serif text-xl font-bold text-[#0B192C]">
                 Evidence-Grounded Intelligence with Knowledge Graphs
               </h3>
-              <ul className="space-y-3 text-xs text-slate-300">
+              <ul className="space-y-3 text-xs text-[#0B192C]/80">
                 <li className="flex items-start gap-2.5">
-                  <span className="text-emerald-400 font-bold">✓</span>
+                  <span className="text-[#059669] font-bold">✓</span>
                   <span>Deterministic 100-point rubrics immediately audit Structure, Clause Coverage, and Verification Jurats.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <span className="text-emerald-400 font-bold">✓</span>
+                  <span className="text-[#059669] font-bold">✓</span>
                   <span>Neo4j knowledge graph traversal highlights missing prerequisite dependencies and illegal restraints.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <span className="text-emerald-400 font-bold">✓</span>
+                  <span className="text-[#059669] font-bold">✓</span>
                   <span>Personalized 5-phase roadmaps and Socratic tutoring guide continuous draft revision.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <span className="text-emerald-400 font-bold">✓</span>
+                  <span className="text-[#059669] font-bold">✓</span>
                   <span>Faculty studio enables rapid brief creation, audited score overrides, and cohort analytics.</span>
                 </li>
               </ul>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 text-[11px] text-emerald-300 font-mono">
+            <div className="p-4 rounded-2xl bg-white border-2 border-[#10B981]/20 text-[11px] text-[#059669] font-mono">
               Outcome: Empirical mastery, verifiable statutory compliance, and commercial drafting confidence.
             </div>
           </div>
@@ -327,13 +322,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
       {/* ========================================================================= */}
       <section id="scanner" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="text-center max-w-2xl mx-auto space-y-2">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-accent-cyan font-mono">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#B45309] font-mono">
             Live Product Simulation
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#0B192C] tracking-tight">
             See the Analysis Engine in Action
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-[#0B192C]/70">
             Select a legal deed below to preview real-time clause extraction, statutory risk flags, and rubric scoring.
           </p>
         </div>
@@ -344,16 +339,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
       {/* ========================================================================= */}
       {/* 5. CORE FEATURES SHOWCASE */}
       {/* ========================================================================= */}
-      <section id="features" className="py-24 border-t border-slate-800/80 bg-slate-950/40">
+      <section id="features" className="py-24 border-t-2 border-[#E6E2D8] bg-[#F3F0EA]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-primary-400 font-mono">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#B45309] font-mono">
               Full Spectrum Platform Capabilities
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#0B192C] tracking-tight">
               Engineered for Law Students & Faculty Alike
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400">
+            <p className="text-xs sm:text-sm text-[#0B192C]/70">
               Every feature corresponds directly to verified backend algorithms and database tables.
             </p>
           </div>
@@ -370,35 +365,35 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
                   <div
                     key={feat.id}
                     onClick={() => setActiveFeatureIndex(idx)}
-                    className={`p-4 sm:p-5 rounded-2xl border cursor-pointer transition-all space-y-1.5 ${
+                    className={`p-4 sm:p-5 rounded-2xl border-2 cursor-pointer transition-all space-y-1.5 ${
                       isActive
-                        ? 'bg-primary-600/15 border-primary-500/50 shadow-lg shadow-primary-500/10 text-white'
-                        : 'bg-slate-900/40 border-slate-800 text-slate-400 hover:border-slate-700 hover:bg-slate-900'
+                        ? 'tactile-card bg-white border-[#1E3E62] shadow-[0_4px_#1E3E62]'
+                        : 'bg-[#FAF8F5] border-[#E6E2D8] shadow-[0_2px_#E6E2D8] hover:border-[#1E3E62]/50 hover:bg-white'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
                         <div
                           className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                            isActive ? 'bg-primary-500 text-white' : 'bg-slate-800 ' + feat.color
+                            isActive ? 'bg-[#1E3E62] text-white' : 'bg-[#E6E2D8] text-[#0B192C]'
                           }`}
                         >
                           <Icon className="w-3.5 h-3.5" />
                         </div>
-                        <h4 className="font-bold text-xs sm:text-sm text-white">{feat.title}</h4>
+                        <h4 className="font-serif font-bold text-xs sm:text-sm text-[#0B192C]">{feat.title}</h4>
                       </div>
                       <span
                         className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider font-mono ${
                           isActive
-                            ? 'bg-primary-500/20 text-primary-300 border border-primary-500/30'
-                            : 'bg-slate-800 text-slate-400'
+                            ? 'bg-[#1E3E62]/10 text-[#1E3E62] border border-[#1E3E62]/30'
+                            : 'bg-[#E6E2D8] text-[#0B192C]/70'
                         }`}
                       >
                         {feat.badge}
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-300 leading-relaxed pl-9">
+                    <p className="text-xs text-[#0B192C]/70 leading-relaxed pl-9 font-sans">
                       {feat.description}
                     </p>
                   </div>
@@ -408,31 +403,31 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
 
             {/* Feature Visual Console Preview (Right 7 Cols) */}
             <div className="col-span-12 lg:col-span-7">
-              <div className="glass-panel-glow p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6 shadow-2xl">
-                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+              <div className="tactile-card bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] space-y-6">
+                <div className="flex items-center justify-between pb-4 border-b-2 border-[#E6E2D8]">
                   <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-rose-500" />
-                    <span className="w-3 h-3 rounded-full bg-amber-500" />
-                    <span className="w-3 h-3 rounded-full bg-emerald-500" />
-                    <span className="text-xs font-mono text-slate-400 ml-2">
+                    <span className="w-3 h-3 rounded-full bg-[#DC2626]" />
+                    <span className="w-3 h-3 rounded-full bg-[#F59E0B]" />
+                    <span className="w-3 h-3 rounded-full bg-[#10B981]" />
+                    <span className="text-xs font-mono text-[#0B192C]/60 ml-2">
                       engine_runtime / {features[activeFeatureIndex].id}.ts
                     </span>
                   </div>
 
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono text-[#059669] bg-[#F0FDF4] border border-[#10B981]/30">
                     Active Execution
                   </span>
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="font-serif text-lg font-bold text-[#0B192C]">
                     {features[activeFeatureIndex].title}
                   </h3>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-[#0B192C]/75 leading-relaxed font-sans">
                     {features[activeFeatureIndex].description}
                   </p>
 
-                  <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 font-mono text-xs text-slate-200 whitespace-pre-wrap leading-relaxed">
+                  <div className="p-4 rounded-2xl bg-[#0B192C] text-[#FAF8F5] border-2 border-[#0B192C] font-mono text-xs whitespace-pre-wrap leading-relaxed shadow-inner">
                     {features[activeFeatureIndex].codeSnippet}
                   </div>
                 </div>
@@ -440,10 +435,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
                 <div className="flex justify-end pt-2">
                   <button
                     onClick={onOpenAuth}
-                    className="px-5 py-2.5 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-primary-500/20 transition-all flex items-center gap-2"
+                    className="tactile-btn px-5 py-2.5 bg-[#1E3E62] hover:bg-[#152C46] text-white font-bold text-xs rounded-xl border-b-4 border-[#0B192C] shadow-sm transition-all flex items-center gap-2 cursor-pointer"
                   >
                     <span>Launch in Studio</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5 text-[#F59E0B]" />
                   </button>
                 </div>
               </div>
@@ -457,13 +452,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
       {/* ========================================================================= */}
       <section id="ai-evaluation" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-accent-cyan font-mono">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#B45309] font-mono">
             System Architecture
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#0B192C] tracking-tight">
             How DraftForge Evaluates a Legal Document
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-[#0B192C]/70">
             A deterministic pipeline integrating semantic vector search with knowledge graph dependency checking.
           </p>
         </div>
@@ -476,61 +471,61 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
               title: 'Draft Intake',
               desc: 'Author in Monaco editor or upload .pdf/.docx/.txt',
               icon: FileEdit,
-              color: 'text-primary-400',
+              color: 'text-[#1E3E62]',
             },
             {
               step: '02',
               title: 'FastEmbed',
               desc: 'Vectorized into 384-dimensional dense embeddings',
               icon: Cpu,
-              color: 'text-indigo-400',
+              color: 'text-[#7C3AED]',
             },
             {
               step: '03',
               title: 'Qdrant RAG',
               desc: 'Matched against gold-standard statutory precedent corpus',
               icon: Database,
-              color: 'text-accent-cyan',
+              color: 'text-[#0284C7]',
             },
             {
               step: '04',
               title: 'Neo4j Aura',
               desc: 'Knowledge graph traverses prerequisite clause links',
               icon: Network,
-              color: 'text-rose-400',
+              color: 'text-[#DC2626]',
             },
             {
               step: '05',
               title: 'Deterministic Rubric',
               desc: 'Evaluates Structure, Clauses, and Jurats (0–100 pts)',
               icon: ClipboardCheck,
-              color: 'text-emerald-400',
+              color: 'text-[#059669]',
             },
             {
               step: '06',
               title: 'Roadmap & Tutor',
               desc: 'Synthesizes Socratic tips & personalized 5-phase trajectory',
               icon: GraduationCap,
-              color: 'text-accent-amber',
+              color: 'text-[#B45309]',
             },
           ].map((item, idx) => {
             const Icon = item.icon;
             return (
               <div
                 key={idx}
-                className="glass-panel p-5 rounded-3xl border border-slate-800 space-y-3 relative group hover:border-slate-700 transition-all flex flex-col justify-between"
+                className="tactile-card bg-white p-5 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3 relative group transition-all flex flex-col justify-between"
               >
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-slate-500">{item.step}</span>
+                    <span className="font-mono text-xs font-bold text-[#0B192C]/50">{item.step}</span>
                     <Icon className={`w-4 h-4 ${item.color}`} />
                   </div>
-                  <h4 className="font-bold text-xs text-white">{item.title}</h4>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">{item.desc}</p>
+                  <h4 className="font-serif font-bold text-xs text-[#0B192C]">{item.title}</h4>
+                  <p className="text-[11px] text-[#0B192C]/70 leading-relaxed font-sans">{item.desc}</p>
                 </div>
 
-                <div className="w-full h-1 bg-slate-900 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary-500/40 rounded-full" style={{ width: '100%' }} />
+                <div className="w-full h-1 bg-[#F3F0EA] rounded-full overflow-hidden">
+                  <div className="h-full bg-[#1E3E62] rounded-full" style={{ width: '100%' }} />
                 </div>
               </div>
             );
@@ -541,26 +536,26 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
       {/* ========================================================================= */}
       {/* 7. DUAL EXPERIENCE: FOR STUDENTS VS FOR FACULTY */}
       {/* ========================================================================= */}
-      <section id="students" className="py-24 border-t border-slate-800/80 bg-slate-950/60">
+      <section id="students" className="py-24 border-t-2 border-[#E6E2D8] bg-[#F3F0EA]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 font-mono">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#B45309] font-mono">
               Tailored Portals
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#0B192C] tracking-tight">
               Two Dedicated Studios. One Seamless Platform.
             </h2>
           </div>
 
           {/* Role Toggle Switch */}
           <div className="flex justify-center">
-            <div className="p-1.5 bg-slate-900 rounded-2xl border border-slate-800 flex items-center gap-2">
+            <div className="p-1.5 bg-white rounded-2xl border-2 border-[#E6E2D8] flex items-center gap-2 shadow-[0_2px_#E6E2D8]">
               <button
                 onClick={() => setActiveRoleTab('student')}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                className={`tactile-btn flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeRoleTab === 'student'
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
+                    : 'text-[#0B192C]/70 hover:text-[#0B192C] hover:bg-[#FAF8F5]'
                 }`}
               >
                 <GraduationCap className="w-4 h-4" />
@@ -568,10 +563,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
               </button>
               <button
                 onClick={() => setActiveRoleTab('faculty')}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                className={`tactile-btn flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeRoleTab === 'faculty'
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
+                    : 'text-[#0B192C]/70 hover:text-[#0B192C] hover:bg-[#FAF8F5]'
                 }`}
               >
                 <Users className="w-4 h-4" />
@@ -583,32 +578,32 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
           {/* Student Journey Showcase */}
           {activeRoleTab === 'student' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in">
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-                <div className="w-10 h-10 rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center text-primary-400">
+              <div className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
+                <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] border-2 border-[#1E3E62]/30 flex items-center justify-center text-[#1E3E62]">
                   <FileEdit className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-sm text-white">Drafting Studio & Unified Diff</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="font-serif font-bold text-sm text-[#0B192C]">Drafting Studio & Unified Diff</h3>
+                <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">
                   Author deeds with Monaco-style monospace precision, save numbered revision versions, and compare additions/deletions with live diff inspection.
                 </p>
               </div>
 
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-                <div className="w-10 h-10 rounded-2xl bg-accent-cyan/10 border border-accent-cyan/20 flex items-center justify-center text-accent-cyan">
+              <div className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
+                <div className="w-10 h-10 rounded-2xl bg-[#FFFBEB] border-2 border-[#F59E0B]/30 flex items-center justify-center text-[#B45309]">
                   <Sparkles className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-sm text-white">Socratic AI Tutor Chat</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="font-serif font-bold text-sm text-[#0B192C]">Socratic AI Tutor Chat</h3>
+                <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">
                   Engage in multi-turn legal reasoning sessions where answers are strictly grounded in retrieved statutory precedents and verified evidence.
                 </p>
               </div>
 
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-                <div className="w-10 h-10 rounded-2xl bg-accent-amber/10 border border-accent-amber/20 flex items-center justify-center text-accent-amber">
+              <div className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
+                <div className="w-10 h-10 rounded-2xl bg-[#F0FDF4] border-2 border-[#10B981]/30 flex items-center justify-center text-[#059669]">
                   <TrendingUp className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-sm text-white">5-Phase Personalized Curriculum</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="font-serif font-bold text-sm text-[#0B192C]">5-Phase Personalized Curriculum</h3>
+                <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">
                   Synthesize an adaptive milestone curriculum, verify knowledge with statutory MCQs, and track your exponential moving average (EMA) skill mastery.
                 </p>
               </div>
@@ -618,32 +613,32 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
           {/* Faculty Journey Showcase */}
           {activeRoleTab === 'faculty' && (
             <div id="faculty" className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in">
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-                <div className="w-10 h-10 rounded-2xl bg-accent-cyan/10 border border-accent-cyan/20 flex items-center justify-center text-accent-cyan">
+              <div className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
+                <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] border-2 border-[#1E3E62]/30 flex items-center justify-center text-[#1E3E62]">
                   <FileCheck className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-sm text-white">Assignment Creator</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="font-serif font-bold text-sm text-[#0B192C]">Assignment Creator</h3>
+                <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">
                   Publish drafting briefs with target document types, rubric constraints, and deadline trackers. Enforce structured coursework workflows.
                 </p>
               </div>
 
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-                <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <div className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
+                <div className="w-10 h-10 rounded-2xl bg-[#F0FDF4] border-2 border-[#10B981]/30 flex items-center justify-center text-[#059669]">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-sm text-white">Submissions Auditor & Overrides</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="font-serif font-bold text-sm text-[#0B192C]">Submissions Auditor & Overrides</h3>
+                <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">
                   Inspect student submissions, review automated evaluation breakdowns, and submit faculty score overrides backed by required audit logs.
                 </p>
               </div>
 
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-                <div className="w-10 h-10 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+              <div className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
+                <div className="w-10 h-10 rounded-2xl bg-[#FEF2F2] border-2 border-[#DC2626]/30 flex items-center justify-center text-[#DC2626]">
                   <Users className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-sm text-white">Cohort Weak-Skill Analytics</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="font-serif font-bold text-sm text-[#0B192C]">Cohort Weak-Skill Analytics</h3>
+                <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">
                   Gain class-wide intelligence into statutory clauses where students struggle, enabling targeted faculty lectures and intervention.
                 </p>
               </div>
@@ -657,13 +652,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
       {/* ========================================================================= */}
       <section id="how-it-works" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-primary-400 font-mono">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#B45309] font-mono">
             Step-by-Step Flow
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#0B192C] tracking-tight">
             How It Works in Practice
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-[#0B192C]/70">
             From raw draft to certified statutory compliance in five steps.
           </p>
         </div>
@@ -698,13 +693,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
           ].map((step, idx) => (
             <div
               key={idx}
-              className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3 relative group hover:border-primary-500/40 transition-all"
+              className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3 relative group hover:border-[#1E3E62] transition-all"
             >
-              <span className="text-3xl font-extrabold font-mono text-primary-500/40 group-hover:text-primary-400 transition-colors">
+              <span className="text-3xl font-serif font-extrabold text-[#1E3E62]/30 group-hover:text-[#1E3E62] transition-colors">
                 {step.num}
               </span>
-              <h4 className="font-bold text-sm text-white">{step.title}</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">{step.desc}</p>
+              <h4 className="font-serif font-bold text-sm text-[#0B192C]">{step.title}</h4>
+              <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">{step.desc}</p>
             </div>
           ))}
         </div>
@@ -714,18 +709,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
       {/* 9. STRATEGIC HIGH-IMPACT CTA BANNER */}
       {/* ========================================================================= */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative glass-panel-glow p-8 sm:p-14 rounded-[2.5rem] border border-primary-500/40 shadow-2xl text-center space-y-6 overflow-hidden">
-          <div className="absolute -top-24 -left-24 w-72 h-72 bg-primary-500/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-accent-cyan/20 rounded-full blur-3xl pointer-events-none" />
-
+        <div className="relative tactile-card bg-[#1E3E62] text-white p-8 sm:p-14 rounded-[2.5rem] border-4 border-[#0B192C] shadow-[0_8px_#0B192C] text-center space-y-6 overflow-hidden">
           <div className="max-w-2xl mx-auto space-y-3 relative z-10">
-            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-primary-500/10 text-primary-300 border border-primary-500/30 font-mono uppercase tracking-wider">
+            <span className="px-3.5 py-1 rounded-full text-[10px] font-bold bg-white/10 text-[#F59E0B] border border-[#F59E0B]/30 font-mono uppercase tracking-wider">
               Start Drafting Today
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
               Turn Every Draft into a Legal Mastery Milestone
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-white/80 leading-relaxed font-sans">
               Experience the power of evidence-grounded legal drafting education. Enter the DraftForge Studio now to author, audit, and master statutory compliance.
             </p>
           </div>
@@ -733,10 +725,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10 pt-2">
             <button
               onClick={onOpenAuth}
-              className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-primary-600 via-indigo-600 to-accent-cyan hover:from-primary-500 hover:to-accent-cyan text-white text-sm font-bold rounded-2xl shadow-xl shadow-primary-500/25 transition-all flex items-center justify-center gap-2 group"
+              className="tactile-btn w-full sm:w-auto px-8 py-3.5 bg-[#F59E0B] hover:bg-[#D97706] text-[#0B192C] text-sm font-bold rounded-2xl border-b-4 border-[#B45309] shadow-lg transition-all flex items-center justify-center gap-2 group cursor-pointer"
             >
               <span>Launch DraftForge Portal</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#0B192C]" />
             </button>
           </div>
         </div>

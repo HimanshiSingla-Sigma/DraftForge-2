@@ -58,6 +58,42 @@ class Settings(BaseSettings):
     EMBEDDING_PROVIDER: str = "fastembed"
     EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
 
+    # Access Control & University Onboarding Configuration
+    ALLOWED_COLLEGE_EMAIL_DOMAINS: str = "ncuindia.edu"
+    INITIAL_ADMIN_EMAIL: str = "singlahimanshi2@gmail.com"
+    INVITATION_EXPIRY_HOURS: int = 72
+    APP_BASE_URL: str = "http://localhost:5173"
+    STUDENT_EMAIL_POLICY: str = "ANY_VERIFIED"  # "ANY_VERIFIED" or "COLLEGE_DOMAIN_ONLY"
+
+    # Email Notifications Configuration
+    EMAIL_PROVIDER: str = "console"  # "console", "smtp", "resend"
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM_EMAIL: str = "noreply@draftforge.ai"
+    SMTP_FROM_NAME: str = "DraftForge Legal AI"
+    SMTP_USE_TLS: bool = True
+    RESEND_API_KEY: str = ""
+
+    def get_allowed_college_domains_list(self) -> List[str]:
+        return [
+            d.strip().lower().lstrip("@")
+            for d in self.ALLOWED_COLLEGE_EMAIL_DOMAINS.split(",")
+            if d.strip()
+        ]
+
+    def normalize_email(self, email: str) -> str:
+        return email.strip().lower() if email else ""
+
+    def is_allowed_college_email(self, email: str) -> bool:
+        norm = self.normalize_email(email)
+        if "@" not in norm:
+            return False
+        domain = norm.split("@")[-1]
+        allowed = self.get_allowed_college_domains_list()
+        return domain in allowed
+
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod
     def parse_allowed_origins(cls, value: Union[str, List[str]]) -> List[str]:
