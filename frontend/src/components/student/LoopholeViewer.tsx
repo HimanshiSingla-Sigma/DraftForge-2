@@ -9,7 +9,6 @@ import {
   AlertOctagon,
   CheckCircle2,
   Sparkles,
-  Network,
   BookOpen,
   Share2,
 } from 'lucide-react';
@@ -41,7 +40,7 @@ export const LoopholeViewer: React.FC<LoopholeViewerProps> = ({
         setSelectedNodeIndex(0);
       }
     } catch (err: any) {
-      showToast(err.response?.data?.detail || 'Error fetching graph loopholes', 'error');
+      showToast(err.response?.data?.detail || 'Error fetching doctrinal risk audit', 'error');
     } finally {
       setLoading(false);
     }
@@ -71,10 +70,10 @@ export const LoopholeViewer: React.FC<LoopholeViewerProps> = ({
     try {
       const evalRes = await api.evaluateDraft(draftId);
       await fetchLoopholes(evalRes.data.id);
-      showToast('Neo4j Graph Traversal & Risk Audit Completed!', 'success');
+      showToast('Doctrinal Risk & Fallacy Audit Completed!', 'success');
       window.dispatchEvent(new CustomEvent('draftforge:metric_update'));
     } catch (err: any) {
-      showToast(err.response?.data?.detail || 'Graph analysis failed', 'error');
+      showToast(err.response?.data?.detail || 'Risk audit failed', 'error');
     } finally {
       setAnalyzing(false);
     }
@@ -83,62 +82,64 @@ export const LoopholeViewer: React.FC<LoopholeViewerProps> = ({
   if (loading || analyzing) {
     return (
       <div className="py-24 flex justify-center">
-        <LoadingSpinner size="xl" label="Traversing Neo4j Aura Graph Dependency Topology..." />
+        <LoadingSpinner size="xl" label="Auditing statutory dependency hierarchy & doctrinal risk exposures..." />
       </div>
     );
   }
 
   if (!report) {
     return (
-      <div className="glass-panel p-8 sm:p-12 rounded-3xl border border-slate-800 space-y-6 text-center max-w-xl mx-auto animate-fade-in-up">
-        <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
-          <Network className="w-8 h-8" />
-        </div>
-        <div>
-          <h3 className="text-lg font-bold text-white tracking-tight">
-            Select Draft for Neo4j Graph Loophole Analysis
-          </h3>
-          <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-            Traverse dependency chains and identify missing prerequisite clauses, statutory risk exposures, and legal loopholes.
-          </p>
-        </div>
+      <div className="space-y-6 font-sans max-w-2xl mx-auto py-8">
+        <div className="bg-[#FFFFFF] p-8 sm:p-10 rounded-lg border border-[#E5DED2] shadow-sm space-y-6 text-center animate-fade-in-up">
+          <div className="w-14 h-14 rounded bg-[#FFDAD6] border border-[#BA1A1A]/30 flex items-center justify-center mx-auto text-[#BA1A1A]">
+            <ShieldAlert className="w-7 h-7" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="font-serif text-2xl font-medium text-[#20344A] tracking-tight">
+              Select Draft for Doctrinal Fallacy & Risk Audit
+            </h3>
+            <p className="text-xs text-[#74777D] max-w-md mx-auto leading-relaxed">
+              Scan dependency hierarchies to identify missing prerequisite covenants, unmitigated liabilities, and contractual vulnerabilities.
+            </p>
+          </div>
 
-        {drafts.length > 0 ? (
-          <div className="space-y-2.5 text-left pt-2">
-            {drafts.map((d) => (
-              <div
-                key={d.id}
-                onClick={() => handleEvaluateAndAnalyze(d.id)}
-                className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-rose-500/50 cursor-pointer flex items-center justify-between transition-all group"
-              >
-                <div>
-                  <span className="font-bold text-xs text-white group-hover:text-rose-300 transition-colors">
-                    {d.title}
-                  </span>
-                  <span className="block text-[10px] text-slate-400 font-mono mt-0.5">
-                    {d.document_type.replace(/_/g, ' ')} • {d.versions?.length || 1} Revisions
-                  </span>
+          {drafts.length > 0 ? (
+            <div className="space-y-2 text-left pt-2">
+              {drafts.map((d) => (
+                <div
+                  key={d.id}
+                  onClick={() => handleEvaluateAndAnalyze(d.id)}
+                  className="p-4 rounded border border-[#E5DED2] hover:border-[#20344A] bg-[#FBF8F2] hover:bg-white cursor-pointer flex items-center justify-between transition-all group"
+                >
+                  <div>
+                    <span className="font-serif font-medium text-sm text-[#20344A] group-hover:text-[#C78335] transition-colors">
+                      {d.title}
+                    </span>
+                    <span className="block text-xs text-[#74777D] font-mono mt-0.5">
+                      {d.document_type.replace(/_/g, ' ')} • {d.versions?.length || 1} Revisions
+                    </span>
+                  </div>
+                  <button className="px-3.5 py-1.5 bg-[#20344A] group-hover:bg-[#152332] text-white rounded text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer">
+                    <span>Audit Risks</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#C78335]" />
+                  </button>
                 </div>
-                <button className="px-3.5 py-1.5 bg-rose-500/10 text-rose-300 group-hover:bg-rose-500/20 border border-rose-500/30 rounded-xl text-xs font-bold transition-all flex items-center gap-1">
-                  <span>Audit Graph</span>
-                  <ArrowRight className="w-3 h-3" />
+              ))}
+            </div>
+          ) : (
+            <div className="p-6 bg-[#FBF8F2] rounded border border-[#E5DED2] text-xs text-[#74777D] space-y-3">
+              <p>No drafts available for analysis.</p>
+              {onNavigateToWorkspace && (
+                <button
+                  onClick={onNavigateToWorkspace}
+                  className="px-4 py-2 bg-[#20344A] text-white text-xs font-semibold rounded transition-all cursor-pointer"
+                >
+                  Author a Draft First
                 </button>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="p-6 bg-slate-900/60 rounded-2xl border border-slate-800 text-xs text-slate-400 space-y-3">
-            <p>No drafts available for analysis.</p>
-            {onNavigateToWorkspace && (
-              <button
-                onClick={onNavigateToWorkspace}
-                className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white text-xs font-bold rounded-xl shadow transition-all"
-              >
-                Create a Draft
-              </button>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
+        </div>
       </div>
     );
   }
@@ -155,127 +156,125 @@ export const LoopholeViewer: React.FC<LoopholeViewerProps> = ({
   return (
     <div className="space-y-6 animate-fade-in font-sans">
       {/* Top Banner */}
-      <div className="tactile-card bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] space-y-6">
+      <header className="bg-[#FFFFFF] p-6 lg:p-8 rounded-lg border border-[#E5DED2] shadow-sm space-y-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#FEF2F2] border-2 border-[#DC2626]/30 flex items-center justify-center text-[#DC2626] shrink-0">
-              <Network className="w-6 h-6" />
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] uppercase tracking-wider text-[#C78335] font-semibold bg-[#FBF0E4] px-2 py-0.5 rounded">
+                Doctrinal Fallacy & Risk Audit
+              </span>
+              <span className="text-xs text-[#74777D] font-mono">
+                {report.document_type.replace(/_/g, ' ')}
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-[#0B192C]/60 uppercase tracking-wider font-mono">
-                  Neo4j Graph Reasoning
-                </span>
-                <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#DC2626]/30 font-mono">
-                  {report.document_type}
-                </span>
-              </div>
-              <h2 className="font-serif text-2xl font-extrabold text-[#0B192C] tracking-tight mt-0.5">
-                GraphRAG Structural Loophole Analysis
-              </h2>
-            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl font-medium text-[#20344A] tracking-tight">
+              Structural Risk & Statutory Exposure Analysis
+            </h2>
+            <p className="text-xs text-[#74777D]">
+              Examine prerequisite clause dependencies, enforce mandatory covenants, and mitigate legal vulnerabilities.
+            </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="px-4 py-2 bg-[#FEF2F2] border-2 border-[#DC2626]/30 rounded-2xl text-xs font-bold text-[#DC2626] font-mono shadow-sm">
-              {report.high_severity_count} High Severity Risks
+          <div className="flex items-center gap-2.5">
+            <div className="px-3.5 py-1.5 bg-[#FFDAD6] border border-[#BA1A1A]/30 rounded text-xs font-semibold text-[#BA1A1A]">
+              {report.high_severity_count} Critical Risks
             </div>
-            <div className="px-4 py-2 bg-[#F3F0EA] border-2 border-[#E6E2D8] rounded-2xl text-xs font-bold text-[#0B192C] font-mono">
-              {report.total_loopholes} Total Gaps
+            <div className="px-3.5 py-1.5 bg-[#FBF8F2] border border-[#E5DED2] rounded text-xs text-[#20344A] font-medium">
+              {report.total_loopholes} Total Observations
             </div>
           </div>
         </div>
 
         {/* Severity Filter Tabs */}
-        <div className="flex items-center gap-2 pt-2 border-t-2 border-[#E6E2D8]">
-          <span className="text-xs text-[#0B192C]/70 font-semibold mr-2 font-mono">Filter Severity:</span>
+        <div className="flex items-center gap-2 pt-3 border-t border-[#E5DED2]">
+          <span className="text-xs text-[#74777D] font-medium mr-1">Filter Severity:</span>
           {(['ALL', 'HIGH', 'MEDIUM', 'LOW'] as const).map((sev) => (
             <button
               key={sev}
               onClick={() => setSeverityFilter(sev)}
-              className={`tactile-btn px-3.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded text-xs font-medium transition-all ${
                 severityFilter === sev
-                  ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
-                  : 'bg-[#F3F0EA] text-[#0B192C]/70 hover:text-[#0B192C] border-2 border-[#E6E2D8]'
+                  ? 'bg-[#20344A] text-white font-semibold'
+                  : 'bg-[#FBF8F2] text-[#74777D] hover:text-[#20344A] border border-[#E5DED2]'
               }`}
             >
               {sev}
             </button>
           ))}
         </div>
-      </div>
+      </header>
 
-      {/* Interactive Graph Topology Visualizer (Only if loopholes exist) */}
+      {/* Interactive Dependency Hierarchy Visualizer */}
       {report.loopholes.length > 0 && activeLoophole && (
-        <div className="tactile-card bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] space-y-6">
-          <div className="flex items-center justify-between border-b-2 border-[#E6E2D8] pb-3">
+        <div className="bg-[#FFFFFF] p-6 lg:p-8 rounded-lg border border-[#E5DED2] shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E5DED2]">
             <div className="flex items-center gap-2">
-              <Share2 className="w-4 h-4 text-[#1E3E62]" />
-              <h3 className="font-serif font-bold text-sm sm:text-base text-[#0B192C] tracking-tight">
-                Interactive Graph Knowledge Topology
+              <Share2 className="w-4 h-4 text-[#C78335]" />
+              <h3 className="font-serif font-medium text-base text-[#20344A]">
+                Statutory Dependency Topology
               </h3>
             </div>
-            <span className="text-[10px] font-mono text-[#0B192C]/60">
-              Traversed from Neo4j Aura Graph Database
+            <span className="text-[11px] text-[#74777D] font-mono">
+              Cross-Referenced Statutory Framework
             </span>
           </div>
 
           {/* SVG Knowledge Graph Visualizer */}
-          <div className="relative rounded-2xl bg-[#FAF8F5] p-6 border-2 border-[#E6E2D8] overflow-x-auto shadow-inner">
-            <div className="min-w-[650px] flex items-center justify-between gap-4 relative py-8">
+          <div className="relative rounded bg-[#FBF8F2] p-6 border border-[#E5DED2] overflow-x-auto">
+            <div className="min-w-[640px] flex items-center justify-between gap-4 relative py-6">
               {/* SVG Connecting Curves */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
                 <path
-                  d="M 100 70 C 180 70, 180 70, 260 70"
-                  stroke="#1E3E62"
+                  d="M 120 60 C 200 60, 200 60, 280 60"
+                  stroke="#20344A"
                   strokeWidth="2"
                   strokeDasharray="4 4"
                   fill="none"
                 />
                 <path
-                  d="M 370 70 C 440 70, 440 70, 520 70"
-                  stroke="#DC2626"
+                  d="M 380 60 C 450 60, 450 60, 520 60"
+                  stroke="#C78335"
                   strokeWidth="2"
                   fill="none"
                 />
               </svg>
 
               {/* Node 1: Contract Document Node */}
-              <div className="relative z-10 p-4 rounded-2xl bg-white border-2 border-[#1E3E62] text-center shadow-[0_3px_#1E3E62] w-44">
-                <span className="text-[9px] font-mono font-bold text-[#1E3E62] block uppercase">
-                  DOCUMENT NODE
+              <div className="relative z-10 p-4 rounded bg-white border border-[#20344A] text-center shadow-xs w-44">
+                <span className="text-[10px] font-semibold text-[#20344A] block uppercase tracking-wider">
+                  Document Standard
                 </span>
-                <span className="text-xs font-serif font-bold text-[#0B192C] block truncate mt-1">
+                <span className="text-xs font-serif font-medium text-[#20344A] block truncate mt-1">
                   {report.document_type.replace(/_/g, ' ')}
                 </span>
-                <span className="text-[9px] font-mono text-[#059669] mt-1 block font-bold">
+                <span className="text-[10px] text-[#557B68] mt-1 block font-semibold">
                   ● Tested Draft
                 </span>
               </div>
 
               {/* Node 2: Missing Prerequisite Node */}
-              <div className="relative z-10 p-4 rounded-2xl bg-[#FEF2F2] border-2 border-[#DC2626] text-center shadow-[0_3px_#DC2626] w-48 animate-pulse-glow">
-                <span className="text-[9px] font-mono font-bold text-[#DC2626] block uppercase">
-                  MISSING PREREQUISITE
+              <div className="relative z-10 p-4 rounded bg-[#FFDAD6] border border-[#BA1A1A] text-center shadow-xs w-48">
+                <span className="text-[10px] font-semibold text-[#BA1A1A] block uppercase tracking-wider">
+                  Missing Prerequisite
                 </span>
-                <span className="text-xs font-serif font-extrabold text-[#0B192C] block truncate mt-1">
+                <span className="text-xs font-serif font-semibold text-[#BA1A1A] block truncate mt-1">
                   {activeLoophole.prerequisite_clause_name || activeLoophole.related_clause_name || 'Clause Boundary'}
                 </span>
-                <span className="text-[9px] font-mono text-[#DC2626] mt-1 block font-bold">
+                <span className="text-[10px] text-[#BA1A1A] mt-1 block font-medium">
                   ⚠ Unmet Dependency
                 </span>
               </div>
 
               {/* Node 3: Risk Exposure & Skill Target Node */}
-              <div className="relative z-10 p-4 rounded-2xl bg-white border-2 border-[#F59E0B] text-center shadow-[0_3px_#F59E0B] w-48">
-                <span className="text-[9px] font-mono font-bold text-[#B45309] block uppercase">
-                  EXPOSED RISK
+              <div className="relative z-10 p-4 rounded bg-white border border-[#C78335] text-center shadow-xs w-48">
+                <span className="text-[10px] font-semibold text-[#C78335] block uppercase tracking-wider">
+                  Exposed Liability
                 </span>
-                <span className="text-xs font-serif font-bold text-[#0B192C] block truncate mt-1">
-                  {activeLoophole.risk_name || 'Unmitigated Liability'}
+                <span className="text-xs font-serif font-medium text-[#20344A] block truncate mt-1">
+                  {activeLoophole.risk_name || 'Unmitigated Exposure'}
                 </span>
-                <span className="text-[9px] font-mono text-[#1E3E62] mt-1 block truncate font-bold">
-                  🎯 {activeLoophole.skill_name || 'Remedial Drafting'}
+                <span className="text-[10px] text-[#20344A] mt-1 block truncate font-medium">
+                  🎯 {activeLoophole.skill_name || 'Targeted Revision'}
                 </span>
               </div>
             </div>
@@ -285,11 +284,11 @@ export const LoopholeViewer: React.FC<LoopholeViewerProps> = ({
 
       {/* Loopholes Cards Grid */}
       {filteredLoopholes.length === 0 ? (
-        <div className="tactile-card bg-white p-12 text-center rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3">
-          <CheckCircle2 className="w-12 h-12 text-[#059669] mx-auto" />
-          <h3 className="font-serif text-base font-bold text-[#0B192C]">No Gaps Detected</h3>
-          <p className="text-xs text-[#0B192C]/70 max-w-md mx-auto font-sans">
-            The draft satisfies all prerequisite structural nodes and unmitigated risk relationships in the knowledge graph.
+        <div className="bg-[#FFFFFF] p-12 text-center rounded-lg border border-[#E5DED2] shadow-sm space-y-3">
+          <CheckCircle2 className="w-10 h-10 text-[#557B68] mx-auto" />
+          <h3 className="font-serif text-lg font-medium text-[#20344A]">No Structural Vulnerabilities Detected</h3>
+          <p className="text-xs text-[#74777D] max-w-md mx-auto leading-relaxed">
+            The draft satisfies all prerequisite structural clauses and statutory covenants in the reference hierarchy.
           </p>
         </div>
       ) : (
@@ -303,88 +302,88 @@ export const LoopholeViewer: React.FC<LoopholeViewerProps> = ({
               <div
                 key={idx}
                 onClick={() => setSelectedNodeIndex(idx)}
-                className={`tactile-card bg-white p-6 rounded-3xl border-2 transition-all space-y-4 cursor-pointer ${
+                className={`bg-[#FFFFFF] p-6 rounded-lg border transition-all space-y-4 cursor-pointer shadow-xs ${
                   isSelected
-                    ? 'border-[#1E3E62] shadow-[0_6px_#1E3E62]'
+                    ? 'border-[#20344A] ring-1 ring-[#20344A]'
                     : isHigh
-                    ? 'border-[#DC2626]/40 shadow-[0_4px_#E6E2D8] hover:border-[#DC2626]'
+                    ? 'border-[#BA1A1A]/40 hover:border-[#BA1A1A]'
                     : isMedium
-                    ? 'border-[#F59E0B]/40 shadow-[0_4px_#E6E2D8] hover:border-[#F59E0B]'
-                    : 'border-[#E6E2D8] shadow-[0_4px_#E6E2D8] hover:border-[#1E3E62]'
+                    ? 'border-[#C78335]/40 hover:border-[#C78335]'
+                    : 'border-[#E5DED2] hover:border-[#20344A]'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border-2 ${
+                      className={`w-8 h-8 rounded flex items-center justify-center shrink-0 border ${
                         isHigh
-                          ? 'bg-[#FEF2F2] text-[#DC2626] border-[#DC2626]/30'
-                          : 'bg-[#FFFBEB] text-[#B45309] border-[#F59E0B]/30'
+                          ? 'bg-[#FFDAD6] text-[#BA1A1A] border-[#BA1A1A]/30'
+                          : 'bg-[#FBF0E4] text-[#C78335] border-[#C78335]/30'
                       }`}
                     >
-                      <ShieldAlert className="w-5 h-5" />
+                      <ShieldAlert className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="font-serif font-bold text-sm text-[#0B192C]">{lh.title}</h4>
-                      <span className="text-[10px] font-mono text-[#0B192C]/60">
-                        Gap Type: {lh.gap_type}
+                      <h4 className="font-serif font-medium text-base text-[#20344A]">{lh.title}</h4>
+                      <span className="text-[11px] text-[#74777D] font-mono">
+                        Classification: {lh.gap_type}
                       </span>
                     </div>
                   </div>
 
                   <span
-                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider font-mono self-start sm:self-auto border-2 ${
+                    className={`px-2.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider self-start sm:self-auto ${
                       isHigh
-                        ? 'bg-[#FEF2F2] text-[#DC2626] border-[#DC2626]/40'
+                        ? 'bg-[#FFDAD6] text-[#BA1A1A]'
                         : isMedium
-                        ? 'bg-[#FFFBEB] text-[#B45309] border-[#F59E0B]/40'
-                        : 'bg-[#F3F0EA] text-[#0B192C] border-[#E6E2D8]'
+                        ? 'bg-[#FBF0E4] text-[#C78335]'
+                        : 'bg-[#FBF8F2] text-[#20344A] border border-[#E5DED2]'
                     }`}
                   >
                     {lh.severity} RISK
                   </span>
                 </div>
 
-                <p className="text-xs text-[#0B192C]/80 leading-relaxed bg-[#FAF8F5] p-4 rounded-2xl border-2 border-[#E6E2D8] font-sans">
+                <p className="text-xs text-[#43474D] leading-relaxed bg-[#FBF8F2] p-4 rounded border border-[#E5DED2]">
                   {lh.educational_observation}
                 </p>
 
                 {/* Missing Dependency Graph Flow */}
                 {lh.prerequisite_clause_name && (
-                  <div className="flex flex-wrap items-center gap-2 p-3 bg-[#F3F0EA] rounded-xl border-2 border-[#E6E2D8] text-xs font-mono">
-                    <span className="text-[#DC2626] font-bold">{lh.related_clause_name}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#0B192C]/50" />
-                    <span className="text-[#0B192C]/70">Missing Prerequisite Node:</span>
-                    <span className="text-[#059669] font-bold px-2 py-0.5 rounded bg-[#F0FDF4] border border-[#10B981]/30">
+                  <div className="flex flex-wrap items-center gap-2 p-2.5 bg-[#FBF8F2] rounded border border-[#E5DED2] text-xs">
+                    <span className="text-[#BA1A1A] font-medium">{lh.related_clause_name}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#74777D]" />
+                    <span className="text-[#74777D]">Missing Prerequisite Covenant:</span>
+                    <span className="text-[#557B68] font-semibold px-2 py-0.5 rounded bg-[#E8F3ED]">
                       {lh.prerequisite_clause_name}
                     </span>
                   </div>
                 )}
 
                 {/* Risk & Skill Meta */}
-                <div className="flex flex-wrap items-center gap-3 text-[11px]">
+                <div className="flex flex-wrap items-center gap-2.5 text-xs">
                   {lh.risk_name && (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FEF2F2] border-2 border-[#DC2626]/30 text-[#DC2626] font-mono">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#FFDAD6] text-[#BA1A1A]">
                       <AlertOctagon className="w-3.5 h-3.5" />
                       <span>Exposes: {lh.risk_name}</span>
                     </div>
                   )}
 
                   {lh.skill_name && (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EFF6FF] border-2 border-[#1E3E62]/30 text-[#1E3E62] font-mono">
-                      <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#FBF8F2] border border-[#E5DED2] text-[#20344A]">
+                      <Sparkles className="w-3.5 h-3.5 text-[#C78335]" />
                       <span>Skill Target: {lh.skill_name}</span>
                     </div>
                   )}
                 </div>
 
                 {/* Actionable Reference Recommendation */}
-                <div className="p-4 bg-[#FFFBEB] rounded-2xl border-2 border-[#F59E0B]/30 text-xs space-y-1.5">
-                  <div className="flex items-center gap-2 text-[#B45309] font-bold text-[11px] uppercase tracking-wider font-mono">
+                <div className="p-3.5 bg-[#FBF0E4] rounded border border-[#C78335]/30 text-xs space-y-1">
+                  <div className="flex items-center gap-1.5 text-[#C78335] font-semibold text-[11px] uppercase tracking-wider">
                     <BookOpen className="w-3.5 h-3.5" />
-                    <span>Statutory Remediation Advice:</span>
+                    <span>Statutory Remediation Guidance:</span>
                   </div>
-                  <p className="text-[#0B192C]/80 leading-relaxed font-sans">
+                  <p className="text-[#20344A] leading-relaxed">
                     {lh.reference_recommendation}
                   </p>
                 </div>

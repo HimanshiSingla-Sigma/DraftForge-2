@@ -19,7 +19,7 @@ const MainLayout: React.FC = () => {
   const getInitialTab = () => {
     if (isAdmin) return 'admin_dashboard';
     if (isTeacher) return 'teacher_assignments';
-    return 'workspace';
+    return 'dashboard';
   };
 
   const [activeTab, setActiveTab] = useState<string>(getInitialTab());
@@ -34,11 +34,11 @@ const MainLayout: React.FC = () => {
 
   useEffect(() => {
     if (isAdmin) {
-      setActiveTab((prev) => (prev === 'workspace' ? 'admin_dashboard' : prev));
+      setActiveTab((prev) => (prev === 'workspace' || prev === 'dashboard' ? 'admin_dashboard' : prev));
     } else if (isTeacher) {
-      setActiveTab((prev) => (prev === 'workspace' ? 'teacher_assignments' : prev));
+      setActiveTab((prev) => (prev === 'workspace' || prev === 'dashboard' ? 'teacher_assignments' : prev));
     } else {
-      setActiveTab('workspace');
+      setActiveTab('dashboard');
     }
   }, [user?.role, isAdmin, isTeacher]);
 

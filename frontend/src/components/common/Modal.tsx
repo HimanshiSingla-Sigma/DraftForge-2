@@ -51,30 +51,30 @@ export const Modal: React.FC<ModalProps> = ({
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-[#0B192C]/60 backdrop-blur-sm transition-opacity animate-fade-in"
+        className="fixed inset-0 bg-[#20344A]/40 backdrop-blur-xs transition-opacity animate-fade-in"
         onClick={onClose}
       />
 
       {/* Modal Container */}
       <div
-        className={`relative w-full ${maxWidthClasses[maxWidth]} bg-white rounded-3xl shadow-[0_8px_#0B192C] border-2 border-[#0B192C] overflow-hidden z-10 animate-scale-in my-8 max-h-[90vh] flex flex-col`}
+        className={`relative w-full ${maxWidthClasses[maxWidth]} bg-white rounded-lg shadow-xl border border-[#E5DED2] overflow-hidden z-10 animate-scale-in my-8 max-h-[90vh] flex flex-col font-sans`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 sm:p-6 border-b-2 border-[#E6E2D8] bg-[#FAF8F5]">
+        <div className="flex items-center justify-between p-5 sm:p-6 border-b border-[#E5DED2] bg-[#FBF8F2]">
           <div className="flex items-center gap-3">
             {icon && (
-              <div className="w-10 h-10 rounded-2xl bg-[#1E3E62] border-2 border-[#0B192C] flex items-center justify-center text-[#F59E0B] shadow-[0_2px_#0B192C]">
+              <div className="w-9 h-9 rounded bg-[#F4EFEA] border border-[#E5DED2] flex items-center justify-center text-[#C78335] shadow-xs">
                 {icon}
               </div>
             )}
             <div>
-              <h3 className="font-serif text-lg sm:text-xl font-black text-[#0B192C] tracking-tight">{title}</h3>
-              {subtitle && <p className="text-xs text-[#5A6A80] mt-0.5">{subtitle}</p>}
+              <h3 className="font-serif text-lg sm:text-xl font-medium text-[#20344A] tracking-tight">{title}</h3>
+              {subtitle && <p className="text-xs text-[#74777D] mt-0.5">{subtitle}</p>}
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-[#5A6A80] hover:text-rose-600 hover:bg-rose-50 transition-colors border-2 border-[#E6E2D8] border-b-4 border-b-[#D5CEBE] bg-white tactile-btn"
+            className="p-1.5 rounded text-[#74777D] hover:text-[#20344A] hover:bg-[#F3EFE6] transition-colors border border-transparent hover:border-[#E5DED2]"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -82,7 +82,7 @@ export const Modal: React.FC<ModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-5 sm:p-6 overflow-y-auto flex-1 bg-white text-[#0B192C]">{children}</div>
+        <div className="p-5 sm:p-6 overflow-y-auto flex-1 bg-white text-[#20344A]">{children}</div>
       </div>
     </div>,
     document.body

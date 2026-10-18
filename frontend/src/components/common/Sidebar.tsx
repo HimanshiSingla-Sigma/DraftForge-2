@@ -15,8 +15,9 @@ import {
   FileCheck,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   Layers,
+  LayoutDashboard,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -42,60 +43,58 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const studentNavItems = [
     {
+      id: 'dashboard',
+      label: 'Student Dashboard',
+      icon: LayoutDashboard,
+      badge: 'Overview',
+    },
+    {
       id: 'workspace',
-      label: 'Drafting Workspace',
+      label: 'Draft Studio',
       icon: FileEdit,
       badge: 'Editor',
-      color: 'text-primary-400',
     },
     {
       id: 'assignments',
-      label: 'Class Assignments',
+      label: 'Course Assignments',
       icon: FolderArchive,
-      badge: 'Portal',
-      color: 'text-accent-cyan',
+      badge: 'Docket',
     },
     {
       id: 'evaluations',
-      label: 'Evaluation & Evidence',
+      label: 'Evaluation Report',
       icon: ClipboardCheck,
-      badge: '100 pts',
-      color: 'text-accent-emerald',
+      badge: 'Rubric',
     },
     {
       id: 'loopholes',
-      label: 'GraphRAG Loopholes',
+      label: 'Doctrinal Fallacy Audit',
       icon: ShieldAlert,
-      badge: 'Neo4j',
-      color: 'text-accent-rose',
+      badge: 'Audit',
     },
     {
       id: 'learning',
-      label: 'AI Roadmap & Tutor',
+      label: 'AI Legal Tutor',
       icon: GraduationCap,
       badge: 'Socratic',
-      color: 'text-indigo-400',
     },
     {
       id: 'quizzes',
-      label: 'Interactive Quizzes',
+      label: 'Practice Exercises',
       icon: HelpCircle,
-      badge: 'Practice',
-      color: 'text-accent-amber',
+      badge: 'Drills',
     },
     {
       id: 'progress',
-      label: 'Skills & Leaderboard',
+      label: 'Core Competencies',
       icon: TrendingUp,
-      badge: 'Analytics',
-      color: 'text-accent-emerald',
+      badge: 'Rank',
     },
     {
       id: 'reference_corpus',
-      label: 'Reference Corpus',
+      label: 'Precedent Library',
       icon: BookOpen,
-      badge: 'RAG',
-      color: 'text-slate-400',
+      badge: 'Corpus',
     },
   ];
 
@@ -105,52 +104,45 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'Manage Assignments',
       icon: FileCheck,
       badge: 'Faculty',
-      color: 'text-accent-cyan',
     },
     {
       id: 'teacher_submissions',
       label: 'Submissions Auditor',
       icon: ClipboardCheck,
       badge: 'Grading',
-      color: 'text-accent-emerald',
     },
     {
       id: 'teacher_sections',
-      label: 'Sections & Rosters',
+      label: 'Section Roster',
       icon: Layers,
-      badge: 'Sections',
-      color: 'text-[#1E3E62]',
+      badge: 'Roster',
     },
     {
       id: 'teacher_reference',
-      label: 'Ingest Reference Corpus',
+      label: 'Statutory Precedents',
       icon: UploadCloud,
-      badge: 'Qdrant RAG',
-      color: 'text-indigo-400',
+      badge: 'Corpus',
     },
     {
       id: 'teacher_analytics',
-      label: 'Cohort Intelligence',
+      label: 'Cohort Overview',
       icon: Users,
       badge: 'Analytics',
-      color: 'text-accent-amber',
     },
     {
       id: 'workspace',
       label: 'Student Studio View',
       icon: FileEdit,
-      badge: 'Student',
-      color: 'text-[#1E3E62]',
+      badge: 'Preview',
     },
   ];
 
   const adminNavItems = [
     {
       id: 'admin_dashboard',
-      label: 'Admin Command Center',
+      label: 'Institutional Admin',
       icon: Shield,
       badge: 'NCU Admin',
-      color: 'text-[#F59E0B]',
     },
     ...teacherNavItems,
   ];
@@ -167,32 +159,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Backdrop Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-[#0B192C]/40 backdrop-blur-sm z-30 lg:hidden animate-fade-in"
+          className="fixed inset-0 bg-[#101D29]/40 backdrop-blur-sm z-30 lg:hidden animate-fade-in"
           onClick={() => setIsMobileMenuOpen && setIsMobileMenuOpen(false)}
         />
       )}
 
       <aside
-        className={`fixed lg:static top-16 bottom-0 left-0 z-30 bg-[#FAF8F5] border-r-2 border-[#E6E2D8] flex flex-col justify-between transition-all duration-300 ${
+        className={`fixed lg:static top-16 bottom-0 left-0 z-30 bg-[#FBF8F2] border-r border-[#E5DED2] flex flex-col justify-between transition-all duration-300 font-sans ${
           isMobileMenuOpen
             ? 'translate-x-0 w-64'
             : ' -translate-x-full lg:translate-x-0 ' + (isCollapsed ? 'w-20' : 'w-64')
         }`}
       >
         {/* Nav Items */}
-        <div className="p-3 space-y-1.5 overflow-y-auto">
+        <div className="p-3 space-y-1 overflow-y-auto">
           <div className="px-3 py-2 flex items-center justify-between">
             <span
-              className={`text-[10px] font-bold text-[#5A6A80] uppercase tracking-wider font-mono ${
+              className={`text-[10px] font-semibold text-[#687584] uppercase tracking-wider font-sans ${
                 isCollapsed ? 'hidden' : 'block'
               }`}
             >
-              {isAdmin ? 'Root Administration' : isTeacher ? 'Faculty Portal' : 'Student Studio'}
+              {isAdmin ? 'University Administration' : isTeacher ? 'Faculty Governance' : 'Academic Syllabus & Tools'}
             </span>
             {setIsCollapsed && (
               <button
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="hidden lg:flex p-1 rounded-lg text-[#5A6A80] hover:text-[#0B192C] hover:bg-[#F3F0EA] transition-colors"
+                className="hidden lg:flex p-1 rounded text-[#687584] hover:text-[#20344A] hover:bg-[#F5F0E7] transition-colors"
                 title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               >
                 {isCollapsed ? (
@@ -211,21 +203,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 key={item.id}
                 onClick={() => handleSelectTab(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-xs font-bold transition-all relative group ${
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all relative group cursor-pointer font-sans ${
                   isActive
-                    ? 'tactile-btn bg-[#1E3E62] text-white border-2 border-[#0B192C] border-b-4 border-b-[#0B192C] shadow-[0_3px_#0B192C]'
-                    : 'text-[#0B192C] hover:bg-white border-2 border-transparent hover:border-[#E6E2D8]'
+                    ? 'bg-[#20344A] text-white shadow-sm'
+                    : 'text-[#43566B] hover:bg-[#F5F0E7] hover:text-[#20344A]'
                 }`}
                 title={isCollapsed ? item.label : undefined}
               >
                 <div
-                  className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                  className={`w-6 h-6 rounded flex items-center justify-center shrink-0 transition-colors ${
                     isActive
-                      ? 'bg-[#F59E0B] text-[#0B192C] font-black shadow-sm'
-                      : 'bg-[#F3F0EA] text-[#1E3E62] group-hover:bg-[#E6E2D8]'
+                      ? 'text-[#C78335]'
+                      : 'text-[#687584] group-hover:text-[#20344A]'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-4 h-4" />
                 </div>
 
                 {!isCollapsed && (
@@ -233,10 +225,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <span className="truncate">{item.label}</span>
                     {item.badge && (
                       <span
-                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider font-mono ${
+                        className={`text-[10px] px-1.5 py-0.5 rounded font-sans uppercase tracking-wider ${
                           isActive
-                            ? 'bg-white/20 text-white'
-                            : 'bg-[#F3F0EA] text-[#5A6A80] border border-[#E6E2D8]'
+                            ? 'bg-white/15 text-white'
+                            : 'bg-[#F5F0E7] text-[#687584] border border-[#E5DED2]'
                         }`}
                       >
                         {item.badge}
@@ -249,20 +241,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
           })}
         </div>
 
-        {/* Bottom System Pro Card */}
+        {/* Bottom Institutional Plaque */}
         {!isCollapsed && (
-          <div className="p-3.5 m-3 rounded-2xl bg-white border-2 border-[#E6E2D8] shadow-[0_3px_#E6E2D8]">
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
-              <p className="font-serif text-xs font-black text-[#0B192C]">Hybrid Reasoning</p>
+          <div className="p-3 m-3 rounded-lg bg-white border border-[#E5DED2] shadow-sm">
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#557B68]" />
+                <span className="text-xs font-medium text-[#20344A] font-serif">Syllabus v4.2 Active</span>
+              </div>
+              <span className="px-1.5 py-0.5 bg-[#F5F0E7] border border-[#E5DED2] rounded text-[10px] font-sans font-medium text-[#20344A]">
+                Law II
+              </span>
             </div>
-            <p className="text-[10px] text-[#5A6A80] leading-relaxed mb-2">
-              Deterministic rubrics verified against Qdrant RAG and Neo4j Aura graphs.
+            <p className="text-[11px] text-[#687584] leading-relaxed font-sans">
+              Formative IRAC evaluation & Bluebook citation rubrics calibrated for Michaelmas term.
             </p>
-            <div className="flex items-center justify-between text-[9px] font-mono text-[#5A6A80] pt-2 border-t border-[#E6E2D8]">
-              <span>FastEmbed (384-dim)</span>
-              <span className="text-[#059669] font-bold">Ready</span>
-            </div>
           </div>
         )}
       </aside>

@@ -38,52 +38,52 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`pointer-events-auto p-4 rounded-2xl shadow-[0_4px_#0B192C] border-2 bg-white flex items-center justify-between gap-3 animate-slide-in-right transform-gpu transition-all ${
+            className={`pointer-events-auto p-3.5 rounded-lg shadow-md border bg-white flex items-center justify-between gap-3 animate-slide-in-right transform-gpu transition-all font-sans ${
               toast.type === 'success'
-                ? 'border-[#059669]'
+                ? 'border-[#557B68]/40 border-l-4 border-l-[#557B68]'
                 : toast.type === 'error'
-                ? 'border-[#DC2626]'
+                ? 'border-rose-300 border-l-4 border-l-rose-600'
                 : toast.type === 'warning'
-                ? 'border-[#D97706]'
-                : 'border-[#0B192C]'
+                ? 'border-amber-300 border-l-4 border-l-[#C78335]'
+                : 'border-[#E5DED2] border-l-4 border-l-[#20344A]'
             }`}
           >
             <div className="flex items-center gap-3">
               <div
-                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border-2 ${
+                className={`w-7 h-7 rounded flex items-center justify-center shrink-0 border ${
                   toast.type === 'success'
-                    ? 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]'
+                    ? 'bg-[#E8F3ED] text-[#557B68] border-[#557B68]/30'
                     : toast.type === 'error'
-                    ? 'bg-rose-50 text-rose-600 border-rose-200'
+                    ? 'bg-rose-50 text-rose-700 border-rose-200'
                     : toast.type === 'warning'
-                    ? 'bg-amber-50 text-amber-600 border-amber-200'
-                    : 'bg-[#FAF8F5] text-[#1E3E62] border-[#E6E2D8]'
+                    ? 'bg-[#FBF0E4] text-[#C78335] border-[#C78335]/30'
+                    : 'bg-[#F4EFEA] text-[#20344A] border-[#E5DED2]'
                 }`}
               >
-                {toast.type === 'success' && <CheckCircle2 className="w-4 h-4" />}
-                {toast.type === 'error' && <AlertCircle className="w-4 h-4" />}
-                {toast.type === 'warning' && <AlertCircle className="w-4 h-4" />}
-                {toast.type === 'info' && <Sparkles className="w-4 h-4" />}
+                {toast.type === 'success' && <CheckCircle2 className="w-3.5 h-3.5" />}
+                {toast.type === 'error' && <AlertCircle className="w-3.5 h-3.5" />}
+                {toast.type === 'warning' && <AlertCircle className="w-3.5 h-3.5" />}
+                {toast.type === 'info' && <Sparkles className="w-3.5 h-3.5" />}
               </div>
               <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5A6A80] block">
+                <span className="text-[10px] font-mono font-medium uppercase tracking-wider text-[#74777D] block">
                   {toast.type === 'success'
-                    ? '✦ DraftForge Intelligence'
+                    ? 'Notice'
                     : toast.type === 'error'
-                    ? '⚠ System Advisory'
+                    ? 'Attention Required'
                     : toast.type === 'warning'
-                    ? '⚡ Action Required'
-                    : '◆ Studio Event'}
+                    ? 'Advisory'
+                    : 'Information'}
                 </span>
-                <p className="text-xs font-bold leading-relaxed text-[#0B192C]">{toast.message}</p>
+                <p className="text-xs font-medium leading-relaxed text-[#20344A]">{toast.message}</p>
               </div>
             </div>
             <button
               onClick={() => removeToast(toast.id)}
-              className="p-1.5 rounded-lg text-[#5A6A80] hover:text-[#0B192C] hover:bg-[#F3F0EA] transition-colors shrink-0"
+              className="p-1 rounded text-[#74777D] hover:text-[#20344A] hover:bg-[#F3EFE6] transition-colors shrink-0"
               aria-label="Dismiss toast"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
         ))}

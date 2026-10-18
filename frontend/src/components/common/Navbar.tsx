@@ -9,6 +9,7 @@ import {
   User,
   Shield,
   GraduationCap,
+  Search,
 } from 'lucide-react';
 import { HealthModal } from './HealthModal';
 import { ClassifierModal } from './ClassifierModal';
@@ -29,10 +30,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isHealthOpen, setIsHealthOpen] = useState(false);
   const [isClassifierOpen, setIsClassifierOpen] = useState(false);
 
-  const getRoleIcon = () => {
-    if (user?.role === 'TEACHER') return <GraduationCap className="w-3.5 h-3.5 text-accent-cyan" />;
-    if (user?.role === 'ADMIN') return <Shield className="w-3.5 h-3.5 text-accent-amber" />;
-    return <User className="w-3.5 h-3.5 text-primary-400" />;
+  const getRoleBadge = () => {
+    if (user?.role === 'TEACHER') return { label: 'Faculty', icon: <GraduationCap className="w-3 h-3 text-[#C78335]" /> };
+    if (user?.role === 'ADMIN') return { label: 'Administrator', icon: <Shield className="w-3 h-3 text-[#20344A]" /> };
+    return { label: '1L Scholar', icon: <User className="w-3 h-3 text-[#557B68]" /> };
   };
 
   const getInitials = (name?: string | null) => {
@@ -45,15 +46,17 @@ export const Navbar: React.FC<NavbarProps> = ({
       .toUpperCase();
   };
 
+  const roleBadge = getRoleBadge();
+
   return (
     <>
-      <header className="h-16 border-b-2 border-[#E6E2D8] bg-[#FAF8F5]/95 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40 transition-colors">
+      <header className="h-16 border-b border-[#E5DED2] bg-[#FBF8F2] px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40 shadow-[0_1px_8px_rgba(32,52,74,0.04)] font-sans">
         {/* Brand */}
         <div className="flex items-center gap-3.5">
           {setIsMobileMenuOpen && (
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-[#0B192C] hover:bg-[#F3F0EA] rounded-xl bg-white border-2 border-[#E6E2D8] border-b-4 border-b-[#D5CEBE] tactile-btn"
+              className="lg:hidden p-2 text-[#20344A] hover:bg-[#F5F0E7] rounded-lg bg-white border border-[#E5DED2] transition-colors"
               aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -64,67 +67,78 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => {
               if (user?.role === 'ADMIN') setActiveTab('admin_dashboard');
               else if (user?.role === 'TEACHER') setActiveTab('teacher_assignments');
-              else setActiveTab('workspace');
+              else setActiveTab('dashboard');
             }}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="w-9 h-9 rounded-xl bg-[#1E3E62] border-2 border-[#0B192C] flex items-center justify-center shadow-[0_3px_#0B192C] group-hover:translate-y-[-1px] transition-transform">
-              <Scale className="w-5 h-5 text-[#F59E0B]" />
+            <div className="w-9 h-9 rounded-lg bg-[#20344A] flex items-center justify-center shadow-sm group-hover:bg-[#101D29] transition-colors">
+              <Scale className="w-4 h-4 text-[#C78335]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-serif text-lg font-black tracking-tight text-[#0B192C] group-hover:text-[#1E3E62] transition-colors">
-                  Draft<span className="text-[#F59E0B]">Forge</span>
+                <span className="font-serif text-lg tracking-tight text-[#20344A] font-normal leading-none group-hover:text-[#101D29] transition-colors">
+                  DraftForge AI
                 </span>
-                <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#F59E0B]/15 text-[#B45309] border border-[#F59E0B]/30 uppercase tracking-wider font-mono">
-                  Legal Studio
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-[#F5E8D3] text-[#8A5100] uppercase tracking-wider font-sans">
+                  Juris Education
                 </span>
               </div>
-              <p className="text-[10px] text-[#5A6A80] hidden sm:block font-medium">
-                Deterministic Rubrics & Graph Reasoning
+              <p className="text-[11px] text-[#687584] hidden sm:block font-sans mt-0.5">
+                Academic Legal Drafting & Evaluation
               </p>
             </div>
           </div>
         </div>
 
-        {/* Action Controls & User Badge */}
+        {/* Global Search Shortcut (Editorial Jurisprudence Spec) */}
+        <div className="relative hidden md:flex items-center">
+          <Search className="w-4 h-4 absolute left-3 text-[#687584] pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Search briefs, rubrics, precedents..."
+            onClick={() => setActiveTab('workspace')}
+            className="bg-white border border-[#E5DED2] rounded-md pl-9 pr-12 py-1.5 text-xs text-[#20344A] placeholder:text-[#687584] focus:outline-none focus:border-[#20344A] w-64 lg:w-72 transition-all font-sans cursor-pointer"
+          />
+          <span className="absolute right-2 px-1.5 py-0.5 bg-[#F5F0E7] border border-[#E5DED2] rounded text-[10px] text-[#687584] font-mono">
+            ⌘K
+          </span>
+        </div>
+
+        {/* Action Controls & User Profile */}
         <div className="flex items-center gap-2.5 sm:gap-3">
           {/* Quick Classifier Tool Button */}
           <button
             onClick={() => setIsClassifierOpen(true)}
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white hover:bg-[#F3F0EA] text-[#0B192C] text-xs font-bold border-2 border-[#E6E2D8] border-b-4 border-b-[#D5CEBE] tactile-btn shadow-sm group"
+            className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-[#F5F0E7] text-[#20344A] text-xs font-medium border border-[#E5DED2] shadow-sm transition-all group font-sans"
             title="Classify legal text into document type"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#F59E0B] group-hover:rotate-12 transition-transform" />
-            <span>Classify Text</span>
+            <Sparkles className="w-3.5 h-3.5 text-[#C78335] group-hover:rotate-12 transition-transform" />
+            <span>Classify Document</span>
           </button>
 
           {/* System Health Check Button */}
           <button
             onClick={() => setIsHealthOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#ECFDF5] hover:bg-[#D1FAE5] text-[#065F46] text-xs font-bold border-2 border-[#A7F3D0] border-b-4 border-b-[#6EE7B7] tactile-btn shadow-sm"
-            title="Inspect Database, Qdrant & Neo4j Connectivity"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#EDF3F0] hover:bg-[#E0ECE6] text-[#557B68] text-xs font-medium border border-[#557B68]/30 shadow-sm transition-all font-sans"
+            title="System Telemetry & Architecture Health"
           >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#059669]" />
-            </span>
-            <span className="hidden sm:inline">System Healthy</span>
+            <span className="w-2 h-2 rounded-full bg-[#557B68] animate-pulse" />
+            <span className="hidden sm:inline">Platform Verified</span>
           </button>
 
           {/* User Profile Card */}
-          <div className="flex items-center gap-2.5 pl-2.5 border-l-2 border-[#E6E2D8]">
+          <div className="flex items-center gap-2.5 pl-2.5 border-l border-[#E5DED2]">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-[#1E3E62] border-2 border-[#0B192C] flex items-center justify-center text-white text-xs font-black shadow-[0_2px_#0B192C]">
+              <div className="w-8 h-8 rounded-lg bg-[#20344A] flex items-center justify-center text-white text-xs font-semibold shadow-sm font-serif">
                 {getInitials(user?.full_name)}
               </div>
               <div className="hidden lg:block text-left">
-                <p className="text-xs font-bold text-[#0B192C] truncate max-w-[120px]">
+                <p className="text-xs font-medium text-[#20344A] truncate max-w-[130px] font-sans">
                   {user?.full_name || user?.email.split('@')[0]}
                 </p>
-                <div className="flex items-center gap-1 text-[10px] text-[#5A6A80] font-semibold font-mono">
-                  {getRoleIcon()}
-                  <span>{user?.role || 'STUDENT'}</span>
+                <div className="flex items-center gap-1 text-[10px] text-[#687584] font-sans">
+                  {roleBadge.icon}
+                  <span>{roleBadge.label}</span>
                 </div>
               </div>
             </div>
@@ -132,7 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Logout Button */}
             <button
               onClick={logout}
-              className="p-2 text-[#5A6A80] hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all border-2 border-[#E6E2D8] border-b-4 border-b-[#D5CEBE] bg-white tactile-btn"
+              className="p-1.5 text-[#687584] hover:text-[#B45D4D] hover:bg-[#F5F0E7] rounded-md transition-all border border-[#E5DED2] bg-white shadow-sm"
               title="Sign Out"
             >
               <LogOut className="w-3.5 h-3.5" />

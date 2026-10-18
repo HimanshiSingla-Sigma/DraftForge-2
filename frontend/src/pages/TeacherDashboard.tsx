@@ -14,6 +14,9 @@ import {
   Users,
   Layers,
   RefreshCw,
+  Scale,
+  ShieldCheck,
+  BarChart3,
 } from 'lucide-react';
 
 interface TeacherDashboardProps {
@@ -47,12 +50,10 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
     }
   };
 
-  // Re-fetch on tab change
   useEffect(() => {
     fetchTeacherMetrics();
   }, [activeTab]);
 
-  // Re-fetch on metric updates and focus
   useEffect(() => {
     const handleUpdate = () => fetchTeacherMetrics();
     window.addEventListener('draftforge:metric_update', handleUpdate);
@@ -63,170 +64,214 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
     };
   }, []);
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
-  };
-
   const handleSelectAssignment = (id: string) => {
     setSelectedAssignmentId(id);
     setActiveTab('teacher_submissions');
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 animate-fade-in font-sans">
+    <div className="space-y-6 animate-fade-in font-sans">
       {/* ========================================================================= */}
-      {/* 1. TEACHER EXECUTIVE COMMAND BANNER */}
+      {/* 1. TOP OPERATIONAL BANNER / SECTION IDENTITY (Faculty Portal Reference) */}
       {/* ========================================================================= */}
-      {/* ========================================================================= */}
-      {/* 1. TEACHER EXECUTIVE COMMAND BANNER */}
-      {/* ========================================================================= */}
-      <div className="relative tactile-card bg-[#FAF8F5] p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] overflow-hidden">
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          {/* Left Title & Actions */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2.5">
-              <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-[#1E3E62]/10 text-[#1E3E62] border border-[#1E3E62]/30 uppercase tracking-wider font-mono">
-                Faculty Governance Portal
+      <header className="bg-[#FFFFFF] p-6 lg:p-8 rounded-lg border border-[#E5DED2] shadow-sm space-y-5">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 text-xs">
+              <span className="font-semibold text-[#C78335] uppercase tracking-wider bg-[#FBF0E4] px-2 py-0.5 rounded">
+                Juris Doctor · Faculty Studio
               </span>
-              <span className="flex items-center gap-1 text-[10px] font-mono font-bold text-[#059669] bg-[#059669]/10 px-2.5 py-0.5 rounded-full border border-[#059669]/30">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
-                <span>Qdrant FastEmbed Active</span>
+              <span className="text-[#E5DED2]">•</span>
+              <span className="text-[#74777D] font-mono">Course: LAW-702 Section 102</span>
+              <span className="text-[#E5DED2]">•</span>
+              <span className="text-[#557B68] font-semibold bg-[#E8F3ED] px-2 py-0.5 rounded flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3" /> Blind Grading FERPA Standard
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#0B192C] tracking-tight">
-              {getGreeting()},{' '}
-              <span className="text-[#1E3E62] underline decoration-[#F59E0B] decoration-2 underline-offset-4">
-                {user?.full_name || 'Professor'}
-              </span>
+            <h1 className="font-serif text-2xl sm:text-3xl text-[#20344A] tracking-tight font-medium">
+              Legal Practice Workshop & Faculty Governance
             </h1>
-
-            <p className="text-xs text-[#0B192C]/70 max-w-xl leading-relaxed">
-              Supervise student legal drafting submissions, review automated 100-point rubric evaluations, ingest statutory reference deeds into Qdrant, and track cohort skill distributions.
+            <p className="text-xs text-[#74777D]">
+              Presiding Faculty:{' '}
+              <span className="text-[#20344A] font-semibold">
+                {user?.full_name || 'Prof. Faculty Instructor, J.D.'}
+              </span>{' '}
+              · Supervise student dockets, review 100-point rubric evaluations, and manage section rosters.
             </p>
-
-            {/* Quick Action Chips */}
-            <div className="flex flex-wrap items-center gap-2 pt-2">
-              <button
-                onClick={() => setActiveTab('teacher_assignments')}
-                className={`tactile-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                  activeTab === 'teacher_assignments'
-                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C] shadow-[0_3px_#0B192C]'
-                    : 'bg-[#F3F0EA] hover:bg-[#FAF8F5] text-[#0B192C] border-2 border-[#E6E2D8] shadow-[0_2px_#E6E2D8]'
-                }`}
-              >
-                <FileCheck className="w-3.5 h-3.5 text-[#F59E0B]" />
-                <span>Manage Assignments</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('teacher_submissions')}
-                className={`tactile-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                  activeTab === 'teacher_submissions'
-                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C] shadow-[0_3px_#0B192C]'
-                    : 'bg-[#F3F0EA] hover:bg-[#FAF8F5] text-[#0B192C] border-2 border-[#E6E2D8] shadow-[0_2px_#E6E2D8]'
-                }`}
-              >
-                <ClipboardCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Submissions Auditor</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('teacher_sections')}
-                className={`tactile-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                  activeTab === 'teacher_sections'
-                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C] shadow-[0_3px_#0B192C]'
-                    : 'bg-[#F3F0EA] hover:bg-[#FAF8F5] text-[#0B192C] border-2 border-[#E6E2D8] shadow-[0_2px_#E6E2D8]'
-                }`}
-              >
-                <Layers className="w-3.5 h-3.5 text-[#1E3E62]" />
-                <span>Sections & Roster</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('teacher_reference')}
-                className={`tactile-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                  activeTab === 'teacher_reference' || activeTab === 'teacher_references'
-                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C] shadow-[0_3px_#0B192C]'
-                    : 'bg-[#F3F0EA] hover:bg-[#FAF8F5] text-[#0B192C] border-2 border-[#E6E2D8] shadow-[0_2px_#E6E2D8]'
-                }`}
-              >
-                <UploadCloud className="w-3.5 h-3.5 text-[#1E3E62]" />
-                <span>Ingest Reference Deeds</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('teacher_analytics')}
-                className={`tactile-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                  activeTab === 'teacher_analytics'
-                    ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C] shadow-[0_3px_#0B192C]'
-                    : 'bg-[#F3F0EA] hover:bg-[#FAF8F5] text-[#0B192C] border-2 border-[#E6E2D8] shadow-[0_2px_#E6E2D8]'
-                }`}
-              >
-                <Users className="w-3.5 h-3.5 text-[#D97706]" />
-                <span>Cohort Analytics</span>
-              </button>
-            </div>
           </div>
 
-          {/* Right Real Metrics Ribbon */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#F3F0EA] p-4 rounded-2xl border-2 border-[#E6E2D8] flex-1">
-              <div className="p-3 rounded-xl bg-[#FAF8F5] border-2 border-[#E6E2D8] text-center space-y-1 shadow-[0_2px_#E6E2D8]">
-                <span className="text-[10px] text-[#0B192C]/60 uppercase font-bold font-mono block">
-                  Active Briefs
-                </span>
-                <span className="text-xl font-serif font-extrabold text-[#0B192C]">{assignmentsCount}</span>
-              </div>
-
-              <div className="p-3 rounded-xl bg-[#FAF8F5] border-2 border-[#E6E2D8] text-center space-y-1 shadow-[0_2px_#E6E2D8]">
-                <span className="text-[10px] text-[#0B192C]/60 uppercase font-bold font-mono block">
-                  Total Students
-                </span>
-                <span className="text-xl font-serif font-extrabold text-[#1E3E62]">
-                  {cohort?.total_students ?? 0}
-                </span>
-              </div>
-
-              <div className="p-3 rounded-xl bg-[#FAF8F5] border-2 border-[#E6E2D8] text-center space-y-1 shadow-[0_2px_#E6E2D8]">
-                <span className="text-[10px] text-[#0B192C]/60 uppercase font-bold font-mono block">
-                  Cohort Avg
-                </span>
-                <span className="text-xl font-serif font-extrabold text-emerald-700">
-                  {cohort ? Math.round(cohort.cohort_average_score) : 0}
-                  <span className="text-[10px] font-mono font-normal text-[#0B192C]/60">/100</span>
-                </span>
-              </div>
-
-              <div className="p-3 rounded-xl bg-[#FAF8F5] border-2 border-[#E6E2D8] text-center space-y-1 shadow-[0_2px_#E6E2D8]">
-                <span className="text-[10px] text-[#0B192C]/60 uppercase font-bold font-mono block">
-                  Evaluations
-                </span>
-                <span className="text-xl font-serif font-extrabold text-[#D97706]">
-                  {cohort?.total_evaluations ?? 0}
-                </span>
-              </div>
-            </div>
+          {/* Quick Action Buttons */}
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <button
+              onClick={() => setActiveTab('teacher_sections')}
+              className="px-3.5 py-1.5 bg-[#FBF8F2] hover:bg-[#F3EFE6] border border-[#E5DED2] text-[#20344A] rounded text-xs font-medium transition-colors flex items-center gap-1.5 shadow-xs"
+            >
+              <Users className="w-3.5 h-3.5 text-[#20344A]" />
+              <span>Section Roster ({cohort?.total_students ?? 0})</span>
+            </button>
 
             <button
               onClick={() => fetchTeacherMetrics()}
               disabled={metricsLoading}
               title="Sync metrics with server"
-              className="tactile-btn self-end sm:self-center p-2.5 rounded-xl bg-white hover:bg-[#F3F0EA] border-2 border-[#E6E2D8] text-[#0B192C] shadow-[0_2px_#E6E2D8] cursor-pointer transition-all disabled:opacity-50"
+              className="p-2 bg-[#FBF8F2] hover:bg-[#F3EFE6] border border-[#E5DED2] text-[#20344A] rounded text-xs font-medium transition-colors flex items-center shadow-xs disabled:opacity-50"
             >
-              <RefreshCw className={`w-4 h-4 text-[#1E3E62] ${metricsLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 text-[#20344A] ${metricsLoading ? 'animate-spin' : ''}`} />
             </button>
+          </div>
+        </div>
+
+        {/* Interior Portal Navigation Strip */}
+        <div className="flex items-center gap-2 overflow-x-auto pt-3 border-t border-[#E5DED2]">
+          <button
+            onClick={() => setActiveTab('teacher_assignments')}
+            className={`px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-1.5 ${
+              activeTab === 'teacher_assignments'
+                ? 'bg-[#20344A] text-white font-semibold'
+                : 'text-[#74777D] hover:text-[#20344A] hover:bg-[#FBF8F2]'
+            }`}
+          >
+            <FileCheck className="w-3.5 h-3.5" />
+            <span>Manage Assignments</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('teacher_submissions')}
+            className={`px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-1.5 ${
+              activeTab === 'teacher_submissions'
+                ? 'bg-[#20344A] text-white font-semibold'
+                : 'text-[#74777D] hover:text-[#20344A] hover:bg-[#FBF8F2]'
+            }`}
+          >
+            <ClipboardCheck className="w-3.5 h-3.5 text-[#C78335]" />
+            <span>Submissions Auditor</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('teacher_sections')}
+            className={`px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-1.5 ${
+              activeTab === 'teacher_sections'
+                ? 'bg-[#20344A] text-white font-semibold'
+                : 'text-[#74777D] hover:text-[#20344A] hover:bg-[#FBF8F2]'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5 text-[#557B68]" />
+            <span>Section Roster & Invites</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('teacher_reference')}
+            className={`px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-1.5 ${
+              activeTab === 'teacher_reference' || activeTab === 'teacher_references'
+                ? 'bg-[#20344A] text-white font-semibold'
+                : 'text-[#74777D] hover:text-[#20344A] hover:bg-[#FBF8F2]'
+            }`}
+          >
+            <UploadCloud className="w-3.5 h-3.5" />
+            <span>Precedent Library Ingestion</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('teacher_analytics')}
+            className={`px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-1.5 ${
+              activeTab === 'teacher_analytics'
+                ? 'bg-[#20344A] text-white font-semibold'
+                : 'text-[#74777D] hover:text-[#20344A] hover:bg-[#FBF8F2]'
+            }`}
+          >
+            <BarChart3 className="w-3.5 h-3.5" />
+            <span>Cohort Analytics</span>
+          </button>
+        </div>
+      </header>
+
+      {/* ========================================================================= */}
+      {/* 2. PEDAGOGICAL METRIC STRIP (Restrained, Editorial Typography) */}
+      {/* ========================================================================= */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Metric 1: Cohort Enrollment */}
+        <div className="bg-[#FFFFFF] p-5 rounded-lg border border-[#E5DED2] shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] uppercase tracking-wider text-[#74777D] font-semibold">
+              Cohort Enrollment
+            </span>
+            <Users className="w-4 h-4 text-[#74777D]" />
+          </div>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className="font-serif text-3xl font-bold text-[#20344A]">
+              {cohort?.total_students ?? 0}
+            </span>
+            <span className="text-xs text-[#74777D]">Enrolled Scholars</span>
+          </div>
+          <div className="mt-2 text-[11px] text-[#557B68] flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#557B68]" />
+            <span>Active Section Docket</span>
+          </div>
+        </div>
+
+        {/* Metric 2: Active Assignments */}
+        <div className="bg-[#FFFFFF] p-5 rounded-lg border border-[#E5DED2] shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] uppercase tracking-wider text-[#74777D] font-semibold">
+              Assigned Briefs
+            </span>
+            <FileCheck className="w-4 h-4 text-[#C78335]" />
+          </div>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className="font-serif text-3xl font-bold text-[#20344A]">
+              {assignmentsCount}
+            </span>
+            <span className="text-xs text-[#74777D]">Bench Prompts</span>
+          </div>
+          <div className="mt-2 text-[11px] text-[#74777D]">
+            Curriculum Modules 1–4
+          </div>
+        </div>
+
+        {/* Metric 3: Cohort Average Score */}
+        <div className="bg-[#FFFFFF] p-5 rounded-lg border border-[#E5DED2] shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] uppercase tracking-wider text-[#74777D] font-semibold">
+              Cohort Mean Score
+            </span>
+            <Scale className="w-4 h-4 text-[#557B68]" />
+          </div>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className="font-serif text-3xl font-bold text-[#557B68]">
+              {cohort ? Math.round(cohort.cohort_average_score) : 0}
+            </span>
+            <span className="text-xs text-[#74777D]">/ 100 PTS</span>
+          </div>
+          <div className="mt-2 text-[11px] text-[#557B68]">
+            Standard Rubric Distribution
+          </div>
+        </div>
+
+        {/* Metric 4: Total Evaluations Logged */}
+        <div className="bg-[#FFFFFF] p-5 rounded-lg border border-[#E5DED2] shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] uppercase tracking-wider text-[#74777D] font-semibold">
+              Audits Concluded
+            </span>
+            <ClipboardCheck className="w-4 h-4 text-[#20344A]" />
+          </div>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className="font-serif text-3xl font-bold text-[#20344A]">
+              {cohort?.total_evaluations ?? 0}
+            </span>
+            <span className="text-xs text-[#74777D]">Submissions Logged</span>
+          </div>
+          <div className="mt-2 text-[11px] text-[#C78335]">
+            Verified against Precedent Corpus
           </div>
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. ACTIVE TEACHER TAB VIEW */}
+      {/* 3. ACTIVE TAB VIEW CONTAINER */}
       {/* ========================================================================= */}
-      <div className="space-y-6">
+      <div>
         {activeTab === 'teacher_assignments' && (
           <AssignmentManager onSelectAssignment={handleSelectAssignment} />
         )}

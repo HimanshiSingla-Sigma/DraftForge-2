@@ -40,9 +40,9 @@ export const HealthModal: React.FC<HealthModalProps> = ({ isOpen, onClose }) => 
   };
 
   const getServiceLabel = (key: string) => {
-    if (key === 'supabase_postgresql') return 'Supabase PostgreSQL';
-    if (key === 'qdrant_cloud') return 'Qdrant Cloud Vector DB';
-    if (key === 'neo4j_aura') return 'Neo4j Aura Knowledge Graph';
+    if (key === 'supabase_postgresql') return 'Primary Database & User Directory';
+    if (key === 'qdrant_cloud') return 'Statutory Precedent Vector Index';
+    if (key === 'neo4j_aura') return 'Doctrinal Fallacy Knowledge Graph';
     return key.replace(/_/g, ' ').toUpperCase();
   };
 
@@ -50,21 +50,21 @@ export const HealthModal: React.FC<HealthModalProps> = ({ isOpen, onClose }) => 
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="System Architecture Health"
-      subtitle="Live end-to-end telemetry across managed database clusters"
-      icon={<Activity className="w-5 h-5" />}
+      title="System Architecture & Connectivity"
+      subtitle="Live connectivity and response status across core platform databases"
+      icon={<Activity className="w-4 h-4" />}
       maxWidth="lg"
     >
       <div className="space-y-6">
         {loading ? (
           <div className="py-12 flex justify-center">
-            <LoadingSpinner size="lg" label="Querying cloud infrastructure status..." />
+            <LoadingSpinner size="lg" label="Checking database connectivity..." />
           </div>
         ) : error ? (
-          <div className="p-4 rounded-2xl bg-rose-50 border-2 border-rose-300 text-rose-900 text-sm flex items-start gap-3">
+          <div className="p-4 rounded-lg bg-rose-50 border border-rose-200 text-rose-900 text-sm flex items-start gap-3">
             <XCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
             <div>
-              <p className="font-bold">Health Verification Failed</p>
+              <p className="font-medium">Connectivity Check Failed</p>
               <p className="text-xs text-rose-700 mt-1">{error}</p>
             </div>
           </div>
@@ -72,67 +72,67 @@ export const HealthModal: React.FC<HealthModalProps> = ({ isOpen, onClose }) => 
           <>
             {/* Top Status Banner */}
             <div
-              className={`p-4 rounded-2xl border-2 flex items-center justify-between ${
+              className={`p-4 rounded-lg border flex items-center justify-between ${
                 health.status === 'healthy'
-                  ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46]'
-                  : 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E]'
+                  ? 'bg-[#E8F3ED] border-[#557B68]/30 text-[#557B68]'
+                  : 'bg-[#FBF0E4] border-[#C78335]/30 text-[#C78335]'
               }`}
             >
               <div className="flex items-center gap-3">
                 {health.status === 'healthy' ? (
-                  <CheckCircle2 className="w-6 h-6 text-[#059669]" />
+                  <CheckCircle2 className="w-5 h-5 text-[#557B68]" />
                 ) : (
-                  <XCircle className="w-6 h-6 text-[#D97706]" />
+                  <XCircle className="w-5 h-5 text-[#C78335]" />
                 )}
                 <div>
-                  <h4 className="font-serif font-black text-sm capitalize text-[#0B192C]">
-                    System State: {health.status}
+                  <h4 className="font-serif font-medium text-sm capitalize text-[#20344A]">
+                    Operational Status: {health.status}
                   </h4>
-                  <p className="text-xs font-mono opacity-80">
-                    DraftForge API Runtime v{health.app_version}
+                  <p className="text-xs font-mono text-[#74777D]">
+                    DraftForge Platform v{health.app_version}
                   </p>
                 </div>
               </div>
               <button
                 onClick={fetchHealth}
-                className="p-2 rounded-xl bg-white hover:bg-[#F3F0EA] text-[#0B192C] border-2 border-[#E6E2D8] border-b-4 border-b-[#D5CEBE] tactile-btn transition-colors"
-                title="Refresh telemetry"
+                className="p-1.5 rounded bg-white hover:bg-[#F3EFE6] text-[#20344A] border border-[#E5DED2] transition-colors shadow-xs"
+                title="Refresh connectivity"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="w-3.5 h-3.5" />
               </button>
             </div>
 
             {/* Services List */}
-            <div className="space-y-3">
-              <h5 className="text-[10px] font-bold text-[#5A6A80] uppercase tracking-wider font-mono">
-                Managed Cloud Nodes
+            <div className="space-y-2.5">
+              <h5 className="text-[10px] font-mono font-medium text-[#74777D] uppercase tracking-wider">
+                Connected Core Services
               </h5>
               {Object.entries(health.services).map(([key, s]) => {
                 if (!s) return null;
                 return (
                   <div
                     key={key}
-                    className="p-3.5 rounded-2xl bg-[#FAF8F5] border-2 border-[#E6E2D8] flex items-center justify-between"
+                    className="p-3 rounded-lg bg-[#FBF8F2] border border-[#E5DED2] flex items-center justify-between"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-white border border-[#E6E2D8] flex items-center justify-center shadow-sm">
+                      <div className="w-8 h-8 rounded bg-white border border-[#E5DED2] flex items-center justify-center text-[#20344A] shadow-xs">
                         {getServiceIcon(key)}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-[#0B192C]">
+                        <p className="text-xs font-medium text-[#20344A]">
                           {getServiceLabel(key)}
                         </p>
-                        <p className="text-xs text-[#5A6A80] font-mono">{s.details}</p>
+                        <p className="text-[11px] text-[#74777D] font-mono">{s.details}</p>
                       </div>
                     </div>
                     <div>
                       {s.reachable ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] font-mono">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping" />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-medium bg-[#E8F3ED] text-[#557B68] border border-[#557B68]/30 font-mono">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#557B68] animate-pulse" />
                           ONLINE
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 font-mono">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-medium bg-rose-50 text-rose-700 border border-rose-200 font-mono">
                           OFFLINE
                         </span>
                       )}
@@ -147,7 +147,7 @@ export const HealthModal: React.FC<HealthModalProps> = ({ isOpen, onClose }) => 
         <div className="flex justify-end pt-2">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 text-xs font-bold text-[#0B192C] bg-white hover:bg-[#F3F0EA] rounded-xl border-2 border-[#E6E2D8] border-b-4 border-b-[#D5CEBE] tactile-btn transition-colors"
+            className="px-4 py-2 text-xs font-medium text-[#20344A] bg-[#FBF8F2] hover:bg-[#F3EFE6] rounded border border-[#E5DED2] transition-colors shadow-xs"
           >
             Close
           </button>

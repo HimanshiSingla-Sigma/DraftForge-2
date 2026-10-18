@@ -10,6 +10,7 @@ import {
   AlertCircle,
   Search,
   BookOpen,
+  ArrowRight,
 } from 'lucide-react';
 
 interface StudentAssignmentsViewProps {
@@ -76,7 +77,7 @@ export const StudentAssignmentsView: React.FC<StudentAssignmentsViewProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedAssignment || !selectedDraftId || !selectedVersionObj) {
-      showToast('Please select an assignment and a draft version.', 'error');
+      showToast('Please select an assignment and a draft revision.', 'error');
       return;
     }
 
@@ -102,198 +103,201 @@ export const StudentAssignmentsView: React.FC<StudentAssignmentsViewProps> = ({
   );
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in font-sans">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl tactile-card bg-[#FAF8F5] border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8]">
+      <header className="bg-[#FFFFFF] p-5 sm:p-6 rounded-lg border border-[#E5DED2] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-serif font-bold text-[#0B192C] tracking-tight">Class Coursework & Assignments</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#1E3E62]/10 text-[#1E3E62] border border-[#1E3E62]/30 font-mono">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider text-[#C78335] font-semibold bg-[#FBF0E4] px-2 py-0.5 rounded">
+              Academic Coursework Docket
+            </span>
+            <span className="text-xs text-[#557B68] font-semibold bg-[#E8F3ED] px-2 py-0.5 rounded">
               Faculty Published
             </span>
           </div>
-          <p className="text-xs text-[#0B192C]/70 mt-1">
-            Complete legal drafting briefs assigned by your professor and submit versioned drafts for grading.
+          <h2 className="font-serif text-xl sm:text-2xl text-[#20344A] tracking-tight font-medium mt-1">
+            Assigned Legal Briefs & Submissions
+          </h2>
+          <p className="text-xs text-[#74777D] mt-0.5">
+            Complete formal drafting assignments prescribed by faculty and submit versioned drafts for rubric evaluation.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="text-xs font-mono text-[#0B192C] px-3.5 py-2 bg-[#F3F0EA] rounded-xl border-2 border-[#E6E2D8]">
-            Active Tasks: <span className="text-[#1E3E62] font-bold">{assignments.length}</span>
-          </div>
+        <div className="px-3.5 py-1.5 bg-[#FBF8F2] border border-[#E5DED2] rounded text-xs font-mono text-[#20344A] shrink-0">
+          Pending Briefs: <strong className="text-[#C78335]">{assignments.length}</strong>
         </div>
-      </div>
+      </header>
 
-      <div className="grid grid-cols-12 gap-6">
+      <div className="grid grid-cols-12 gap-6 items-start">
         {/* Left Column: Assignments List (5 cols) */}
-        <div className="col-span-12 lg:col-span-5 space-y-4">
-          <div className="tactile-card bg-[#FAF8F5] p-5 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#0B192C]/70">
-                Coursework Catalog ({assignments.length})
-              </span>
-            </div>
-
-            {/* Search */}
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 text-[#0B192C]/50 absolute left-3 top-2.5" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search assignments..."
-                className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl pl-8 pr-3 py-2 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none transition-colors"
-              />
-            </div>
-
-            {loading ? (
-              <div className="py-16 flex justify-center">
-                <LoadingSpinner size="md" />
-              </div>
-            ) : filtered.length === 0 ? (
-              <div className="py-12 text-center text-xs text-[#0B192C]/60 space-y-2">
-                <BookOpen className="w-8 h-8 text-[#0B192C]/30 mx-auto" />
-                <p>No active assignments published by faculty.</p>
-              </div>
-            ) : (
-              <div className="space-y-3 max-h-[580px] overflow-y-auto pr-1">
-                {filtered.map((a) => {
-                  const isSelected = selectedAssignment?.id === a.id;
-                  const isOverdue = a.deadline && new Date(a.deadline) < new Date();
-
-                  return (
-                    <div
-                      key={a.id}
-                      onClick={() => setSelectedAssignment(a)}
-                      className={`p-5 rounded-2xl border-2 cursor-pointer transition-all space-y-2.5 ${
-                        isSelected
-                          ? 'bg-[#1E3E62]/10 border-[#1E3E62] text-[#0B192C] shadow-[0_3px_#1E3E62]'
-                          : 'bg-[#F3F0EA] border-[#E6E2D8] text-[#0B192C] hover:border-[#1E3E62]/40 shadow-[0_2px_#E6E2D8]'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FAF8F5] text-[#1E3E62] border border-[#1E3E62]/30">
-                          {a.document_type.replace(/_/g, ' ')}
-                        </span>
-                        {a.deadline && (
-                          <span
-                            className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                              isOverdue
-                                ? 'bg-red-50 text-red-700 border border-red-200'
-                                : 'bg-[#FAF8F5] text-[#0B192C]/70 border border-[#E6E2D8]'
-                            }`}
-                          >
-                            Due {new Date(a.deadline).toLocaleDateString()}
-                          </span>
-                        )}
-                      </div>
-
-                      <h4 className="font-serif font-bold text-sm text-[#0B192C]">{a.title}</h4>
-                      <p className="text-xs text-[#0B192C]/70 line-clamp-2 leading-relaxed">
-                        {a.instructions}
-                      </p>
-
-                      <div className="flex items-center justify-between text-[11px] text-[#0B192C]/60 pt-2 border-t border-[#E6E2D8]">
-                        <span>Status: <strong className="text-[#0B192C] uppercase">{a.status}</strong></span>
-                        <span>{a.submissions_count || 0} Submissions</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+        <div className="col-span-12 lg:col-span-5 bg-[#FFFFFF] p-5 rounded-lg border border-[#E5DED2] shadow-sm space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-[#E5DED2]">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#74777D]">
+              Coursework Catalog ({assignments.length})
+            </span>
+            <span className="text-[11px] text-[#74777D] font-mono">Curriculum v4.2</span>
           </div>
+
+          {/* Search */}
+          <div className="relative">
+            <Search className="w-3.5 h-3.5 text-[#74777D] absolute left-2.5 top-2.5" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search assigned briefs..."
+              className="w-full bg-[#FBF8F2] border border-[#E5DED2] rounded pl-7 pr-3 py-1.5 text-xs text-[#20344A] placeholder-[#74777D] focus:border-[#20344A] focus:outline-none transition-colors"
+            />
+          </div>
+
+          {loading ? (
+            <div className="py-16 flex justify-center">
+              <LoadingSpinner size="md" />
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="py-12 text-center text-xs text-[#74777D] space-y-2">
+              <BookOpen className="w-8 h-8 text-[#74777D]/30 mx-auto" />
+              <p>No active coursework assignments published yet.</p>
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-[560px] overflow-y-auto pr-1">
+              {filtered.map((a) => {
+                const isSelected = selectedAssignment?.id === a.id;
+                const isOverdue = a.deadline && new Date(a.deadline) < new Date();
+
+                return (
+                  <div
+                    key={a.id}
+                    onClick={() => setSelectedAssignment(a)}
+                    className={`p-3.5 rounded border cursor-pointer transition-all space-y-2 ${
+                      isSelected
+                        ? 'bg-[#FBF0E4] border-[#C78335] text-[#20344A]'
+                        : 'bg-[#FBF8F2] border-[#E5DED2] text-[#20344A] hover:border-[#74777D]'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-white text-[#20344A] border border-[#E5DED2]">
+                        {a.document_type.replace(/_/g, ' ')}
+                      </span>
+                      {a.deadline && (
+                        <span
+                          className={`text-[10px] font-medium px-2 py-0.5 rounded ${
+                            isOverdue
+                              ? 'bg-[#FFDAD6] text-[#BA1A1A]'
+                              : 'bg-white text-[#74777D] border border-[#E5DED2]'
+                          }`}
+                        >
+                          Due {new Date(a.deadline).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+
+                    <h4 className="font-serif font-medium text-sm text-[#20344A]">{a.title}</h4>
+                    <p className="text-xs text-[#43474D] line-clamp-2 leading-relaxed">
+                      {a.instructions}
+                    </p>
+
+                    <div className="flex items-center justify-between text-[11px] text-[#74777D] pt-2 border-t border-[#E5DED2]">
+                      <span>Status: <strong className="text-[#20344A] uppercase">{a.status}</strong></span>
+                      <span>{a.submissions_count || 0} Submissions</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Right Column: Assignment Details & Submission Tool (7 cols) */}
-        <div className="col-span-12 lg:col-span-7 space-y-4">
+        <div className="col-span-12 lg:col-span-7 bg-[#FFFFFF] p-6 lg:p-8 rounded-lg border border-[#E5DED2] shadow-sm space-y-6">
           {selectedAssignment ? (
-            <div className="tactile-card bg-[#FAF8F5] p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-6">
+            <div className="space-y-5">
               {/* Assignment Brief Header */}
-              <div className="space-y-3 pb-5 border-b-2 border-[#E6E2D8]">
+              <div className="space-y-2 pb-4 border-b border-[#E5DED2]">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded bg-[#1E3E62]/10 text-[#1E3E62] border border-[#1E3E62]/30">
+                  <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-[#FBF0E4] text-[#C78335] border border-[#C78335]/30">
                     {selectedAssignment.document_type.replace(/_/g, ' ')}
                   </span>
 
                   {selectedAssignment.deadline && (
-                    <div className="flex items-center gap-1.5 text-xs text-[#D97706] font-mono font-semibold">
+                    <div className="flex items-center gap-1.5 text-xs text-[#C78335] font-medium">
                       <Calendar className="w-3.5 h-3.5" />
-                      <span>Deadline: {new Date(selectedAssignment.deadline).toLocaleString()}</span>
+                      <span>Filing Deadline: {new Date(selectedAssignment.deadline).toLocaleString()}</span>
                     </div>
                   )}
                 </div>
 
-                <h2 className="text-2xl font-serif font-bold text-[#0B192C] tracking-tight">
+                <h2 className="font-serif text-xl sm:text-2xl font-medium text-[#20344A] tracking-tight">
                   {selectedAssignment.title}
                 </h2>
                 {selectedAssignment.description && (
-                  <p className="text-xs text-[#0B192C]/80 font-medium">
+                  <p className="text-xs text-[#74777D]">
                     {selectedAssignment.description}
                   </p>
                 )}
               </div>
 
               {/* Instructions Callout */}
-              <div className="p-5 rounded-2xl bg-[#F3F0EA] border-2 border-[#E6E2D8] space-y-2">
-                <div className="flex items-center gap-2 text-[#1E3E62] font-bold text-xs uppercase tracking-wider">
-                  <FileCheck className="w-4 h-4" />
-                  <span>Drafting Instructions & Rubric Constraints</span>
+              <div className="p-4 rounded bg-[#FBF8F2] border border-[#E5DED2] space-y-2">
+                <div className="flex items-center gap-1.5 text-[#20344A] font-semibold text-xs uppercase tracking-wider">
+                  <FileCheck className="w-4 h-4 text-[#C78335]" />
+                  <span>Drafting Directives & Rubric Constraints</span>
                 </div>
-                <p className="text-xs text-[#0B192C] leading-relaxed whitespace-pre-line font-mono bg-[#FAF8F5] p-4 rounded-xl border border-[#E6E2D8]">
+                <p className="text-xs text-[#20344A] leading-relaxed whitespace-pre-line bg-white p-3 rounded border border-[#E5DED2]">
                   {selectedAssignment.instructions}
                 </p>
               </div>
 
               {/* Submission Form */}
-              <form onSubmit={handleSubmit} className="p-5 sm:p-6 rounded-2xl bg-[#F3F0EA]/70 border-2 border-[#E6E2D8] space-y-4">
+              <form onSubmit={handleSubmit} className="p-5 rounded bg-[#FBF8F2] border border-[#E5DED2] space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs uppercase tracking-wider text-[#0B192C]">
-                    Submit Draft for Assignment
+                  <h4 className="font-serif font-medium text-sm text-[#20344A]">
+                    Submit Authored Draft
                   </h4>
                   {onNavigateToWorkspace && (
                     <button
                       type="button"
                       onClick={onNavigateToWorkspace}
-                      className="text-xs text-[#1E3E62] hover:underline font-bold"
+                      className="text-xs text-[#C78335] hover:underline font-semibold flex items-center gap-1"
                     >
-                      Open Workspace Editor →
+                      <span>Open in Draft Studio</span>
+                      <ArrowRight className="w-3 h-3" />
                     </button>
                   )}
                 </div>
 
                 {drafts.length === 0 ? (
-                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 shrink-0 text-amber-600" />
-                    <span>You have not created any drafts yet. Create one in the Workspace first.</span>
+                  <div className="p-3.5 bg-[#FBF0E4] border border-[#C78335]/30 rounded text-xs text-[#20344A] flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-[#C78335]" />
+                    <span>No drafts available in your docket. Please author a draft in the studio first.</span>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-[#0B192C] mb-1.5">
-                        Select Workspace Draft
+                      <label className="block text-xs font-semibold text-[#20344A] mb-1">
+                        Select Docket Draft
                       </label>
                       <select
                         value={selectedDraftId}
                         onChange={(e) => handleSelectDraft(e.target.value)}
-                        className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl p-2.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+                        className="w-full bg-white border border-[#E5DED2] rounded px-3 py-1.5 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none"
                       >
                         {drafts.map((d) => (
                           <option key={d.id} value={d.id}>
-                            {d.title} ({d.document_type})
+                            {d.title} ({d.document_type.replace(/_/g, ' ')})
                           </option>
                         ))}
                       </select>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-[#0B192C] mb-1.5">
-                        Revision Version
+                      <label className="block text-xs font-semibold text-[#20344A] mb-1">
+                        Revision Number
                       </label>
                       <select
                         value={selectedVersion}
                         onChange={(e) => setSelectedVersion(Number(e.target.value))}
-                        className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl p-2.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+                        className="w-full bg-white border border-[#E5DED2] rounded px-3 py-1.5 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none"
                       >
                         {selectedDraftObj?.versions?.map((v) => (
                           <option key={v.id} value={v.version_number}>
@@ -308,17 +312,17 @@ export const StudentAssignmentsView: React.FC<StudentAssignmentsViewProps> = ({
                 <button
                   type="submit"
                   disabled={submitting || drafts.length === 0}
-                  className="tactile-btn w-full py-3 bg-[#1E3E62] hover:bg-[#152e4a] text-white font-bold text-xs rounded-xl shadow-[0_3px_#0B192C] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-2.5 bg-[#20344A] hover:bg-[#152332] text-white font-semibold text-xs rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm cursor-pointer"
                 >
-                  {submitting ? <LoadingSpinner size="sm" /> : <Send className="w-4 h-4" />}
-                  <span>Submit Version {selectedVersion} for Faculty Evaluation</span>
+                  {submitting ? <LoadingSpinner size="sm" /> : <Send className="w-3.5 h-3.5 text-[#C78335]" />}
+                  <span>Submit Version {selectedVersion} for Evaluation</span>
                 </button>
               </form>
             </div>
           ) : (
-            <div className="tactile-card bg-[#FAF8F5] p-16 text-center rounded-3xl border-2 border-[#E6E2D8] text-xs text-[#0B192C]/60 space-y-2 shadow-[0_4px_#E6E2D8]">
-              <BookOpen className="w-10 h-10 text-[#0B192C]/30 mx-auto" />
-              <p>Select an assignment from the left catalog to inspect instructions and submit your work.</p>
+            <div className="p-16 text-center text-xs text-[#74777D] space-y-2">
+              <BookOpen className="w-8 h-8 text-[#74777D]/30 mx-auto" />
+              <p>Select an assignment prompt from the docket on the left to inspect guidelines and submit your brief.</p>
             </div>
           )}
         </div>

@@ -5,7 +5,6 @@ import { LoadingSpinner } from '../common/LoadingSpinner';
 import { useToast } from '../common/Toast';
 import { AIEvaluationModal } from '../ai/AIEvaluationModal';
 import {
-  FileText,
   Upload,
   Sparkles,
   GitCompare,
@@ -15,7 +14,13 @@ import {
   Clock,
   Layers,
   Save,
-  FileCheck2,
+  CheckCircle2,
+  Copy,
+  Gavel,
+  Cloud,
+  AlignLeft,
+  X,
+  Scale,
 } from 'lucide-react';
 
 interface DraftWorkspaceProps {
@@ -41,7 +46,8 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
   const [loading, setLoading] = useState(false);
   const [evaluating, setEvaluating] = useState(false);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
-  const [activeSidePanel, setActiveSidePanel] = useState<'ai_assist' | 'rag_search' | 'diff' | null>(null);
+  const [activeSidePanel, setActiveSidePanel] = useState<'rubric' | 'ai_assist' | 'rag_search' | 'diff' | null>('rubric');
+  const [fontFamily, setFontFamily] = useState<'serif' | 'sans' | 'mono'>('serif');
 
   // 3D AI Evaluation Modal State
   const [isAiEvalModalOpen, setIsAiEvalModalOpen] = useState(false);
@@ -59,7 +65,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
   const [aiGenerating, setAiGenerating] = useState(false);
   const [aiAssistResult, setAiAssistResult] = useState<AssistDraftingResponse | null>(null);
 
-  // RAG Search State
+  // Precedent Search State
   const [ragQuery, setRagQuery] = useState('');
   const [ragLoading, setRagLoading] = useState(false);
   const [ragResults, setRagResults] = useState<EvidenceChunk[]>([]);
@@ -160,7 +166,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
     try {
       const res = await api.evaluateDraft(selectedDraft.id, currentVersionNumber);
       setEvaluationResult(res.data);
-      showToast('Deterministic RAG Evaluation Completed!', 'success');
+      showToast('Academic 100-Point Rubric Evaluation Completed!', 'success');
       window.dispatchEvent(new CustomEvent('draftforge:metric_update'));
     } catch (err: any) {
       showToast(err.response?.data?.detail || 'Evaluation failed to complete', 'error');
@@ -216,7 +222,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
         context_draft_id: selectedDraft.id,
       });
       setAiAssistResult(res.data);
-      showToast('Draft clause synthesized from legal reference corpus', 'success');
+      showToast('Clause synthesized from statutory reference corpus', 'success');
     } catch (err: any) {
       showToast(err.response?.data?.detail || 'AI drafting assistance failed', 'error');
     } finally {
@@ -225,8 +231,12 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
   };
 
   const handleInsertAiClause = (clauseText: string) => {
-    setRawContent((prev) => `${prev}\n\n/* AI Generated Clause (${targetClause}) */\n${clauseText}`);
+    setRawContent((prev) => `${prev}\n\n/* Synthesized Clause (${targetClause}) */\n${clauseText}`);
     showToast('Clause appended to active editor', 'info');
+  };
+
+  const handleInsertSymbol = (symbol: string) => {
+    setRawContent((prev) => `${prev} ${symbol} `);
   };
 
   const handleRagSearch = async (e: React.FormEvent) => {
@@ -240,9 +250,9 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
         top_k: 4,
       });
       setRagResults(res.data.evidence);
-      showToast(`Retrieved ${res.data.evidence.length} statutory evidence chunks`, 'success');
+      showToast(`Retrieved ${res.data.evidence.length} precedent benchmarks`, 'success');
     } catch (err: any) {
-      showToast(err.response?.data?.detail || 'RAG Precedent Search failed', 'error');
+      showToast(err.response?.data?.detail || 'Precedent search failed', 'error');
     } finally {
       setRagLoading(false);
     }
@@ -255,89 +265,206 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
   });
 
   const wordCount = rawContent.trim() ? rawContent.trim().split(/\s+/).length : 0;
-  const lineCount = rawContent.split('\n').length;
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Top Workspace Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl tactile-card bg-[#FAF8F5] border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8]">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-serif font-bold text-[#0B192C] tracking-tight">Legal Drafting Workspace</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#1E3E62]/10 text-[#1E3E62] border border-[#1E3E62]/30 font-mono">
-              Live Editor
+    <div className="space-y-6 animate-fade-in font-sans">
+      {/* ========================================================================= */}
+      {/* 1. WORKBENCH UTILITY & SESSION BAR (Editorial Jurisprudence) */}
+      {/* ========================================================================= */}
+      <header className="w-full bg-[#FFFFFF] border border-[#E5DED2] p-4 sm:p-5 rounded-lg shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] font-semibold text-[#C78335] uppercase tracking-wider bg-[#FBF0E4] px-2 py-0.5 rounded">
+                {isCreatingNew ? 'New Draft Studio' : selectedDraft?.document_type.replace(/_/g, ' ') || 'Appellate Advocacy'}
+              </span>
+              <span className="text-xs text-[#74777D]">•</span>
+              <span className="text-xs text-[#43474D]">
+                {isCreatingNew ? 'Draft Inception' : `Revision #${currentVersionNumber}`}
+              </span>
+            </div>
+            <h1 className="font-serif text-xl sm:text-2xl text-[#20344A] tracking-tight font-medium truncate flex items-center gap-2 mt-1">
+              {isCreatingNew ? (
+                'Draft Inception Workbench'
+              ) : (
+                selectedDraft?.title || 'Legal Document Studio'
+              )}
+            </h1>
+          </div>
+          <div className="hidden xl:flex items-center gap-1.5 pl-4 py-1 text-xs text-[#557B68] border-l border-[#E5DED2]">
+            <Cloud className="w-4 h-4 text-[#557B68]" />
+            <span className="text-[#43474D]">
+              Saved to Academic Cloud <span className="text-[#74777D]">(Synced)</span>
             </span>
           </div>
-          <p className="text-xs text-[#0B192C]/70 mt-1">
-            Author, revise, and verify statutory compliance with automated RAG evidence grounding.
-          </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        {/* Workbench Actions & Metrics */}
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {/* Word Count Pill */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FBF8F2] border border-[#E5DED2] rounded text-xs text-[#20344A]">
+            <AlignLeft className="w-3.5 h-3.5 text-[#74777D]" />
+            <span className="font-semibold">{wordCount}</span>
+            <span className="text-[#74777D]">/ 3,500 words</span>
+          </div>
+
           {/* Upload Button */}
-          <label className="tactile-btn flex items-center gap-2 px-3.5 py-2 bg-[#FAF8F5] hover:bg-[#F3F0EA] border-2 border-[#E6E2D8] text-[#0B192C] rounded-xl text-xs font-bold cursor-pointer transition-all shadow-[0_2px_#E6E2D8] group">
-            <Upload className="w-3.5 h-3.5 text-[#1E3E62] group-hover:-translate-y-0.5 transition-transform" />
-            <span>Upload Document</span>
+          <label className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FBF8F2] hover:bg-[#F3EFE6] border border-[#E5DED2] text-[#20344A] rounded text-xs font-medium cursor-pointer transition-colors shadow-xs">
+            <Upload className="w-3.5 h-3.5 text-[#20344A]" />
+            <span>Upload</span>
             <input type="file" accept=".pdf,.docx,.txt" onChange={handleFileUpload} className="hidden" />
           </label>
 
-          {/* AI Assist Drawer Toggle */}
+          {/* Save Button */}
+          {!isCreatingNew && selectedDraft && (
+            <button
+              onClick={handleSaveRevision}
+              disabled={loading}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FBF8F2] hover:bg-[#F3EFE6] border border-[#E5DED2] text-[#20344A] rounded text-xs font-medium transition-colors shadow-xs"
+            >
+              <Save className="w-3.5 h-3.5 text-[#20344A]" />
+              <span>Save Revision</span>
+            </button>
+          )}
+
+          {/* AI Tutor Toggle */}
           <button
             onClick={() => setActiveSidePanel(activeSidePanel === 'ai_assist' ? null : 'ai_assist')}
-            className={`tactile-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded text-xs font-medium border transition-colors shadow-xs ${
               activeSidePanel === 'ai_assist'
-                ? 'bg-[#1E3E62] text-white border-[#0B192C] shadow-[0_3px_#0B192C]'
-                : 'bg-[#FAF8F5] hover:bg-[#F3F0EA] border-[#E6E2D8] text-[#0B192C] shadow-[0_2px_#E6E2D8]'
+                ? 'bg-[#20344A] text-white border-[#20344A]'
+                : 'bg-[#FBF8F2] hover:bg-[#F3EFE6] border-[#E5DED2] text-[#20344A]'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
-            <span>AI Copilot</span>
+            <Sparkles className="w-3.5 h-3.5 text-[#C78335]" />
+            <span>AI Legal Tutor</span>
           </button>
 
-          {/* RAG Precedent Search Drawer Toggle */}
+          {/* Precedent Search Toggle */}
           <button
             onClick={() => setActiveSidePanel(activeSidePanel === 'rag_search' ? null : 'rag_search')}
-            className={`tactile-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded text-xs font-medium border transition-colors shadow-xs ${
               activeSidePanel === 'rag_search'
-                ? 'bg-[#F59E0B] text-[#0B192C] border-[#0B192C] shadow-[0_3px_#0B192C]'
-                : 'bg-[#FAF8F5] hover:bg-[#F3F0EA] border-[#E6E2D8] text-[#0B192C] shadow-[0_2px_#E6E2D8]'
+                ? 'bg-[#20344A] text-white border-[#20344A]'
+                : 'bg-[#FBF8F2] hover:bg-[#F3EFE6] border-[#E5DED2] text-[#20344A]'
             }`}
           >
-            <BookOpen className="w-3.5 h-3.5 text-[#1E3E62]" />
-            <span>RAG Search</span>
+            <BookOpen className="w-3.5 h-3.5 text-[#20344A]" />
+            <span>Precedents</span>
           </button>
 
-          {/* Run RAG Evaluation Trigger */}
+          {/* Submit for Evaluation */}
           <button
             onClick={handleEvaluate}
             disabled={evaluating || !selectedDraft || isCreatingNew}
-            className="tactile-btn flex items-center gap-2 px-4 py-2 bg-[#1E3E62] hover:bg-[#152e4a] text-white rounded-xl text-xs font-bold border-b-4 border-[#0B192C] shadow-[0_3px_#0B192C] transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-1.5 bg-[#C78335] hover:bg-[#b57328] text-white rounded text-xs font-semibold transition-all shadow-sm disabled:opacity-50"
           >
             {evaluating ? (
               <>
                 <LoadingSpinner size="sm" />
-                <span>Evaluating Evidence...</span>
+                <span>Auditing Rubrics...</span>
               </>
             ) : (
               <>
-                <FileCheck2 className="w-4 h-4" />
-                <span>Run Evaluation</span>
+                <Gavel className="w-3.5 h-3.5 text-white" />
+                <span>Submit for Evaluation</span>
               </>
             )}
           </button>
         </div>
+      </header>
+
+      {/* ========================================================================= */}
+      {/* 2. EDITORIAL RIBBON / MICRO-FORMATTING BAR */}
+      {/* ========================================================================= */}
+      <div className="w-full bg-[#FBF8F2] border border-[#E5DED2] px-4 py-2 rounded-lg flex flex-wrap items-center justify-between gap-3 text-xs text-[#43474D]">
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center bg-[#FFFFFF] border border-[#E5DED2] rounded p-0.5">
+            <button
+              onClick={() => setFontFamily('serif')}
+              className={`px-2.5 py-1 rounded font-serif text-xs transition-colors ${
+                fontFamily === 'serif' ? 'bg-[#20344A] text-white' : 'text-[#43474D] hover:text-[#20344A]'
+              }`}
+            >
+              Newsreader (Serif)
+            </button>
+            <button
+              onClick={() => setFontFamily('sans')}
+              className={`px-2.5 py-1 rounded text-xs transition-colors ${
+                fontFamily === 'sans' ? 'bg-[#20344A] text-white' : 'text-[#43474D] hover:text-[#20344A]'
+              }`}
+            >
+              Source Sans
+            </button>
+            <button
+              onClick={() => setFontFamily('mono')}
+              className={`px-2.5 py-1 rounded font-mono text-xs transition-colors ${
+                fontFamily === 'mono' ? 'bg-[#20344A] text-white' : 'text-[#43474D] hover:text-[#20344A]'
+              }`}
+            >
+              Monospace
+            </button>
+          </div>
+
+          <span className="w-px h-4 bg-[#E5DED2]" />
+
+          {/* Quick Insert Legal Symbols */}
+          <div className="flex items-center gap-1">
+            <span className="text-[11px] text-[#74777D] mr-1">Insert:</span>
+            <button
+              onClick={() => handleInsertSymbol('§')}
+              className="px-2 py-0.5 bg-[#FFFFFF] hover:bg-[#F3EFE6] border border-[#E5DED2] rounded text-xs font-serif font-bold text-[#20344A]"
+              title="Section Symbol (§)"
+            >
+              §
+            </button>
+            <button
+              onClick={() => handleInsertSymbol('¶')}
+              className="px-2 py-0.5 bg-[#FFFFFF] hover:bg-[#F3EFE6] border border-[#E5DED2] rounded text-xs font-serif font-bold text-[#20344A]"
+              title="Paragraph Symbol (¶)"
+            >
+              ¶
+            </button>
+            <button
+              onClick={() => handleInsertSymbol('—')}
+              className="px-2 py-0.5 bg-[#FFFFFF] hover:bg-[#F3EFE6] border border-[#E5DED2] rounded text-xs font-serif font-bold text-[#20344A]"
+              title="Em Dash (—)"
+            >
+              —
+            </button>
+            <button
+              onClick={() => handleInsertSymbol('" "')}
+              className="px-2 py-0.5 bg-[#FFFFFF] hover:bg-[#F3EFE6] border border-[#E5DED2] rounded text-xs font-serif font-bold text-[#20344A]"
+              title="Citation Quotes"
+            >
+              “ ”
+            </button>
+          </div>
+        </div>
+
+        <div className="hidden md:flex items-center gap-4 text-[11px] text-[#74777D]">
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#557B68]" />
+            Double-spaced Body Standard (Bluebook R. 10.2)
+          </span>
+          <span className="flex items-center gap-1 text-[#20344A]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C78335]" />
+            Active Rubric: Statutory Synthesis & Due Execution
+          </span>
+        </div>
       </div>
 
-      {/* Main Grid: Explorer + Editor + Side Drawer */}
-      <div className="grid grid-cols-12 gap-6">
-        {/* Left Column: Drafts Inventory & Version History */}
-        <div className="col-span-12 lg:col-span-3 space-y-4">
-          {/* Drafts List Card */}
-          <div className="tactile-card bg-[#FAF8F5] p-4 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3.5">
-            <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#0B192C]/70 flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-[#1E3E62]" />
-                <span>Drafts ({drafts.length})</span>
+      {/* ========================================================================= */}
+      {/* 3. PRIMARY WORKSPACE CANVAS: Inventory + Parchment Sheet + Dock */}
+      {/* ========================================================================= */}
+      <div className="grid grid-cols-12 gap-6 items-start">
+        {/* Left Column: Drafts & Revisions (3 Columns) */}
+        <aside className="col-span-12 lg:col-span-3 space-y-4">
+          <div className="bg-[#FFFFFF] border border-[#E5DED2] p-4 rounded-lg shadow-sm space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-[#E5DED2]">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#74777D] flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-[#20344A]" />
+                <span>Drafts Docket ({drafts.length})</span>
               </span>
               <button
                 onClick={() => {
@@ -346,32 +473,32 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                   setTitle('');
                   setRawContent('');
                 }}
-                className="tactile-btn p-1.5 rounded-lg bg-[#1E3E62]/10 hover:bg-[#1E3E62]/20 text-[#1E3E62] border border-[#1E3E62]/30 transition-colors"
+                className="p-1 rounded bg-[#FBF8F2] hover:bg-[#F3EFE6] text-[#20344A] border border-[#E5DED2] transition-colors"
                 title="Initialize New Blank Draft"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-3.5 h-3.5" />
               </button>
             </div>
 
             {/* Search & Filter */}
             <div className="space-y-2">
               <div className="relative">
-                <Search className="w-3.5 h-3.5 text-[#0B192C]/40 absolute left-3 top-2.5" />
+                <Search className="w-3.5 h-3.5 text-[#74777D] absolute left-2.5 top-2.5" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search drafts..."
-                  className="w-full bg-[#F3F0EA] border-2 border-[#E6E2D8] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none"
+                  placeholder="Search docket..."
+                  className="w-full bg-[#FBF8F2] border border-[#E5DED2] rounded pl-7 pr-3 py-1.5 text-xs text-[#20344A] placeholder-[#74777D] focus:border-[#20344A] focus:outline-none"
                 />
               </div>
 
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="w-full bg-[#F3F0EA] border-2 border-[#E6E2D8] rounded-xl px-2.5 py-1.5 text-[11px] text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+                className="w-full bg-[#FBF8F2] border border-[#E5DED2] rounded px-2 py-1.5 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none"
               >
-                <option value="ALL">All Document Types</option>
+                <option value="ALL">All Categories</option>
                 <option value="AFFIDAVIT_OF_CHARACTER">Affidavit of Character</option>
                 <option value="EMPLOYMENT_AGREEMENT">Employment Agreement</option>
                 <option value="RENT_AGREEMENT">Rent Agreement</option>
@@ -380,19 +507,19 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
             </div>
 
             {/* Drafts List */}
-            <div className="space-y-2 max-h-[360px] overflow-y-auto pr-1">
+            <div className="space-y-1.5 max-h-[340px] overflow-y-auto pr-1">
               {loading ? (
                 <div className="py-8 flex justify-center">
                   <LoadingSpinner size="sm" />
                 </div>
               ) : filteredDrafts.length === 0 ? (
-                <div className="text-center py-6 text-[#0B192C]/50 text-xs">
-                  <p>No drafts found.</p>
+                <div className="text-center py-6 text-[#74777D] text-xs space-y-2">
+                  <p>No briefs found.</p>
                   <button
                     onClick={() => setIsCreatingNew(true)}
-                    className="mt-2 text-[#1E3E62] hover:underline font-bold"
+                    className="text-[#C78335] hover:underline font-semibold"
                   >
-                    + Create First Draft
+                    + Start New Draft
                   </button>
                 </div>
               ) : (
@@ -402,19 +529,19 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                     <div
                       key={d.id}
                       onClick={() => selectDraftItem(d)}
-                      className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                      className={`p-3 rounded border cursor-pointer transition-all ${
                         isSelected
-                          ? 'bg-[#1E3E62]/10 border-[#1E3E62] text-[#0B192C] shadow-[0_2px_#1E3E62]'
-                          : 'bg-[#F3F0EA] border-[#E6E2D8] hover:border-[#1E3E62]/40 text-[#0B192C] shadow-[0_1px_#E6E2D8]'
+                          ? 'bg-[#FBF0E4] border-[#C78335] text-[#20344A]'
+                          : 'bg-[#FBF8F2] border-[#E5DED2] hover:border-[#74777D] text-[#20344A]'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-1">
-                        <span className="font-serif font-bold text-xs text-[#0B192C] truncate">{d.title}</span>
-                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#FAF8F5] text-[#1E3E62] border border-[#E6E2D8] shrink-0">
+                        <span className="font-serif font-medium text-xs truncate">{d.title}</span>
+                        <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white text-[#74777D] border border-[#E5DED2] shrink-0">
                           v{d.versions?.length || 1}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between mt-1.5 text-[10px] text-[#0B192C]/60">
+                      <div className="flex items-center justify-between mt-1 text-[11px] text-[#74777D]">
                         <span className="truncate max-w-[120px]">{d.document_type.replace(/_/g, ' ')}</span>
                         <span>{new Date(d.updated_at).toLocaleDateString()}</span>
                       </div>
@@ -425,40 +552,40 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
             </div>
           </div>
 
-          {/* Versions Timeline & Diff Trigger */}
+          {/* Versions Timeline & Diff Selection */}
           {selectedDraft && !isCreatingNew && (
-            <div className="tactile-card bg-[#FAF8F5] p-4 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#0B192C]/70 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-[#D97706]" />
+            <div className="bg-[#FFFFFF] border border-[#E5DED2] p-4 rounded-lg shadow-sm space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-[#E5DED2]">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#74777D] flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-[#C78335]" />
                   <span>Version Timeline</span>
                 </span>
-                <span className="text-[10px] text-[#0B192C]/60 font-mono font-bold">
+                <span className="text-[11px] text-[#74777D] font-mono">
                   {selectedDraft.versions.length} Revisions
                 </span>
               </div>
 
-              <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+              <div className="space-y-1.5 max-h-44 overflow-y-auto pr-1">
                 {selectedDraft.versions.map((v) => {
                   const isCurrent = currentVersionNumber === v.version_number;
                   return (
                     <div
                       key={v.id}
                       onClick={() => handleSelectVersion(v.version_number)}
-                      className={`flex items-center justify-between p-2 rounded-xl text-xs cursor-pointer transition-all border-2 ${
+                      className={`flex items-center justify-between p-2 rounded text-xs cursor-pointer transition-all border ${
                         isCurrent
-                          ? 'bg-[#1E3E62]/10 border-[#1E3E62] text-[#0B192C] shadow-[0_2px_#1E3E62]'
-                          : 'bg-[#F3F0EA] border-[#E6E2D8] hover:border-[#1E3E62]/40 text-[#0B192C]'
+                          ? 'bg-[#20344A] text-white border-[#20344A]'
+                          : 'bg-[#FBF8F2] border-[#E5DED2] hover:border-[#74777D] text-[#20344A]'
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <span className="font-bold">Version {v.version_number}</span>
-                        <span className="text-[10px] text-[#0B192C]/50 font-mono">
+                        <span className="font-medium">Version {v.version_number}</span>
+                        <span className={`text-[10px] font-mono ${isCurrent ? 'text-white/70' : 'text-[#74777D]'}`}>
                           {new Date(v.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                       {isCurrent && (
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#1E3E62] text-white uppercase tracking-wider">
+                        <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-[#C78335] text-white uppercase tracking-wider">
                           Active
                         </span>
                       )}
@@ -469,16 +596,16 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
 
               {/* Version Comparison Selector */}
               {selectedDraft.versions.length > 1 && (
-                <div className="pt-2 border-t-2 border-[#E6E2D8] space-y-2">
-                  <div className="flex items-center justify-between text-[11px] text-[#0B192C]/70 font-semibold">
-                    <span>Compare Diff</span>
+                <div className="pt-2 border-t border-[#E5DED2] space-y-2">
+                  <div className="flex items-center justify-between text-xs text-[#74777D]">
+                    <span>Compare Revisions</span>
                     <button
                       onClick={handleCompareDiff}
                       disabled={diffLoading}
-                      className="text-[#1E3E62] hover:underline text-xs font-bold flex items-center gap-1"
+                      className="text-[#C78335] hover:underline text-xs font-semibold flex items-center gap-1"
                     >
                       <GitCompare className="w-3 h-3" />
-                      <span>Inspect</span>
+                      <span>Inspect Diff</span>
                     </button>
                   </div>
 
@@ -486,7 +613,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                     <select
                       value={diffVersion1}
                       onChange={(e) => setDiffVersion1(Number(e.target.value))}
-                      className="bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-lg p-1.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+                      className="bg-[#FBF8F2] border border-[#E5DED2] rounded p-1 text-xs text-[#20344A] focus:outline-none"
                     >
                       {selectedDraft.versions.map((v) => (
                         <option key={v.id} value={v.version_number}>
@@ -497,7 +624,7 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
                     <select
                       value={diffVersion2}
                       onChange={(e) => setDiffVersion2(Number(e.target.value))}
-                      className="bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-lg p-1.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+                      className="bg-[#FBF8F2] border border-[#E5DED2] rounded p-1 text-xs text-[#20344A] focus:outline-none"
                     >
                       {selectedDraft.versions.map((v) => (
                         <option key={v.id} value={v.version_number}>
@@ -510,81 +637,48 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
               )}
             </div>
           )}
-        </div>
+        </aside>
 
-        {/* Center Column: Interactive Editor Workspace */}
-        <div
+        {/* Center Column: Physical Parchment Sheet Editor Canvas */}
+        <section
           className={`${
-            activeSidePanel ? 'col-span-12 lg:col-span-6' : 'col-span-12 lg:col-span-9'
-          } space-y-4 transition-all duration-300`}
+            activeSidePanel ? 'col-span-12 lg:col-span-5 xl:col-span-6' : 'col-span-12 lg:col-span-9'
+          } flex flex-col items-center transition-all duration-300`}
         >
-          <div className="tactile-card bg-[#FAF8F5] p-5 sm:p-6 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
-            {/* Editor Top Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b-2 border-[#E6E2D8]">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#1E3E62]/10 border border-[#1E3E62]/20 flex items-center justify-center text-[#1E3E62]">
-                  <FileText className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base text-[#0B192C]">
-                    {isCreatingNew ? 'Initialize New Legal Draft' : selectedDraft?.title}
-                  </h3>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#F3F0EA] text-[#1E3E62] border border-[#E6E2D8]">
-                      {isCreatingNew ? docType : selectedDraft?.document_type}
-                    </span>
-                    {!isCreatingNew && (
-                      <span className="text-[10px] font-mono text-[#0B192C]/60">
-                        Editing Version {currentVersionNumber}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
+          <article className="w-full bg-[#FFFFFF] border border-[#E5DED2] shadow-[0_1px_3px_rgba(32,52,74,0.06),0_8px_24px_rgba(32,52,74,0.03)] px-6 sm:px-12 py-8 sm:py-12 rounded-sm relative flex flex-col text-[#20344A]">
+            {/* Parchment Running Head */}
+            <header className="w-full pb-3 mb-6 flex items-center justify-between text-[#74777D] text-[11px] uppercase tracking-widest border-b border-[#E5DED2]">
+              <span>
+                {isCreatingNew ? 'Initial Pleading' : selectedDraft?.title || 'DraftForge Academic Docket'}
+              </span>
+              <span>
+                {isCreatingNew ? 'Inception' : `Revision #${currentVersionNumber} • ${wordCount} Words`}
+              </span>
+            </header>
 
-              {/* Editor Right Controls */}
-              <div className="flex items-center gap-2">
-                <div className="hidden sm:flex items-center gap-3 text-[11px] font-mono text-[#0B192C]/60 pr-2 border-r-2 border-[#E6E2D8]">
-                  <span>{wordCount} words</span>
-                  <span>{lineCount} lines</span>
-                </div>
-
-                {!isCreatingNew && selectedDraft && (
-                  <button
-                    onClick={handleSaveRevision}
-                    disabled={loading}
-                    className="tactile-btn flex items-center gap-1.5 px-3.5 py-1.5 bg-[#F59E0B] hover:bg-[#d97706] text-[#0B192C] rounded-xl text-xs font-bold border-b-2 border-[#0B192C] shadow-[0_2px_#0B192C] transition-all"
-                  >
-                    <Save className="w-3.5 h-3.5 text-[#0B192C]" />
-                    <span>Save Version</span>
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* If creating new, show title and doc type form */}
+            {/* Creation Controls if creating new */}
             {isCreatingNew && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl bg-[#F3F0EA] border-2 border-[#E6E2D8]">
+              <div className="mb-6 p-4 rounded bg-[#FBF8F2] border border-[#E5DED2] grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[#0B192C] mb-1.5">
-                    Draft Title
+                  <label className="block text-xs font-semibold text-[#20344A] mb-1">
+                    Document Title
                   </label>
                   <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g., Employment Agreement - Software Engineer 2026"
-                    className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+                    placeholder="e.g. Affidavit of Character - Academic Pleading"
+                    className="w-full bg-white border border-[#E5DED2] rounded px-3 py-1.5 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#0B192C] mb-1.5">
-                    Document Category
+                  <label className="block text-xs font-semibold text-[#20344A] mb-1">
+                    Document Type
                   </label>
                   <select
                     value={docType}
                     onChange={(e) => setDocType(e.target.value as DocumentType)}
-                    className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+                    className="w-full bg-white border border-[#E5DED2] rounded px-3 py-1.5 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none"
                   >
                     <option value="AFFIDAVIT_OF_CHARACTER">Affidavit of Character (India)</option>
                     <option value="EMPLOYMENT_AGREEMENT">Employment Agreement (India)</option>
@@ -595,251 +689,382 @@ export const DraftWorkspace: React.FC<DraftWorkspaceProps> = ({
               </div>
             )}
 
-            {/* Monospace Legal Editor */}
-            <div className="relative rounded-xl border-2 border-[#E6E2D8] bg-[#FDFBF7] shadow-inner overflow-hidden focus-within:border-[#1E3E62] transition-colors">
+            {/* Parchment Textarea */}
+            <div className="relative w-full">
               <textarea
                 value={rawContent}
                 onChange={(e) => setRawContent(e.target.value)}
-                rows={18}
-                placeholder="Type or paste the complete legal draft here (including title, parties recitals, operative covenants, statutory jurisdiction, and deponent verification jurat)..."
-                className="w-full bg-transparent p-4 font-mono text-xs text-[#0B192C] leading-relaxed focus:outline-none resize-none"
+                rows={22}
+                placeholder="Author or paste the legal instrument here (captions, parties, operative covenants, jurisdiction, and verification clause)..."
+                className={`w-full bg-transparent border-0 p-0 text-sm text-[#20344A] leading-relaxed focus:outline-none resize-none ${
+                  fontFamily === 'serif'
+                    ? 'font-serif text-base leading-loose'
+                    : fontFamily === 'mono'
+                    ? 'font-mono text-xs leading-relaxed'
+                    : 'font-sans text-sm leading-relaxed'
+                }`}
               />
             </div>
 
-            {/* Bottom Actions */}
-            {isCreatingNew ? (
-              <div className="flex justify-end gap-3 pt-2">
+            {/* Creation Actions Footer */}
+            {isCreatingNew && (
+              <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-[#E5DED2]">
                 <button
                   type="button"
                   onClick={() => setIsCreatingNew(false)}
-                  className="px-4 py-2 text-xs font-semibold text-[#0B192C]/60 hover:text-[#0B192C]"
+                  className="px-4 py-2 text-xs font-medium text-[#74777D] hover:text-[#20344A]"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCreateDraft}
                   disabled={loading || !title.trim() || !rawContent.trim()}
-                  className="tactile-btn px-5 py-2 bg-[#1E3E62] hover:bg-[#152e4a] text-white text-xs font-bold rounded-xl border-b-4 border-[#0B192C] shadow-[0_3px_#0B192C] transition-all disabled:opacity-50"
+                  className="px-5 py-2 bg-[#20344A] hover:bg-[#152332] text-white text-xs font-semibold rounded transition-all disabled:opacity-50"
                 >
-                  {loading ? 'Initializing...' : 'Create Draft & Version 1'}
+                  {loading ? 'Initializing...' : 'Initialize Draft as Version 1'}
                 </button>
               </div>
-            ) : null}
-          </div>
-        </div>
-
-        {/* Right Column: Dynamic Side Drawer (Diff Inspector, AI Copilot, RAG Search) */}
-        {activeSidePanel && (
-          <div className="col-span-12 lg:col-span-3 space-y-4 animate-slide-in-right">
-            {/* Tab 1: Version Diff Inspector */}
-            {activeSidePanel === 'diff' && (
-              <div className="tactile-card bg-[#FAF8F5] p-5 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3.5">
-                <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
-                  <div className="flex items-center gap-2">
-                    <GitCompare className="w-4 h-4 text-[#1E3E62]" />
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#0B192C]">
-                      Unified Diff (v{diffVersion1} vs v{diffVersion2})
-                    </h4>
-                  </div>
-                  <button
-                    onClick={() => setActiveSidePanel(null)}
-                    className="text-[#0B192C]/50 hover:text-[#0B192C] text-xs font-bold"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                {diffResult ? (
-                  <div className="space-y-2.5">
-                    <div className="flex items-center justify-between text-[11px] font-mono p-2 rounded-xl bg-[#F3F0EA] border-2 border-[#E6E2D8]">
-                      <span className="text-emerald-700 font-bold">
-                        +{diffResult.additions} additions
-                      </span>
-                      <span className="text-red-700 font-bold">
-                        -{diffResult.deletions} deletions
-                      </span>
-                    </div>
-
-                    <div className="p-3 bg-[#FDFBF7] rounded-xl border-2 border-[#E6E2D8] font-mono text-[11px] text-[#0B192C] max-h-96 overflow-y-auto whitespace-pre-wrap leading-relaxed">
-                      {diffResult.diff_summary || 'No changes between selected versions.'}
-                    </div>
-                  </div>
-                ) : (
-                  <p className="text-xs text-[#0B192C]/60">Click inspect to compute version diff.</p>
-                )}
-              </div>
             )}
 
-            {/* Tab 2: AI Drafting Copilot */}
-            {activeSidePanel === 'ai_assist' && (
-              <div className="tactile-card bg-[#FAF8F5] p-5 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#F59E0B]" />
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#0B192C]">
-                      AI Legal Copilot
-                    </h4>
-                  </div>
-                  <button
-                    onClick={() => setActiveSidePanel(null)}
-                    className="text-[#0B192C]/50 hover:text-[#0B192C] text-xs font-bold"
-                  >
-                    ✕
-                  </button>
-                </div>
+            {/* Parchment Sheet Footer */}
+            <footer className="w-full pt-6 mt-8 flex items-center justify-between text-[#74777D] text-[10px] uppercase tracking-widest border-t border-[#E5DED2]">
+              <span>DraftForge Academic Juris Sandbox</span>
+              <span>Bluebook Standard Applied</span>
+            </footer>
+          </article>
+        </section>
 
-                <form onSubmit={handleAiAssist} className="space-y-3">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-[#0B192C] mb-1">
-                      Target Legal Clause
-                    </label>
-                    <select
-                      value={targetClause}
-                      onChange={(e) => setTargetClause(e.target.value)}
-                      className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl p-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
-                    >
-                      <option value="Verification & Perjury Jurat">Verification & Perjury Jurat</option>
-                      <option value="Section 27 Compliant Restrictive Covenants">
-                        Section 27 Compliant Restrictive Covenants
-                      </option>
-                      <option value="Statutory Notice Period & Termination">
-                        Notice Period & Termination
-                      </option>
-                      <option value="Security Deposit Refund Mechanics">
-                        Security Deposit Refund Mechanics
-                      </option>
-                      <option value="Arbitration & Territorial Jurisdiction">
-                        Arbitration & Jurisdiction
-                      </option>
-                    </select>
-                  </div>
+        {/* Right Column: Supporting Drawer (Rubric, AI Tutor, Precedents, Diff) */}
+        {activeSidePanel && (
+          <aside className="col-span-12 lg:col-span-4 xl:col-span-3 space-y-4">
+            <div className="bg-[#FFFFFF] border border-[#E5DED2] rounded-lg shadow-sm overflow-hidden flex flex-col">
+              {/* Tab Header Strip */}
+              <div className="bg-[#FBF8F2] p-1.5 border-b border-[#E5DED2] flex items-center gap-1 text-xs">
+                <button
+                  onClick={() => setActiveSidePanel('rubric')}
+                  className={`flex-1 py-1.5 px-2 rounded font-medium transition-all text-center flex items-center justify-center gap-1 ${
+                    activeSidePanel === 'rubric'
+                      ? 'bg-white text-[#20344A] shadow-xs font-semibold'
+                      : 'text-[#74777D] hover:text-[#20344A]'
+                  }`}
+                >
+                  <Scale className="w-3 h-3 text-[#C78335]" />
+                  <span>Rubric</span>
+                </button>
+                <button
+                  onClick={() => setActiveSidePanel('ai_assist')}
+                  className={`flex-1 py-1.5 px-2 rounded font-medium transition-all text-center flex items-center justify-center gap-1 ${
+                    activeSidePanel === 'ai_assist'
+                      ? 'bg-white text-[#20344A] shadow-xs font-semibold'
+                      : 'text-[#74777D] hover:text-[#20344A]'
+                  }`}
+                >
+                  <Sparkles className="w-3 h-3 text-[#C78335]" />
+                  <span>Tutor</span>
+                </button>
+                <button
+                  onClick={() => setActiveSidePanel('rag_search')}
+                  className={`flex-1 py-1.5 px-2 rounded font-medium transition-all text-center flex items-center justify-center gap-1 ${
+                    activeSidePanel === 'rag_search'
+                      ? 'bg-white text-[#20344A] shadow-xs font-semibold'
+                      : 'text-[#74777D] hover:text-[#20344A]'
+                  }`}
+                >
+                  <BookOpen className="w-3 h-3 text-[#20344A]" />
+                  <span>Cites</span>
+                </button>
+                <button
+                  onClick={() => setActiveSidePanel(null)}
+                  className="p-1 text-[#74777D] hover:text-[#20344A]"
+                  title="Close Inspector"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
 
-                  <div>
-                    <label className="block text-[11px] font-semibold text-[#0B192C] mb-1">
-                      Custom Instructions / Facts
-                    </label>
-                    <textarea
-                      value={userInstructions}
-                      onChange={(e) => setUserInstructions(e.target.value)}
-                      placeholder="e.g. Add 30-day notice with written registered post requirement..."
-                      rows={3}
-                      className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl p-2.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none resize-none"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={aiGenerating || !selectedDraft}
-                    className="tactile-btn w-full py-2 bg-[#1E3E62] hover:bg-[#152e4a] text-white text-xs font-bold rounded-xl border-b-2 border-[#0B192C] shadow-[0_2px_#0B192C] transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
-                  >
-                    {aiGenerating ? <LoadingSpinner size="sm" /> : <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />}
-                    <span>Generate Grounded Clause</span>
-                  </button>
-                </form>
-
-                {aiAssistResult && (
-                  <div className="space-y-2.5 pt-2 border-t-2 border-[#E6E2D8] animate-fade-in-up">
-                    <div className="p-3 rounded-xl bg-[#F3F0EA] border-2 border-[#1E3E62]/30 text-xs font-mono text-[#0B192C]">
-                      {aiAssistResult.drafted_clause || aiAssistResult.generated_draft}
+              {/* Sub-Panel 1: Rubric Guidance (Matching Reference Design) */}
+              {activeSidePanel === 'rubric' && (
+                <div className="p-4 space-y-4">
+                  {/* Score Projection Header */}
+                  <div className="bg-[#FBF8F2] border border-[#E5DED2] p-3 rounded flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] uppercase tracking-wider text-[#74777D] font-semibold block">
+                        Academic Target
+                      </span>
+                      <span className="font-serif text-xl font-bold text-[#20344A]">
+                        100 <span className="text-xs text-[#74777D] font-sans font-normal">/ 100 PTS</span>
+                      </span>
                     </div>
+                    <span className="text-[11px] font-semibold text-[#557B68] bg-[#E8F3ED] px-2 py-0.5 rounded">
+                      Standard Rubric
+                    </span>
+                  </div>
 
-                    {aiAssistResult.commentary && (
-                      <p className="text-[11px] text-[#0B192C]/80 bg-[#FDFBF7] p-2.5 rounded-lg border-2 border-[#E6E2D8] leading-relaxed">
-                        <span className="font-bold text-[#1E3E62]">Statutory Note: </span>
-                        {aiAssistResult.commentary}
-                      </p>
-                    )}
+                  {/* Criteria Checklist */}
+                  <div className="space-y-2">
+                    <span className="text-[10px] uppercase tracking-wider text-[#74777D] font-semibold block">
+                      Core Grading Criteria
+                    </span>
+                    <div className="space-y-1.5 text-xs">
+                      <div className="p-2 bg-[#FBF8F2] border border-[#E5DED2] rounded flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#557B68] shrink-0 mt-0.5" />
+                        <div>
+                          <div className="font-medium text-[#20344A] flex justify-between">
+                            <span>Caption & Jurisdiction</span>
+                            <span className="text-[10px] text-[#557B68] font-semibold">15%</span>
+                          </div>
+                          <p className="text-[11px] text-[#74777D]">Court hierarchy and cause title properly established.</p>
+                        </div>
+                      </div>
 
+                      <div className="p-2 bg-[#FBF8F2] border border-[#E5DED2] rounded flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#557B68] shrink-0 mt-0.5" />
+                        <div>
+                          <div className="font-medium text-[#20344A] flex justify-between">
+                            <span>Statutory Synthesis</span>
+                            <span className="text-[10px] text-[#557B68] font-semibold">25%</span>
+                          </div>
+                          <p className="text-[11px] text-[#74777D]">Required statutory acts cited with section specificity.</p>
+                        </div>
+                      </div>
+
+                      <div className="p-2 bg-[#FBF0E4] border border-[#C78335] rounded flex items-start gap-2">
+                        <div className="w-3.5 h-3.5 rounded-full border-2 border-[#C78335] shrink-0 mt-0.5" />
+                        <div>
+                          <div className="font-medium text-[#20344A] flex justify-between">
+                            <span>Verification & Perjury Jurat</span>
+                            <span className="text-[10px] text-[#C78335] font-semibold">30%</span>
+                          </div>
+                          <p className="text-[11px] text-[#74777D]">Deponent declaration of personal knowledge under oath.</p>
+                        </div>
+                      </div>
+
+                      <div className="p-2 bg-[#FBF8F2] border border-[#E5DED2] rounded flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#557B68] shrink-0 mt-0.5" />
+                        <div>
+                          <div className="font-medium text-[#20344A] flex justify-between">
+                            <span>Professional Tone & Bluebook</span>
+                            <span className="text-[10px] text-[#557B68] font-semibold">15%</span>
+                          </div>
+                          <p className="text-[11px] text-[#74777D]">Formal legal cadence with accurate typographical formatting.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Fast Insert Precedents */}
+                  <div className="pt-2 border-t border-[#E5DED2] space-y-2">
+                    <span className="text-[10px] uppercase tracking-wider text-[#74777D] font-semibold block">
+                      Common Precedent Citations (Click to Insert)
+                    </span>
                     <button
-                      onClick={() =>
-                        handleInsertAiClause(
-                          aiAssistResult.drafted_clause || aiAssistResult.generated_draft || ''
-                        )
-                      }
-                      className="tactile-btn w-full py-2 bg-[#FAF8F5] hover:bg-[#F3F0EA] text-[#0B192C] text-xs font-bold rounded-xl border-2 border-[#E6E2D8] shadow-[0_2px_#E6E2D8] flex items-center justify-center gap-1.5 transition-colors"
+                      onClick={() => handleInsertSymbol('(1970) 397 U.S. 137')}
+                      className="w-full text-left p-2 bg-[#FBF8F2] hover:bg-[#F3EFE6] border border-[#E5DED2] rounded text-xs transition-colors flex items-center justify-between"
                     >
-                      <Plus className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Insert Clause into Editor</span>
+                      <span className="font-serif italic text-[#20344A]">Pike v. Bruce Church, Inc.</span>
+                      <Copy className="w-3 h-3 text-[#74777D]" />
+                    </button>
+                    <button
+                      onClick={() => handleInsertSymbol('(1978) 437 U.S. 617')}
+                      className="w-full text-left p-2 bg-[#FBF8F2] hover:bg-[#F3EFE6] border border-[#E5DED2] rounded text-xs transition-colors flex items-center justify-between"
+                    >
+                      <span className="font-serif italic text-[#20344A]">City of Philadelphia v. New Jersey</span>
+                      <Copy className="w-3 h-3 text-[#74777D]" />
                     </button>
                   </div>
-                )}
-              </div>
-            )}
+                </div>
+              )}
 
-            {/* Tab 3: RAG Precedent & Evidence Search */}
-            {activeSidePanel === 'rag_search' && (
-              <div className="tactile-card bg-[#FAF8F5] p-5 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-[#1E3E62]" />
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#0B192C]">
-                      RAG Precedent Search
+              {/* Sub-Panel 2: AI Legal Tutor */}
+              {activeSidePanel === 'ai_assist' && (
+                <div className="p-4 space-y-3.5">
+                  <div className="flex items-center gap-1.5 pb-2 border-b border-[#E5DED2]">
+                    <Sparkles className="w-4 h-4 text-[#C78335]" />
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-[#20344A]">
+                      AI Legal Clause Synthesis
                     </h4>
                   </div>
-                  <button
-                    onClick={() => setActiveSidePanel(null)}
-                    className="text-[#0B192C]/50 hover:text-[#0B192C] text-xs font-bold"
-                  >
-                    ✕
-                  </button>
-                </div>
 
-                <form onSubmit={handleRagSearch} className="space-y-2.5">
-                  <div className="relative">
+                  <form onSubmit={handleAiAssist} className="space-y-3">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-[#20344A] mb-1">
+                        Target Legal Clause
+                      </label>
+                      <select
+                        value={targetClause}
+                        onChange={(e) => setTargetClause(e.target.value)}
+                        className="w-full bg-[#FBF8F2] border border-[#E5DED2] rounded p-1.5 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none"
+                      >
+                        <option value="Verification & Perjury Jurat">Verification & Perjury Jurat</option>
+                        <option value="Section 27 Compliant Restrictive Covenants">
+                          Section 27 Compliant Restrictive Covenants
+                        </option>
+                        <option value="Statutory Notice Period & Termination">
+                          Notice Period & Termination
+                        </option>
+                        <option value="Security Deposit Refund Mechanics">
+                          Security Deposit Refund Mechanics
+                        </option>
+                        <option value="Arbitration & Territorial Jurisdiction">
+                          Arbitration & Jurisdiction
+                        </option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-semibold text-[#20344A] mb-1">
+                        Specific Facts or Directives
+                      </label>
+                      <textarea
+                        value={userInstructions}
+                        onChange={(e) => setUserInstructions(e.target.value)}
+                        placeholder="e.g. Include 30-day notice via registered speed post..."
+                        rows={3}
+                        className="w-full bg-[#FBF8F2] border border-[#E5DED2] rounded p-2 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none resize-none"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={aiGenerating || !selectedDraft}
+                      className="w-full py-2 bg-[#20344A] hover:bg-[#152332] text-white text-xs font-semibold rounded transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
+                    >
+                      {aiGenerating ? (
+                        <LoadingSpinner size="sm" />
+                      ) : (
+                        <Sparkles className="w-3.5 h-3.5 text-[#C78335]" />
+                      )}
+                      <span>Synthesize Clause</span>
+                    </button>
+                  </form>
+
+                  {aiAssistResult && (
+                    <div className="space-y-2.5 pt-3 border-t border-[#E5DED2]">
+                      <div className="p-3 rounded bg-[#FBF8F2] border border-[#E5DED2] text-xs font-mono text-[#20344A] leading-relaxed">
+                        {aiAssistResult.drafted_clause || aiAssistResult.generated_draft}
+                      </div>
+
+                      {aiAssistResult.commentary && (
+                        <p className="text-[11px] text-[#43474D] bg-[#FBF0E4] p-2.5 rounded border border-[#C78335]/30 leading-relaxed">
+                          <strong className="text-[#C78335]">Statutory Rationale: </strong>
+                          {aiAssistResult.commentary}
+                        </p>
+                      )}
+
+                      <button
+                        onClick={() =>
+                          handleInsertAiClause(
+                            aiAssistResult.drafted_clause || aiAssistResult.generated_draft || ''
+                          )
+                        }
+                        className="w-full py-1.5 bg-[#557B68] hover:bg-[#436354] text-white text-xs font-semibold rounded flex items-center justify-center gap-1.5 transition-colors"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Insert Clause into Sheet</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Sub-Panel 3: Precedents & Citation Search */}
+              {activeSidePanel === 'rag_search' && (
+                <div className="p-4 space-y-3">
+                  <div className="flex items-center gap-1.5 pb-2 border-b border-[#E5DED2]">
+                    <BookOpen className="w-4 h-4 text-[#20344A]" />
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-[#20344A]">
+                      Precedent & Knowledge Corpus
+                    </h4>
+                  </div>
+
+                  <form onSubmit={handleRagSearch} className="space-y-2">
                     <input
                       type="text"
                       value={ragQuery}
                       onChange={(e) => setRagQuery(e.target.value)}
-                      placeholder="e.g., verification under oath bar council"
-                      className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl p-2 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+                      placeholder="e.g. verification under oath jurat..."
+                      className="w-full bg-[#FBF8F2] border border-[#E5DED2] rounded p-2 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none"
                     />
+
+                    <button
+                      type="submit"
+                      disabled={ragLoading || !ragQuery.trim()}
+                      className="w-full py-1.5 bg-[#20344A] hover:bg-[#152332] text-white text-xs font-semibold rounded flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+                    >
+                      {ragLoading ? <LoadingSpinner size="sm" /> : <Search className="w-3.5 h-3.5" />}
+                      <span>Search Precedent Corpus</span>
+                    </button>
+                  </form>
+
+                  <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+                    {ragResults.length === 0 ? (
+                      <p className="text-center py-6 text-[11px] text-[#74777D]">
+                        Search for statutory principles, standard clauses, and binding precedents.
+                      </p>
+                    ) : (
+                      ragResults.map((chunk, idx) => (
+                        <div
+                          key={idx}
+                          className="p-2.5 rounded bg-[#FBF8F2] border border-[#E5DED2] hover:border-[#74777D] space-y-1.5 text-xs transition-colors"
+                        >
+                          <div className="flex items-center justify-between text-[10px] text-[#20344A] font-semibold">
+                            <span>{chunk.source_document}</span>
+                            <span>Pg. {chunk.page_number}</span>
+                          </div>
+                          <p className="font-serif text-[11px] text-[#43474D] leading-relaxed italic bg-white p-2 rounded border border-[#E5DED2]">
+                            "{chunk.content}"
+                          </p>
+                          <button
+                            onClick={() => {
+                              setRawContent((prev) => `${prev}\n\n${chunk.content}`);
+                              showToast('Citation appended to draft', 'info');
+                            }}
+                            className="text-[11px] text-[#C78335] hover:underline font-semibold flex items-center gap-1"
+                          >
+                            <Plus className="w-3 h-3" />
+                            <span>Insert into Draft</span>
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Sub-Panel 4: Revision Comparison (Diff) */}
+              {activeSidePanel === 'diff' && (
+                <div className="p-4 space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-[#E5DED2]">
+                    <div className="flex items-center gap-1.5">
+                      <GitCompare className="w-4 h-4 text-[#20344A]" />
+                      <h4 className="text-xs font-semibold uppercase tracking-wider text-[#20344A]">
+                        Revision Diff (v{diffVersion1} vs v{diffVersion2})
+                      </h4>
+                    </div>
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={ragLoading || !ragQuery.trim()}
-                    className="tactile-btn w-full py-2 bg-[#1E3E62] hover:bg-[#152e4a] text-white text-xs font-bold rounded-xl border-b-2 border-[#0B192C] shadow-[0_2px_#0B192C] flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
-                  >
-                    {ragLoading ? <LoadingSpinner size="sm" /> : <Search className="w-3.5 h-3.5" />}
-                    <span>Query Qdrant Vector Corpus</span>
-                  </button>
-                </form>
-
-                <div className="space-y-2.5 max-h-96 overflow-y-auto pr-1">
-                  {ragResults.length === 0 ? (
-                    <p className="text-center py-6 text-[11px] text-[#0B192C]/50">
-                      Enter legal terms to retrieve dense vector and statutory citations.
-                    </p>
-                  ) : (
-                    ragResults.map((chunk, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3 rounded-xl bg-[#F3F0EA] border-2 border-[#E6E2D8] hover:border-[#1E3E62]/40 space-y-1.5 text-xs"
-                      >
-                        <div className="flex items-center justify-between text-[10px] text-[#1E3E62] font-bold font-mono">
-                          <span>{chunk.source_document}</span>
-                          <span>Page {chunk.page_number}</span>
-                        </div>
-                        <p className="font-mono text-[11px] text-[#0B192C] leading-relaxed bg-[#FAF8F5] p-2 rounded border border-[#E6E2D8]">
-                          "{chunk.content}"
-                        </p>
-                        <button
-                          onClick={() => {
-                            setRawContent((prev) => `${prev}\n\n${chunk.content}`);
-                            showToast('Citation inserted into editor', 'info');
-                          }}
-                          className="text-[10px] text-[#1E3E62] hover:underline font-bold flex items-center gap-1"
-                        >
-                          <Plus className="w-3 h-3" />
-                          Insert citation
-                        </button>
+                  {diffResult ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs p-2 rounded bg-[#FBF8F2] border border-[#E5DED2]">
+                        <span className="text-[#557B68] font-semibold">
+                          +{diffResult.additions} additions
+                        </span>
+                        <span className="text-[#BA1A1A] font-semibold">
+                          -{diffResult.deletions} deletions
+                        </span>
                       </div>
-                    ))
+
+                      <div className="p-2.5 bg-[#FFFFFF] rounded border border-[#E5DED2] font-mono text-[11px] text-[#20344A] max-h-80 overflow-y-auto whitespace-pre-wrap leading-relaxed">
+                        {diffResult.diff_summary || 'No textual changes between selected versions.'}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-[#74777D]">Select revisions and click inspect.</p>
                   )}
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          </aside>
         )}
       </div>
 

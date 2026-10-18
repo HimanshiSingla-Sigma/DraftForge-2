@@ -63,10 +63,13 @@ class Settings(BaseSettings):
     INITIAL_ADMIN_EMAIL: str = "singlahimanshi2@gmail.com"
     INVITATION_EXPIRY_HOURS: int = 72
     APP_BASE_URL: str = "http://localhost:5173"
-    STUDENT_EMAIL_POLICY: str = "ANY_VERIFIED"  # "ANY_VERIFIED" or "COLLEGE_DOMAIN_ONLY"
+    STUDENT_EMAIL_POLICY: str = "COLLEGE_DOMAIN_ONLY"  # Enforces @ncuindia.edu for all student invitations
 
-    # Email Notifications Configuration
-    EMAIL_PROVIDER: str = "console"  # "console", "resend", "brevo", "sendgrid", "smtp"
+    # Email Notifications Configuration (HTTPS Resend API preferred; blocked SMTP fallback)
+    EMAIL_PROVIDER: str = "resend"  # "resend", "https", "console", "smtp", "brevo", "sendgrid"
+    RESEND_API_KEY: str = ""
+    RESEND_FROM_EMAIL: str = "onboarding@resend.dev"
+    EMAIL_FALLBACK_TO_CONSOLE: bool = True
     SMTP_HOST: str = ""
     SMTP_PORT: int = 587
     SMTP_USERNAME: str = ""
@@ -74,8 +77,6 @@ class Settings(BaseSettings):
     SMTP_FROM_EMAIL: str = "noreply@draftforge.ai"
     SMTP_FROM_NAME: str = "DraftForge Legal AI"
     SMTP_USE_TLS: bool = True
-    RESEND_API_KEY: str = ""
-    RESEND_FROM_EMAIL: str = ""
     BREVO_API_KEY: str = ""
     BREVO_FROM_EMAIL: str = ""
     SENDGRID_API_KEY: str = ""

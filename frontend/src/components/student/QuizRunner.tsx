@@ -109,7 +109,7 @@ export const QuizRunner: React.FC = () => {
   const copyClauseText = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
-    showToast('Model template copied to clipboard', 'info');
+    showToast('Model clause copied to clipboard', 'info');
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -119,30 +119,35 @@ export const QuizRunner: React.FC = () => {
   return (
     <div className="space-y-6 animate-fade-in font-sans">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl tactile-card bg-white border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8]">
+      <header className="bg-[#FFFFFF] p-5 sm:p-6 rounded-lg border border-[#E5DED2] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="font-serif text-xl sm:text-2xl font-bold text-[#0B192C] tracking-tight">Legal Quizzes & Practice Studio</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#F59E0B]/30 font-mono">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider text-[#C78335] font-semibold bg-[#FBF0E4] px-2 py-0.5 rounded">
+              Academic Practice Studio
+            </span>
+            <span className="text-xs text-[#557B68] font-semibold bg-[#E8F3ED] px-2 py-0.5 rounded">
               Knowledge Verification
             </span>
           </div>
-          <p className="text-xs text-[#0B192C]/70 mt-1 font-sans">
+          <h2 className="font-serif text-xl sm:text-2xl text-[#20344A] tracking-tight font-medium mt-1">
+            Statutory Practice & Legal Quizzes
+          </h2>
+          <p className="text-xs text-[#74777D] mt-0.5">
             Test statutory mechanics with interactive multiple-choice questions or generate AI drafting scenarios.
           </p>
         </div>
 
         {/* Tab Toggle */}
-        <div className="flex items-center gap-1.5 p-1 bg-[#F3F0EA] rounded-2xl border-2 border-[#E6E2D8]">
+        <div className="flex items-center gap-1.5 p-1 bg-[#FBF8F2] rounded border border-[#E5DED2]">
           <button
             onClick={() => {
               setActiveTab('standard');
               setActiveQuiz(null);
             }}
-            className={`tactile-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded text-xs font-medium transition-all ${
               activeTab === 'standard'
-                ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
-                : 'text-[#0B192C]/70 hover:text-[#0B192C] hover:bg-white'
+                ? 'bg-[#20344A] text-white font-semibold'
+                : 'text-[#74777D] hover:text-[#20344A]'
             }`}
           >
             Statutory Quizzes ({quizzes.length})
@@ -152,31 +157,31 @@ export const QuizRunner: React.FC = () => {
               setActiveTab('ai_exercise');
               setActiveQuiz(null);
             }}
-            className={`tactile-btn flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded text-xs font-medium transition-all ${
               activeTab === 'ai_exercise'
-                ? 'bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
-                : 'text-[#0B192C]/70 hover:text-[#0B192C] hover:bg-white'
+                ? 'bg-[#20344A] text-white font-semibold'
+                : 'text-[#74777D] hover:text-[#20344A]'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
+            <Sparkles className="w-3.5 h-3.5 text-[#C78335]" />
             <span>AI Practice Studio</span>
           </button>
         </div>
-      </div>
+      </header>
 
       {/* VIEW 1: Standard Quizzes Catalog */}
       {activeTab === 'standard' && !activeQuiz && (
         <div className="space-y-4">
           {/* Filter Bar */}
           <div className="flex items-center justify-between">
-            <span className="text-xs font-serif font-bold text-[#0B192C] uppercase tracking-wider">
+            <span className="text-xs font-medium text-[#74777D] uppercase tracking-wider">
               Available Tests
             </span>
 
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="bg-white border-2 border-[#E6E2D8] rounded-xl px-3 py-1.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+              className="bg-[#FFFFFF] border border-[#E5DED2] rounded px-3 py-1.5 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none"
             >
               <option value="ALL">All Categories</option>
               <option value="AFFIDAVIT_OF_CHARACTER">Affidavit of Character</option>
@@ -191,52 +196,52 @@ export const QuizRunner: React.FC = () => {
               <LoadingSpinner size="lg" label="Loading legal quizzes..." />
             </div>
           ) : quizzes.length === 0 ? (
-            <div className="tactile-card bg-white p-12 text-center rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-3">
-              <HelpCircle className="w-12 h-12 text-[#0B192C]/40 mx-auto" />
-              <h3 className="font-serif text-sm font-semibold text-[#0B192C]">No Quizzes Found</h3>
-              <p className="text-xs text-[#0B192C]/70 font-sans">
+            <div className="bg-[#FFFFFF] p-12 text-center rounded-lg border border-[#E5DED2] shadow-sm space-y-3">
+              <HelpCircle className="w-10 h-10 text-[#74777D]/30 mx-auto" />
+              <h3 className="font-serif text-lg font-medium text-[#20344A]">No Quizzes Found</h3>
+              <p className="text-xs text-[#74777D] leading-relaxed">
                 No interactive quizzes match the selected category filter.
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {quizzes.map((q) => (
                 <div
                   key={q.id}
                   onClick={() => handleSelectQuiz(q.id)}
-                  className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] hover:border-[#1E3E62] cursor-pointer transition-all space-y-4 flex flex-col justify-between group"
+                  className="bg-[#FFFFFF] p-5 rounded-lg border border-[#E5DED2] shadow-xs hover:border-[#20344A] cursor-pointer transition-all space-y-3 flex flex-col justify-between group"
                 >
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-[#F3F0EA] text-[#0B192C] border border-[#E6E2D8]">
+                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-[#FBF0E4] text-[#C78335] border border-[#C78335]/30">
                         {q.document_type.replace(/_/g, ' ')}
                       </span>
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full font-mono ${
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded uppercase tracking-wider ${
                           q.difficulty === 'ADVANCED'
-                            ? 'bg-[#FEF2F2] text-[#DC2626] border border-[#DC2626]/30'
+                            ? 'bg-[#FFDAD6] text-[#BA1A1A]'
                             : q.difficulty === 'INTERMEDIATE'
-                            ? 'bg-[#FFFBEB] text-[#B45309] border border-[#F59E0B]/30'
-                            : 'bg-[#F0FDF4] text-[#059669] border border-[#10B981]/30'
+                            ? 'bg-[#FBF0E4] text-[#C78335]'
+                            : 'bg-[#E8F3ED] text-[#557B68]'
                         }`}
                       >
                         {q.difficulty}
                       </span>
                     </div>
 
-                    <h3 className="font-serif font-bold text-sm text-[#0B192C] group-hover:text-[#1E3E62] transition-colors">
+                    <h3 className="font-serif font-medium text-base text-[#20344A] group-hover:text-[#C78335] transition-colors">
                       {q.title}
                     </h3>
                     {q.description && (
-                      <p className="text-xs text-[#0B192C]/70 leading-relaxed line-clamp-2 font-sans">
+                      <p className="text-xs text-[#43474D] leading-relaxed line-clamp-2">
                         {q.description}
                       </p>
                     )}
                   </div>
 
-                  <button className="tactile-btn w-full py-2 bg-[#F3F0EA] group-hover:bg-[#1E3E62] border-2 border-[#E6E2D8] group-hover:border-[#0B192C] text-[#0B192C] group-hover:text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer">
-                    <span>Start Test</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#F59E0B]" />
+                  <button className="w-full py-1.5 bg-[#FBF8F2] group-hover:bg-[#20344A] border border-[#E5DED2] group-hover:border-[#20344A] text-[#20344A] group-hover:text-white rounded text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                    <span>Take Quiz</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#C78335]" />
                   </button>
                 </div>
               ))}
@@ -247,18 +252,18 @@ export const QuizRunner: React.FC = () => {
 
       {/* VIEW 2: Active Quiz Runner */}
       {activeTab === 'standard' && activeQuiz && (
-        <div className="tactile-card bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b-2 border-[#E6E2D8]">
+        <div className="bg-[#FFFFFF] p-6 lg:p-8 rounded-lg border border-[#E5DED2] shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#E5DED2]">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F3F0EA] text-[#0B192C] border border-[#E6E2D8]">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FBF8F2] text-[#20344A] border border-[#E5DED2]">
                   {activeQuiz.document_type}
                 </span>
-                <span className="text-[10px] font-bold text-[#B45309] font-mono">
+                <span className="text-[11px] font-semibold text-[#C78335]">
                   Difficulty: {activeQuiz.difficulty}
                 </span>
               </div>
-              <h2 className="font-serif text-lg font-bold text-[#0B192C] mt-1">{activeQuiz.title}</h2>
+              <h2 className="font-serif text-xl font-medium text-[#20344A] mt-1">{activeQuiz.title}</h2>
             </div>
 
             <button
@@ -266,27 +271,27 @@ export const QuizRunner: React.FC = () => {
                 setActiveQuiz(null);
                 setResult(null);
               }}
-              className="text-xs text-[#0B192C]/70 hover:text-[#0B192C] font-semibold self-start sm:self-auto cursor-pointer"
+              className="text-xs text-[#74777D] hover:text-[#20344A] font-semibold self-start sm:self-auto cursor-pointer"
             >
-              ← Back to Quizzes Catalogue
+              ← Back to Quizzes Catalog
             </button>
           </div>
 
           {/* Questions Stream */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {activeQuiz.questions?.map((q, idx) => {
               const selectedOption = answers[q.id];
               return (
                 <div
                   key={q.id}
-                  className="p-5 rounded-2xl bg-[#FAF8F5] border-2 border-[#E6E2D8] space-y-4"
+                  className="p-5 rounded bg-[#FBF8F2] border border-[#E5DED2] space-y-3"
                 >
-                  <p className="text-xs font-serif font-bold text-[#0B192C] leading-relaxed">
-                    <span className="font-mono text-[#1E3E62] mr-2">Q{idx + 1}.</span>
+                  <p className="text-xs font-serif font-medium text-[#20344A] leading-relaxed">
+                    <span className="font-sans font-bold text-[#C78335] mr-2">Q{idx + 1}.</span>
                     {q.question_text}
                   </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {q.options.map((opt) => {
                       const isSelected = selectedOption === opt.key;
                       return (
@@ -294,22 +299,22 @@ export const QuizRunner: React.FC = () => {
                           key={opt.key}
                           type="button"
                           onClick={() => setAnswers({ ...answers, [q.id]: opt.key })}
-                          className={`p-3.5 rounded-xl text-xs text-left border-2 transition-all flex items-start gap-2.5 cursor-pointer ${
+                          className={`p-3 rounded text-xs text-left border transition-all flex items-start gap-2.5 cursor-pointer ${
                             isSelected
-                              ? 'bg-white text-[#0B192C] border-[#1E3E62] shadow-[0_3px_#1E3E62]'
-                              : 'bg-white border-[#E6E2D8] text-[#0B192C]/80 hover:border-[#1E3E62]/40'
+                              ? 'bg-white text-[#20344A] border-[#20344A] font-medium shadow-xs'
+                              : 'bg-white border-[#E5DED2] text-[#43474D] hover:border-[#74777D]'
                           }`}
                         >
                           <span
                             className={`font-mono text-xs font-bold px-1.5 py-0.5 rounded shrink-0 border ${
                               isSelected
-                                ? 'bg-[#1E3E62] text-white border-[#0B192C]'
-                                : 'bg-[#F3F0EA] text-[#0B192C] border-[#E6E2D8]'
+                                ? 'bg-[#20344A] text-white border-[#20344A]'
+                                : 'bg-[#FBF8F2] text-[#20344A] border-[#E5DED2]'
                             }`}
                           >
                             {opt.key}
                           </span>
-                          <span className="leading-relaxed font-sans">{opt.text}</span>
+                          <span className="leading-relaxed">{opt.text}</span>
                         </button>
                       );
                     })}
@@ -325,68 +330,68 @@ export const QuizRunner: React.FC = () => {
               <button
                 onClick={handleSubmit}
                 disabled={submitting || Object.keys(answers).length === 0}
-                className="tactile-btn px-6 py-2.5 bg-[#1E3E62] hover:bg-[#152C46] text-white font-bold text-xs rounded-xl border-b-4 border-[#0B192C] shadow-md transition-all disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                className="px-5 py-2.5 bg-[#20344A] hover:bg-[#152332] text-white font-semibold text-xs rounded transition-all disabled:opacity-50 flex items-center gap-2 cursor-pointer shadow-sm"
               >
-                {submitting ? <LoadingSpinner size="sm" /> : <CheckCircle2 className="w-4 h-4 text-[#F59E0B]" />}
-                <span>Submit Quiz for Instant Scoring</span>
+                {submitting ? <LoadingSpinner size="sm" /> : <CheckCircle2 className="w-4 h-4 text-[#C78335]" />}
+                <span>Submit Answers for Evaluation</span>
               </button>
             </div>
           ) : (
-            <div className="p-6 rounded-2xl bg-[#FAF8F5] border-2 border-[#E6E2D8] space-y-5 shadow-[0_4px_#E6E2D8] animate-fade-in-up">
-              <div className="flex items-center justify-between pb-4 border-b-2 border-[#E6E2D8]">
+            <div className="p-6 rounded-lg bg-[#FFFFFF] border border-[#E5DED2] space-y-4 shadow-sm animate-fade-in-up">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E5DED2]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#FFFBEB] border-2 border-[#F59E0B]/30 flex items-center justify-center text-[#B45309]">
+                  <div className="w-9 h-9 rounded bg-[#FBF0E4] border border-[#C78335]/30 flex items-center justify-center text-[#C78335]">
                     <Award className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-serif font-bold text-base text-[#0B192C]">
+                    <h3 className="font-serif font-bold text-lg text-[#20344A]">
                       Score: {result.score.toFixed(0)}%
                     </h3>
-                    <p className="text-xs text-[#0B192C]/60 font-mono">
-                      Answered: {Object.keys(answers).length} of {result.total_questions} questions
+                    <p className="text-xs text-[#74777D]">
+                      Answered {Object.keys(answers).length} of {result.total_questions} questions
                     </p>
                   </div>
                 </div>
 
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider font-mono border-2 ${
+                  className={`px-2.5 py-0.5 rounded text-xs font-semibold uppercase tracking-wider ${
                     result.passed
-                      ? 'bg-[#F0FDF4] text-[#059669] border-[#10B981]/40'
-                      : 'bg-[#FEF2F2] text-[#DC2626] border-[#DC2626]/40'
+                      ? 'bg-[#E8F3ED] text-[#557B68]'
+                      : 'bg-[#FFDAD6] text-[#BA1A1A]'
                   }`}
                 >
-                  {result.passed ? 'PASSED (>= 70%)' : 'NEEDS REVISION'}
+                  {result.passed ? 'PASSED (≥ 70%)' : 'REQUIRES REVISION'}
                 </span>
               </div>
 
               {/* Explanations Breakdown */}
-              <div className="space-y-3">
-                <h4 className="text-xs font-serif font-bold text-[#0B192C] uppercase tracking-wider">
+              <div className="space-y-2.5">
+                <h4 className="text-xs font-serif font-medium text-[#20344A] uppercase tracking-wider">
                   Itemized Question Explanations
                 </h4>
                 {result.breakdown?.map((b, i) => (
                   <div
                     key={i}
-                    className={`p-4 rounded-xl text-xs space-y-2 border-2 ${
+                    className={`p-3.5 rounded text-xs space-y-1.5 border ${
                       b.is_correct
-                        ? 'bg-[#F0FDF4] border-[#10B981]/40'
-                        : 'bg-[#FEF2F2] border-[#DC2626]/40'
+                        ? 'bg-[#E8F3ED]/40 border-[#557B68]/30'
+                        : 'bg-[#FFDAD6]/40 border-[#BA1A1A]/30'
                     }`}
                   >
-                    <div className="flex items-center justify-between font-semibold">
+                    <div className="flex items-center justify-between font-medium">
                       <div className="flex items-center gap-2">
                         {b.is_correct ? (
-                          <CheckCircle2 className="w-4 h-4 text-[#059669] shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 text-[#557B68] shrink-0" />
                         ) : (
-                          <XCircle className="w-4 h-4 text-[#DC2626] shrink-0" />
+                          <XCircle className="w-4 h-4 text-[#BA1A1A] shrink-0" />
                         )}
-                        <span className="font-serif font-bold text-[#0B192C]">Question {i + 1}</span>
+                        <span className="font-serif font-semibold text-[#20344A]">Question {i + 1}</span>
                       </div>
-                      <span className="font-mono text-[11px] text-[#0B192C]/70">
-                        Correct Option: <strong className="text-[#059669] font-bold">{b.correct_answer}</strong>
+                      <span className="font-mono text-[11px] text-[#74777D]">
+                        Correct: <strong className="text-[#557B68] font-bold">{b.correct_answer}</strong>
                       </span>
                     </div>
-                    <p className="text-[#0B192C]/80 text-xs leading-relaxed font-sans">{b.explanation}</p>
+                    <p className="text-[#43474D] text-xs leading-relaxed">{b.explanation}</p>
                   </div>
                 ))}
               </div>
@@ -397,9 +402,9 @@ export const QuizRunner: React.FC = () => {
                     setActiveQuiz(null);
                     setResult(null);
                   }}
-                  className="tactile-btn px-4 py-2 bg-white hover:bg-[#F3F0EA] text-[#0B192C] text-xs font-bold rounded-xl border-2 border-[#E6E2D8] transition-colors cursor-pointer"
+                  className="px-4 py-1.5 bg-[#FBF8F2] hover:bg-[#F3EFE6] text-[#20344A] text-xs font-medium rounded border border-[#E5DED2] transition-colors cursor-pointer"
                 >
-                  Return to Catalogue
+                  Return to Quizzes Catalog
                 </button>
               </div>
             </div>
@@ -409,21 +414,21 @@ export const QuizRunner: React.FC = () => {
 
       {/* VIEW 3: AI Practice Exercise Generator Studio */}
       {activeTab === 'ai_exercise' && (
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-12 lg:col-span-5 tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
-            <div className="flex items-center gap-2.5 pb-2 border-b-2 border-[#E6E2D8]">
-              <Sparkles className="w-5 h-5 text-[#F59E0B]" />
-              <h3 className="font-serif font-bold text-sm text-[#0B192C]">AI Scenario Generator</h3>
+        <div className="grid grid-cols-12 gap-6 items-start">
+          <div className="col-span-12 lg:col-span-5 bg-[#FFFFFF] p-6 rounded-lg border border-[#E5DED2] shadow-sm space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-[#E5DED2]">
+              <Sparkles className="w-4 h-4 text-[#C78335]" />
+              <h3 className="font-serif font-medium text-base text-[#20344A]">AI Practice Scenario Generator</h3>
             </div>
 
             <div>
-              <label className="block text-xs font-serif font-bold text-[#0B192C] mb-1.5">
+              <label className="block text-xs font-semibold text-[#20344A] mb-1">
                 Target Legal Document
               </label>
               <select
                 value={exerciseDocType}
                 onChange={(e) => setExerciseDocType(e.target.value as DocumentType)}
-                className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl p-2.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+                className="w-full bg-[#FBF8F2] border border-[#E5DED2] rounded px-3 py-1.5 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none"
               >
                 <option value="AFFIDAVIT_OF_CHARACTER">Affidavit of Character (India)</option>
                 <option value="EMPLOYMENT_AGREEMENT">Employment Agreement (India)</option>
@@ -433,7 +438,7 @@ export const QuizRunner: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-serif font-bold text-[#0B192C] mb-1.5">
+              <label className="block text-xs font-semibold text-[#20344A] mb-1">
                 Focus Legal Clause / Concept
               </label>
               <input
@@ -441,18 +446,18 @@ export const QuizRunner: React.FC = () => {
                 value={targetSkill}
                 onChange={(e) => setTargetSkill(e.target.value)}
                 placeholder="e.g. Verification Jurat, Section 27 Restraint of Trade, Notice Period"
-                className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl p-2.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+                className="w-full bg-[#FBF8F2] border border-[#E5DED2] rounded px-3 py-1.5 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-serif font-bold text-[#0B192C] mb-1.5">
+              <label className="block text-xs font-semibold text-[#20344A] mb-1">
                 Difficulty Level
               </label>
               <select
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value)}
-                className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl p-2.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+                className="w-full bg-[#FBF8F2] border border-[#E5DED2] rounded px-3 py-1.5 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none"
               >
                 <option value="BEGINNER">Beginner (Foundational Structures)</option>
                 <option value="INTERMEDIATE">Intermediate (Statutory Enforceability)</option>
@@ -463,26 +468,26 @@ export const QuizRunner: React.FC = () => {
             <button
               onClick={handleGenerateAIExercise}
               disabled={generatingExercise || !targetSkill.trim()}
-              className="tactile-btn w-full py-2.5 bg-[#1E3E62] hover:bg-[#152C46] text-white font-bold text-xs rounded-xl border-b-4 border-[#0B192C] shadow-md transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-2 bg-[#20344A] hover:bg-[#152332] text-white font-semibold text-xs rounded transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
             >
-              {generatingExercise ? <LoadingSpinner size="sm" /> : <Sparkles className="w-4 h-4 text-[#F59E0B]" />}
+              {generatingExercise ? <LoadingSpinner size="sm" /> : <Sparkles className="w-3.5 h-3.5 text-[#C78335]" />}
               <span>Synthesize Practice Scenario</span>
             </button>
           </div>
 
-          <div className="col-span-12 lg:col-span-7 tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
+          <div className="col-span-12 lg:col-span-7 bg-[#FFFFFF] p-6 rounded-lg border border-[#E5DED2] shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#E5DED2]">
               <div className="flex items-center gap-2">
-                <PenTool className="w-4 h-4 text-[#1E3E62]" />
-                <h3 className="font-serif font-bold text-sm text-[#0B192C]">Generated Scenario & Model Solution</h3>
+                <PenTool className="w-4 h-4 text-[#20344A]" />
+                <h3 className="font-serif font-medium text-base text-[#20344A]">Synthesized Model Clause & Guidance</h3>
               </div>
 
               {templateText && (
                 <button
                   onClick={() => copyClauseText(templateText)}
-                  className="tactile-btn flex items-center gap-1 px-3 py-1.5 bg-[#F3F0EA] hover:bg-white text-[#0B192C] rounded-xl text-xs font-semibold border-2 border-[#E6E2D8] transition-all cursor-pointer"
+                  className="flex items-center gap-1 px-3 py-1 bg-[#FBF8F2] hover:bg-[#F3EFE6] text-[#20344A] rounded text-xs font-medium border border-[#E5DED2] transition-colors cursor-pointer shadow-xs"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 text-[#059669]" /> : <Copy className="w-3.5 h-3.5 text-[#1E3E62]" />}
+                  {copied ? <Check className="w-3.5 h-3.5 text-[#557B68]" /> : <Copy className="w-3.5 h-3.5 text-[#20344A]" />}
                   <span>{copied ? 'Copied' : 'Copy Clause'}</span>
                 </button>
               )}
@@ -494,29 +499,29 @@ export const QuizRunner: React.FC = () => {
               </div>
             ) : templateText ? (
               <div className="space-y-4 animate-fade-in">
-                <div className="p-4 bg-[#FAF8F5] rounded-2xl border-2 border-[#E6E2D8] space-y-2">
-                  <span className="font-serif font-bold text-xs text-[#1E3E62] uppercase tracking-wider">
+                <div className="p-4 bg-[#FBF8F2] rounded border border-[#E5DED2] space-y-2">
+                  <span className="font-serif font-medium text-xs text-[#20344A] uppercase tracking-wider">
                     Model Statutory Draft:
                   </span>
-                  <pre className="text-xs font-mono text-[#FAF8F5] whitespace-pre-wrap leading-relaxed p-4 bg-[#0B192C] rounded-xl border-2 border-[#0B192C] shadow-inner">
+                  <pre className="text-xs font-mono text-[#20344A] whitespace-pre-wrap leading-relaxed p-4 bg-white rounded border border-[#E5DED2]">
                     {templateText}
                   </pre>
                 </div>
 
                 {commentaryText && (
-                  <div className="p-4 bg-[#F0FDF4] rounded-2xl border-2 border-[#10B981]/30 space-y-2 text-xs">
-                    <span className="font-serif font-bold text-[#059669] uppercase tracking-wider">
+                  <div className="p-4 bg-[#E8F3ED]/60 rounded border border-[#557B68]/30 space-y-1.5 text-xs">
+                    <span className="font-serif font-medium text-[#557B68] uppercase tracking-wider block">
                       Statutory Commentary & Enforceability Notes:
                     </span>
-                    <p className="text-[#0B192C]/80 leading-relaxed whitespace-pre-line font-sans">
+                    <p className="text-[#20344A] leading-relaxed whitespace-pre-line">
                       {commentaryText}
                     </p>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="py-20 text-center text-xs text-[#0B192C]/50 space-y-2">
-                <BookOpen className="w-10 h-10 text-[#0B192C]/30 mx-auto" />
+              <div className="py-20 text-center text-xs text-[#74777D] space-y-2">
+                <BookOpen className="w-8 h-8 text-[#74777D]/30 mx-auto" />
                 <p>Configure parameters on the left and click &ldquo;Synthesize Practice Scenario&rdquo; to generate bespoke drafting challenges.</p>
               </div>
             )}

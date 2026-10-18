@@ -10,6 +10,7 @@ from app.models.schemas.access_control import (
     AssignTeacherSectionsRequest,
     AuditLogResponse,
     InvitationResponse,
+    InviteStudentRequest,
     InviteTeacherRequest,
     SectionCreateRequest,
     SectionResponse,
@@ -74,6 +75,42 @@ async def invite_teacher(
         f"Faculty invitation dispatched to {payload.email}."
         if email_sent
         else f"Faculty invitation created for {payload.email}. (Email delivery was not possible; please copy the activation link below)."
+    )
+    return {
+        "status": "success",
+        "message": msg,
+        "invitation": result,
+        "invitation_url": result.get("invitation_url"),
+        "email_sent": email_sent,
+    }
+
+
+@router.post("/students/invite", status_code=status.HTTP_201_CREATED)
+async def invite_student(
+    payload: InviteStudentRequest,
+    request: Request,
+    admin: UserProfileDB = Depends(require_admin),
+):
+    """
+    Sends an onboarding invitation to a student for a designated academic section.
+    Enables administrators to invite students directly into any active course section.
+    """
+    ip_address = request.client.host if request.client else None
+    result = invitation_service.invite_student(
+        inviter_id=admin.id,
+        inviter_email=admin.email,
+        inviter_role="ADMIN",
+        student_email=payload.email,
+        section_id=payload.section_id,
+        full_name=payload.full_name,
+        inviter_name=admin.full_name or "Himanshi Singla",
+        ip_address=ip_address,
+    )
+    email_sent = result.get("email_sent", False)
+    msg = (
+        f"Invitation email dispatched to {payload.email}."
+        if email_sent
+        else f"Invitation created for {payload.email}. (Email delivery was not possible; please copy the activation link below)."
     )
     return {
         "status": "success",

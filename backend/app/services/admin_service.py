@@ -261,17 +261,20 @@ class AdminService:
             ip_address=ip_address,
         )
 
-        # Step 4: Security Notification
-        self.email_service.send_security_notification(
-            recipient_email=norm_new,
-            subject="DraftForge Administration Transferred",
-            message=f"You have been granted primary administrator privileges for DraftForge by {current_admin_email}. Reason: {reason}",
-        )
-        self.email_service.send_security_notification(
-            recipient_email=current_admin_email,
-            subject="DraftForge Administrator Transfer Complete",
-            message=f"Administrator privileges were successfully transferred to {norm_new}. Your account role has transitioned to Faculty Instructor.",
-        )
+        # Step 4: Security Notification (HTTPS API with graceful fallback)
+        try:
+            self.email_service.send_security_notification(
+                recipient_email=norm_new,
+                subject="DraftForge Administration Transferred",
+                message=f"You have been granted primary administrator privileges for DraftForge by {current_admin_email}. Reason: {reason}",
+            )
+            self.email_service.send_security_notification(
+                recipient_email=current_admin_email,
+                subject="DraftForge Administrator Transfer Complete",
+                message=f"Administrator privileges were successfully transferred to {norm_new}. Your account role has transitioned to Faculty Instructor.",
+            )
+        except Exception as exc:
+            logger.warning(f"Security notification email error: {exc}")
 
         return {
             "status": "TRANSFERRED",

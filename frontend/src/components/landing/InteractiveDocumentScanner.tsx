@@ -4,7 +4,7 @@ import {
   AlertTriangle,
   XCircle,
   ShieldCheck,
-  Cpu,
+  Scale,
 } from 'lucide-react';
 
 interface MockDocument {
@@ -170,33 +170,33 @@ export const InteractiveDocumentScanner: React.FC = () => {
   };
 
   return (
-    <div className="tactile-card p-6 sm:p-10 rounded-3xl bg-[#FAF8F5] border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] space-y-8">
+    <div className="p-6 sm:p-8 rounded-xl bg-white border border-[#E5DED2] shadow-sm space-y-8 font-sans">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b-2 border-[#E6E2D8]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#E5DED2]">
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="p-2 rounded-xl bg-[#1E3E62]/10 text-[#1E3E62] border border-[#1E3E62]/20">
-              <Cpu className="w-4 h-4" />
+            <span className="p-1.5 rounded-md bg-[#F5F0E7] text-[#20344A]">
+              <Scale className="w-4 h-4 text-[#C78335]" />
             </span>
-            <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0B192C] tracking-tight">
-              Interactive Legal Document Analysis Engine
+            <h3 className="font-serif text-xl sm:text-2xl font-normal text-[#20344A] tracking-tight">
+              Interactive Legal Document Analysis Workbench
             </h3>
           </div>
-          <p className="text-xs text-[#0B192C]/70 mt-1 font-sans">
-            Experience how DraftForge scans clauses, verifies statutory enforceability, and calculates deterministic scores in real time.
+          <p className="text-xs text-[#43566B] mt-1 font-sans">
+            Preview how DraftForge evaluates clause syntax, identifies statutory prerequisites, and scores legal precision.
           </p>
         </div>
 
         {/* Document Selector Pills */}
-        <div className="flex items-center gap-2 p-1.5 bg-[#F3F0EA] rounded-2xl border-2 border-[#E6E2D8] overflow-x-auto">
+        <div className="flex items-center gap-1.5 p-1 bg-[#FBF8F2] rounded-lg border border-[#E5DED2] overflow-x-auto">
           {documents.map((doc, idx) => (
             <button
               key={doc.id}
               onClick={() => handleSelectDoc(idx)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`px-3 py-1.5 rounded text-xs font-medium whitespace-nowrap transition-all font-sans cursor-pointer ${
                 activeDocIndex === idx
-                  ? 'tactile-btn bg-[#1E3E62] text-white border-b-4 border-[#0B192C]'
-                  : 'text-[#0B192C]/70 hover:text-[#0B192C] hover:bg-[#FAF8F5]'
+                  ? 'bg-[#20344A] text-white shadow-sm'
+                  : 'text-[#43566B] hover:text-[#20344A] hover:bg-[#F5F0E7]'
               }`}
             >
               {doc.title.split(' ')[0]} {doc.title.split(' ')[1]}
@@ -208,17 +208,17 @@ export const InteractiveDocumentScanner: React.FC = () => {
       <div className="grid grid-cols-12 gap-8 items-start">
         {/* Left 7 Cols: Legal Document Preview with Scanning Line */}
         <div className="col-span-12 lg:col-span-7 space-y-4">
-          <div className="relative rounded-2xl bg-white border-2 border-[#E6E2D8] p-6 text-xs text-[#0B192C] overflow-hidden shadow-[0_4px_#E6E2D8]">
+          <div className="relative rounded-xl bg-white border border-[#E5DED2] p-6 text-xs text-[#20344A] overflow-hidden shadow-sm">
             {/* Active Scanning Laser Line */}
             {isScanning && <div className="laser-scan-line animate-scan" />}
 
             {/* Document Header */}
-            <div className="text-center pb-4 mb-4 border-b-2 border-[#E6E2D8] space-y-1">
-              <span className="text-[10px] font-bold text-[#F59E0B] uppercase tracking-widest block font-mono">
+            <div className="text-center pb-4 mb-4 border-b border-[#E5DED2] space-y-1">
+              <span className="text-[10px] font-medium text-[#C78335] uppercase tracking-widest block font-mono">
                 {activeDoc.category.replace(/_/g, ' ')}
               </span>
-              <h4 className="font-serif font-bold text-base text-[#0B192C] tracking-wide">{activeDoc.title}</h4>
-              <p className="text-[10px] text-[#0B192C]/60 uppercase tracking-wider font-mono">{activeDoc.preamble}</p>
+              <h4 className="font-serif font-medium text-base text-[#20344A] tracking-wide">{activeDoc.title}</h4>
+              <p className="text-[10px] text-[#74777D] uppercase tracking-wider font-mono">{activeDoc.preamble}</p>
             </div>
 
             {/* Clauses List */}
@@ -231,27 +231,27 @@ export const InteractiveDocumentScanner: React.FC = () => {
                 return (
                   <div
                     key={i}
-                    className={`p-4 rounded-xl border-2 transition-all space-y-2 ${
+                    className={`p-4 rounded-lg border transition-all space-y-2 ${
                       isPass
-                        ? 'bg-[#F0FDF4] border-[#10B981]/50'
+                        ? 'bg-[#E8F3ED] border-[#557B68]/30'
                         : isWarning
-                        ? 'bg-[#FFFBEB] border-[#F59E0B]/50'
-                        : 'bg-[#FEF2F2] border-[#DC2626]/50'
+                        ? 'bg-[#FBF0E4] border-[#C78335]/30'
+                        : 'bg-rose-50 border-rose-200'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        {isPass && <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0" />}
-                        {isWarning && <AlertTriangle className="w-4 h-4 text-[#F59E0B] shrink-0" />}
-                        {isFail && <XCircle className="w-4 h-4 text-[#DC2626] shrink-0" />}
-                        <span className="font-serif font-bold text-xs text-[#0B192C]">{clause.title}</span>
+                        {isPass && <CheckCircle2 className="w-4 h-4 text-[#557B68] shrink-0" />}
+                        {isWarning && <AlertTriangle className="w-4 h-4 text-[#C78335] shrink-0" />}
+                        {isFail && <XCircle className="w-4 h-4 text-rose-600 shrink-0" />}
+                        <span className="font-serif font-medium text-xs text-[#20344A]">{clause.title}</span>
                       </div>
-                      <span className="text-[10px] font-mono font-bold text-[#0B192C]/70 bg-white/80 px-2 py-0.5 rounded border border-[#E6E2D8]">
+                      <span className="text-[10px] font-mono font-medium text-[#74777D] bg-white/80 px-2 py-0.5 rounded border border-[#E5DED2]">
                         {clause.points}
                       </span>
                     </div>
 
-                    <p className="text-[11px] text-[#0B192C]/80 leading-relaxed font-sans pl-6 italic">
+                    <p className="text-[11px] text-[#20344A]/80 leading-relaxed font-sans pl-6 italic">
                       &ldquo;{clause.text}&rdquo;
                     </p>
 
@@ -278,20 +278,20 @@ export const InteractiveDocumentScanner: React.FC = () => {
         {/* Right 5 Cols: Live Score & Metric Visualizer */}
         <div className="col-span-12 lg:col-span-5 space-y-6">
           {/* Circular Score Gauge Card */}
-          <div className="tactile-card bg-white p-6 rounded-2xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-5 text-center">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#0B192C]/60 font-mono">
-              Deterministic Rubric Calculation
+          <div className="bg-white p-6 rounded-xl border border-[#E5DED2] shadow-sm space-y-5 text-center">
+            <span className="text-xs uppercase tracking-wider text-[#687584] font-sans font-medium block">
+              Academic Rubric Calculation
             </span>
 
             <div className="relative w-36 h-36 mx-auto flex items-center justify-center">
               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="42" stroke="#F3F0EA" strokeWidth="8" fill="transparent" />
+                <circle cx="50" cy="50" r="42" stroke="#F5F0E7" strokeWidth="6" fill="transparent" />
                 <circle
                   cx="50"
                   cy="50"
                   r="42"
-                  stroke={displayedScore >= 75 ? '#10B981' : displayedScore >= 50 ? '#F59E0B' : '#DC2626'}
-                  strokeWidth="8"
+                  stroke={displayedScore >= 75 ? '#557B68' : displayedScore >= 50 ? '#C78335' : '#B45D4D'}
+                  strokeWidth="6"
                   fill="transparent"
                   strokeDasharray={2 * Math.PI * 42}
                   strokeDashoffset={(2 * Math.PI * 42) * (1 - displayedScore / 100)}
@@ -300,63 +300,63 @@ export const InteractiveDocumentScanner: React.FC = () => {
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-3xl font-serif font-extrabold text-[#0B192C]">{displayedScore}</span>
-                <span className="text-[10px] text-[#0B192C]/60 font-semibold uppercase tracking-wider">Overall Quality</span>
+                <span className="text-3xl font-serif text-[#20344A] font-bold">{displayedScore}</span>
+                <span className="text-[10px] text-[#687584] font-medium uppercase tracking-wider font-sans">Composite Score</span>
               </div>
             </div>
 
             {/* Score Breakdown Bars */}
-            <div className="space-y-3 text-left pt-2 border-t-2 border-[#E6E2D8]">
-              <div className="flex justify-between text-xs font-semibold">
-                <span className="text-[#0B192C]">Structure & Demarcation</span>
-                <span className="font-mono text-[#059669] font-bold">{activeDoc.structureScore} / 25 pts</span>
+            <div className="space-y-3 text-left pt-2 border-t border-[#E5DED2]">
+              <div className="flex justify-between text-xs font-medium">
+                <span className="text-[#20344A]">Structure & IRAC Demarcation</span>
+                <span className="font-mono text-[#557B68] font-semibold">{activeDoc.structureScore} / 25 pts</span>
               </div>
-              <div className="w-full h-2 bg-[#F3F0EA] rounded-full overflow-hidden border border-[#E6E2D8]">
+              <div className="w-full h-1.5 bg-[#F5F0E7] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-[#10B981] rounded-full transition-all duration-500"
+                  className="h-full bg-[#557B68] rounded-full transition-all duration-500"
                   style={{ width: `${(activeDoc.structureScore / 25) * 100}%` }}
                 />
               </div>
 
-              <div className="flex justify-between text-xs font-semibold">
-                <span className="text-[#0B192C]">Clause Relevance & Matching</span>
-                <span className="font-mono text-[#1E3E62] font-bold">{activeDoc.clauseScore} / 50 pts</span>
+              <div className="flex justify-between text-xs font-medium">
+                <span className="text-[#20344A]">Substantive Clause Coverage</span>
+                <span className="font-mono text-[#20344A] font-semibold">{activeDoc.clauseScore} / 50 pts</span>
               </div>
-              <div className="w-full h-2 bg-[#F3F0EA] rounded-full overflow-hidden border border-[#E6E2D8]">
+              <div className="w-full h-1.5 bg-[#F5F0E7] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-[#1E3E62] rounded-full transition-all duration-500"
+                  className="h-full bg-[#20344A] rounded-full transition-all duration-500"
                   style={{ width: `${(activeDoc.clauseScore / 50) * 100}%` }}
                 />
               </div>
 
-              <div className="flex justify-between text-xs font-semibold">
-                <span className="text-[#0B192C]">Formatting & Oath Verification</span>
-                <span className="font-mono text-[#F59E0B] font-bold">{activeDoc.formattingScore} / 25 pts</span>
+              <div className="flex justify-between text-xs font-medium">
+                <span className="text-[#20344A]">Formalities & Verification Jurat</span>
+                <span className="font-mono text-[#C78335] font-semibold">{activeDoc.formattingScore} / 25 pts</span>
               </div>
-              <div className="w-full h-2 bg-[#F3F0EA] rounded-full overflow-hidden border border-[#E6E2D8]">
+              <div className="w-full h-1.5 bg-[#F5F0E7] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-[#F59E0B] rounded-full transition-all duration-500"
+                  className="h-full bg-[#C78335] rounded-full transition-all duration-500"
                   style={{ width: `${(activeDoc.formattingScore / 25) * 100}%` }}
                 />
               </div>
 
               {activeDoc.penalty > 0 && (
-                <div className="flex justify-between text-xs font-semibold text-[#DC2626]">
-                  <span>Contradiction / Restraint Penalty</span>
-                  <span className="font-mono font-bold">-{activeDoc.penalty} pts</span>
+                <div className="flex justify-between text-xs font-semibold text-[#B45D4D]">
+                  <span>Doctrinal Fallacy Penalty</span>
+                  <span className="font-mono">-{activeDoc.penalty} pts</span>
                 </div>
               )}
             </div>
           </div>
 
           {/* Key Insight Card */}
-          <div className="p-5 rounded-2xl bg-[#F3F0EA] border-2 border-[#E6E2D8] shadow-[0_2px_#E6E2D8] space-y-2">
-            <div className="flex items-center gap-2 text-[#1E3E62] font-bold text-xs uppercase tracking-wider font-mono">
-              <ShieldCheck className="w-4 h-4 text-[#F59E0B]" />
-              <span>Deterministic Precision</span>
+          <div className="p-5 rounded-xl bg-[#FBF8F2] border border-[#E5DED2] shadow-sm space-y-2">
+            <div className="flex items-center gap-2 text-[#20344A] font-medium text-xs font-sans">
+              <ShieldCheck className="w-4 h-4 text-[#557B68]" />
+              <span className="font-semibold uppercase tracking-wider text-[11px]">Academic Rubric Rigor</span>
             </div>
-            <p className="text-xs text-[#0B192C]/80 leading-relaxed font-sans">
-              DraftForge evaluates legal text by combining rule-based heuristics with 384-dimensional dense vectors from statutory precedent corpuses — eliminating arbitrary LLM score hallucination.
+            <p className="text-xs text-[#43566B] leading-relaxed font-sans">
+              DraftForge evaluates legal writing by grounding analysis in verified statutory precedents and structured rubric criteria — providing transparent, objective grading with clear remedial guidance.
             </p>
           </div>
         </div>

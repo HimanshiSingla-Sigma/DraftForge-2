@@ -30,10 +30,10 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
   const [synthesisStage, setSynthesisStage] = useState<number>(0);
 
   const synthesisStages = [
-    'Analyzing evaluated weaknesses and draft gap deductions...',
-    'Traversing statutory curriculum concepts & learning standards...',
-    'Calibrating personalized 5-phase milestone trajectory...',
-    'Synthesizing practice targets & mastery certifications...',
+    'Reviewing evaluated feedback and drafting findings...',
+    'Mapping statutory curriculum milestones & benchmark standards...',
+    'Synthesizing personalized 5-phase learning trajectory...',
+    'Formulating practice targets & academic competencies...',
   ];
 
   // Progressive generation loading animation
@@ -70,75 +70,74 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
   const progressPercent = items.length > 0 ? (completedCount / items.length) * 100 : 0;
 
   return (
-    <div className="space-y-8 animate-fade-in font-sans">
-      {/* If Generating: 3D AI Core Universe Generation State */}
+    <div className="space-y-6 animate-fade-in font-sans">
+      {/* If Generating: Synthesis State */}
       {generating ? (
-        <div className="tactile-card bg-white p-8 sm:p-12 rounded-[2.5rem] border-2 border-[#E6E2D8] text-center space-y-6 shadow-[0_8px_#E6E2D8] relative overflow-hidden">
+        <div className="bg-[#FFFFFF] p-8 sm:p-12 rounded-lg border border-[#E5DED2] text-center space-y-6 shadow-sm relative overflow-hidden">
           <AICoreOrb size="lg" stageText={synthesisStages[synthesisStage]} />
 
-          <div className="max-w-md mx-auto space-y-3 pt-2">
-            <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0B192C] tracking-tight">
-              Synthesizing 5-Phase Personalized Curriculum
+          <div className="max-w-md mx-auto space-y-2 pt-2">
+            <h3 className="font-serif text-xl sm:text-2xl font-medium text-[#20344A] tracking-tight">
+              Synthesizing 5-Phase Learning Roadmap
             </h3>
-            <p className="text-xs text-[#0B192C]/70 leading-relaxed font-sans">
+            <p className="text-xs text-[#74777D] leading-relaxed">
               DraftForge AI is dynamically organizing your drafting trajectory based on verified evaluation findings.
             </p>
           </div>
         </div>
       ) : roadmap ? (
-        /* Roadmap View with 3D Progressive Nodes */
+        /* Roadmap View with Progressive Nodes */
         <div className="space-y-6">
           {/* Header Card with Progress Gauge */}
-          <div className="tactile-card bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] space-y-6 relative overflow-hidden">
+          <header className="bg-[#FFFFFF] p-6 sm:p-8 rounded-lg border border-[#E5DED2] shadow-sm space-y-5 relative overflow-hidden">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-[#F3F0EA] text-[#1E3E62] border border-[#E6E2D8] uppercase tracking-wider font-mono">
+                  <span className="text-[11px] uppercase tracking-wider text-[#C78335] font-semibold bg-[#FBF0E4] px-2 py-0.5 rounded">
                     Personalized 5-Phase Track
                   </span>
-                  <span className="text-[10px] font-mono text-[#059669] bg-[#F0FDF4] px-2.5 py-0.5 rounded-full border border-[#10B981]/30">
-                    Active Curriculum
+                  <span className="text-xs text-[#557B68] font-semibold bg-[#E8F3ED] px-2 py-0.5 rounded">
+                    Active Syllabus
                   </span>
                 </div>
-                <h2 className="font-serif text-2xl font-bold text-[#0B192C] tracking-tight">
+                <h2 className="font-serif text-2xl sm:text-3xl font-medium text-[#20344A] tracking-tight">
                   {roadmap.title}
                 </h2>
-                <p className="text-xs text-[#0B192C]/70 font-sans">
-                  Calibrated to elevate your weakest statutory clauses and jurat structures to commercial mastery.
+                <p className="text-xs text-[#74777D]">
+                  Calibrated to elevate your statutory drafting and verification jurat precision to honors benchmark.
                 </p>
               </div>
 
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <span className="text-xs text-[#0B192C]/60 font-medium block">Curriculum Completion</span>
-                  <span className="font-serif text-2xl font-extrabold text-[#1E3E62]">
+                  <span className="text-xs text-[#74777D] block">Trajectory Progress</span>
+                  <span className="font-serif text-2xl sm:text-3xl font-bold text-[#20344A]">
                     {Math.round(progressPercent)}%
                   </span>
                 </div>
 
                 <button
                   onClick={onGenerateNew}
-                  className="tactile-btn px-4 py-2.5 bg-[#F3F0EA] hover:bg-white text-[#0B192C] text-xs font-bold rounded-xl border-2 border-[#E6E2D8] transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-3.5 py-1.5 bg-[#FBF8F2] hover:bg-[#F3EFE6] text-[#20344A] text-xs font-medium rounded border border-[#E5DED2] transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#C78335]" />
                   <span>Resynthesize</span>
                 </button>
               </div>
             </div>
 
             {/* Overall Progress Bar */}
-            <div className="w-full h-2.5 bg-[#F3F0EA] rounded-full overflow-hidden border border-[#E6E2D8]">
+            <div className="w-full h-1.5 bg-[#E5DED2] rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#1E3E62] rounded-full transition-all duration-700"
+                className="h-full bg-[#20344A] rounded-full transition-all duration-700"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-          </div>
+          </header>
 
           {/* 5-Phase Progressive Materialized Nodes Timeline */}
-          <div className="space-y-4 relative">
-            {/* Connecting Track Line */}
-            <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-[#E6E2D8] hidden sm:block" />
+          <div className="space-y-3 relative">
+            <div className="absolute left-6 top-8 bottom-8 w-px bg-[#E5DED2] hidden sm:block" />
 
             {items.map((item: RoadmapItem, idx: number) => {
               const isRevealed = idx < revealedNodesCount;
@@ -155,47 +154,47 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
                   }`}
                 >
                   <div
-                    className={`relative p-5 sm:p-6 rounded-3xl border-2 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                    className={`relative p-5 rounded-lg border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs ${
                       isCompleted
-                        ? 'bg-[#F0FDF4] border-[#10B981]/50 shadow-[0_4px_#10B981]/20'
-                        : 'tactile-card bg-white border-[#E6E2D8] shadow-[0_4px_#E6E2D8] hover:border-[#1E3E62]'
+                        ? 'bg-[#E8F3ED]/40 border-[#557B68]/30'
+                        : 'bg-[#FFFFFF] border-[#E5DED2] hover:border-[#20344A]'
                     }`}
                   >
                     {/* Left Phase Badge & Description */}
                     <div className="flex items-start gap-4">
-                      {/* Node Icon Avatar */}
+                      {/* Node Avatar */}
                       <div
-                        className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm shrink-0 border-2 ${
+                        className={`w-10 h-10 rounded flex items-center justify-center font-serif font-bold text-sm shrink-0 border ${
                           isCompleted
-                            ? 'bg-[#10B981] text-white border-[#059669]'
-                            : 'bg-[#F3F0EA] border-[#E6E2D8] text-[#1E3E62]'
+                            ? 'bg-[#557B68] text-white border-[#557B68]'
+                            : 'bg-[#FBF8F2] border-[#E5DED2] text-[#20344A]'
                         }`}
                       >
                         {isCompleted ? (
-                          <Check className="w-6 h-6 stroke-[3]" />
+                          <Check className="w-5 h-5 stroke-[2.5]" />
                         ) : (
-                          <span className="font-serif text-sm font-extrabold">{item.phase_number}</span>
+                          <span>{item.phase_number}</span>
                         )}
                       </div>
 
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0B192C]/60">
+                          <span className="text-[10px] uppercase tracking-wider text-[#74777D] font-semibold">
                             Phase {item.phase_number}
                           </span>
                           {isCompleted && (
-                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#F0FDF4] text-[#059669] border border-[#10B981]/30 uppercase tracking-wider font-mono">
-                              ✓ Completed
+                            <span className="text-[10px] font-semibold text-[#557B68] bg-[#E8F3ED] px-2 py-0.2 rounded">
+                              ✓ Milestone Achieved
                             </span>
                           )}
                         </div>
 
-                        <h3 className="font-serif font-bold text-base text-[#0B192C] tracking-tight">
+                        <h3 className="font-serif font-medium text-base text-[#20344A] tracking-tight">
                           {item.title}
                         </h3>
 
                         {item.description && (
-                          <p className="text-xs text-[#0B192C]/75 leading-relaxed max-w-2xl font-sans">
+                          <p className="text-xs text-[#43474D] leading-relaxed max-w-2xl">
                             {item.description}
                           </p>
                         )}
@@ -208,19 +207,19 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
                         <button
                           onClick={() => onCompleteItem(item.id)}
                           disabled={isCompleting}
-                          className="tactile-btn px-4 py-2 bg-[#1E3E62] hover:bg-[#152C46] text-white text-xs font-bold rounded-xl border-b-4 border-[#0B192C] shadow-sm transition-all disabled:opacity-50 flex items-center gap-1.5 cursor-pointer"
+                          className="px-3.5 py-1.5 bg-[#20344A] hover:bg-[#152332] text-white text-xs font-semibold rounded transition-all disabled:opacity-50 flex items-center gap-1.5 cursor-pointer shadow-xs"
                         >
                           {isCompleting ? (
                             <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                           ) : (
-                            <CheckCircle2 className="w-4 h-4 text-[#F59E0B]" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[#C78335]" />
                           )}
-                          <span>Mark Phase Complete</span>
+                          <span>Mark Milestone Completed</span>
                         </button>
                       ) : (
-                        <div className="text-[11px] font-mono text-[#059669] font-bold px-3 py-1.5 rounded-xl bg-[#F0FDF4] border-2 border-[#10B981]/40 flex items-center gap-1.5">
-                          <Award className="w-3.5 h-3.5 text-[#059669]" />
-                          <span>Milestone Achieved</span>
+                        <div className="text-xs text-[#557B68] font-semibold px-2.5 py-1 rounded bg-[#E8F3ED] flex items-center gap-1.5">
+                          <Award className="w-3.5 h-3.5 text-[#557B68]" />
+                          <span>Phase Completed</span>
                         </div>
                       )}
                     </div>
@@ -232,28 +231,28 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
 
           {/* Bottom Skill Mastery Matrix Ribbon */}
           {skills.length > 0 && (
-            <div className="tactile-card bg-white p-6 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
+            <div className="bg-[#FFFFFF] p-6 rounded-lg border border-[#E5DED2] shadow-sm space-y-3">
               <div className="flex items-center gap-2">
-                <Compass className="w-4 h-4 text-[#1E3E62]" />
-                <h3 className="font-serif font-bold text-sm text-[#0B192C]">Target Skill Matrices</h3>
+                <Compass className="w-4 h-4 text-[#C78335]" />
+                <h3 className="font-serif font-medium text-base text-[#20344A]">Target Competencies</h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {skills.slice(0, 6).map((sk) => (
                   <div
                     key={sk.id}
-                    className="p-3.5 rounded-2xl bg-[#F3F0EA] border-2 border-[#E6E2D8] flex items-center justify-between"
+                    className="p-3 rounded bg-[#FBF8F2] border border-[#E5DED2] flex items-center justify-between"
                   >
                     <div>
-                      <h4 className="font-serif font-bold text-xs text-[#0B192C] truncate max-w-[170px]">
+                      <h4 className="font-serif font-medium text-xs text-[#20344A] truncate max-w-[170px]">
                         {sk.skill?.name || 'Legal Drafting'}
                       </h4>
-                      <span className="text-[10px] text-[#0B192C]/60 font-mono">
+                      <span className="text-[10px] text-[#74777D] font-mono">
                         {sk.skill?.category || 'General'}
                       </span>
                     </div>
 
-                    <span className="font-mono text-xs font-bold text-[#059669]">
+                    <span className="font-serif text-xs font-bold text-[#557B68]">
                       {Math.round(sk.proficiency_score)}%
                     </span>
                   </div>
@@ -264,21 +263,21 @@ export const AIRoadmapGenerator: React.FC<AIRoadmapGeneratorProps> = ({
         </div>
       ) : (
         /* Empty Roadmap State */
-        <div className="tactile-card bg-white p-12 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_6px_#E6E2D8] text-center space-y-5 max-w-md mx-auto">
-          <div className="w-16 h-16 rounded-2xl bg-[#F3F0EA] border-2 border-[#E6E2D8] flex items-center justify-center mx-auto text-[#1E3E62] shadow-sm">
-            <Compass className="w-8 h-8 text-[#1E3E62]" />
+        <div className="bg-[#FFFFFF] p-12 rounded-lg border border-[#E5DED2] shadow-sm text-center space-y-4 max-w-md mx-auto">
+          <div className="w-12 h-12 rounded bg-[#FBF0E4] border border-[#C78335]/30 flex items-center justify-center mx-auto text-[#C78335]">
+            <Compass className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <h3 className="font-serif text-base font-bold text-[#0B192C]">No Active Learning Roadmap</h3>
-            <p className="text-xs text-[#0B192C]/70 font-sans">
-              Synthesize a tailored 5-phase statutory drafting trajectory based on your latest draft evaluations.
+            <h3 className="font-serif text-lg font-medium text-[#20344A]">No Active Learning Roadmap</h3>
+            <p className="text-xs text-[#74777D] leading-relaxed">
+              Synthesize a tailored 5-phase statutory drafting roadmap based on your latest evaluation findings.
             </p>
           </div>
           <button
             onClick={onGenerateNew}
-            className="tactile-btn w-full py-3 bg-[#1E3E62] hover:bg-[#152C46] text-white font-bold text-xs rounded-xl border-b-4 border-[#0B192C] shadow-md flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-2.5 bg-[#20344A] hover:bg-[#152332] text-white font-semibold text-xs rounded transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
           >
-            <Sparkles className="w-4 h-4 text-[#F59E0B]" />
+            <Sparkles className="w-3.5 h-3.5 text-[#C78335]" />
             <span>Generate 5-Phase Roadmap</span>
           </button>
         </div>

@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 import { Evaluation } from '../../types';
 import { AICoreOrb } from './AICoreOrb';
 import {
-  Sparkles,
   ShieldCheck,
   CheckCircle2,
   AlertTriangle,
@@ -11,8 +10,9 @@ import {
   ArrowRight,
   X,
   FileText,
-  Network,
+  ShieldAlert,
   GraduationCap,
+  Scale,
 } from 'lucide-react';
 
 interface AIEvaluationModalProps {
@@ -42,14 +42,14 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
   const [animatedScore, setAnimatedScore] = useState(0);
 
   const stages = [
-    'Parsing statutory demarcations & recitals...',
-    'Generating 384-dimensional FastEmbed vectors...',
-    'Matching semantic clauses against Qdrant gold standards...',
-    'Traversing Neo4j Aura graph prerequisite dependencies...',
-    'Executing mathematical 100-point rubric calculation...',
+    'Parsing statutory captions, recitals, and party designations...',
+    'Analyzing operative clauses against academic standards...',
+    'Verifying statutory verifications, oaths, and judicial jurats...',
+    'Auditing cross-clause legal dependencies & potential risk exposures...',
+    'Computing 100-point rubric assessment & faculty benchmark...',
   ];
 
-  // Cycle through decorative loading stages while evaluating
+  // Cycle through loading stages while evaluating
   useEffect(() => {
     if (evaluating) {
       setAnimatedScore(0);
@@ -112,10 +112,10 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
 
   const strokeColor =
     effectiveScore >= 75
-      ? '#10b981'
+      ? '#557B68'
       : effectiveScore >= 50
-      ? '#f59e0b'
-      : '#f43f5e';
+      ? '#C78335'
+      : '#BA1A1A';
 
   const maxScore = evaluation?.max_score || 100;
   const circumference = 2 * Math.PI * 46;
@@ -126,62 +126,63 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
   const failCount = evaluation?.evidence_items?.filter((i) => i.status === 'FAIL').length || 0;
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-[#0B192C]/85 backdrop-blur-md animate-fade-in overflow-y-auto font-sans">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-[#20344A]/80 backdrop-blur-xs animate-fade-in overflow-y-auto font-sans">
       {/* Modal Container */}
-      <div className="relative w-full max-w-5xl bg-white p-6 sm:p-10 rounded-[2.5rem] border-2 border-[#0B192C] shadow-[0_12px_#0B192C] space-y-8 my-auto overflow-hidden animate-scale-in">
+      <div className="relative w-full max-w-4xl bg-[#FFFFFF] p-6 sm:p-8 rounded-lg border border-[#E5DED2] shadow-2xl space-y-6 my-auto overflow-hidden animate-scale-in">
+        {/* Top Hairline */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-[#20344A]" />
+
         {/* Top Modal Chrome */}
-        <div className="flex items-center justify-between pb-4 border-b-2 border-[#E6E2D8] relative z-10">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E5DED2] relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#1E3E62] border-2 border-[#0B192C] flex items-center justify-center shadow-sm">
-              <Sparkles className="w-5 h-5 text-[#F59E0B]" />
+            <div className="w-8 h-8 rounded bg-[#FBF0E4] border border-[#C78335]/30 flex items-center justify-center text-[#C78335]">
+              <Scale className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-serif font-bold text-base sm:text-lg text-[#0B192C] tracking-tight">
-                  Deterministic AI Evaluation Engine
+                <h3 className="font-serif font-medium text-base sm:text-lg text-[#20344A] tracking-tight">
+                  Academic 100-Point Rubric Audit
                 </h3>
-                <span className="px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold bg-[#F3F0EA] text-[#1E3E62] border border-[#E6E2D8]">
-                  Rubric v1.0
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#E8F3ED] text-[#557B68]">
+                  Rubric v4.2
                 </span>
               </div>
-              <p className="text-xs text-[#0B192C]/60 font-mono">
-                {draftTitle} • Grounded in Qdrant & Neo4j
+              <p className="text-xs text-[#74777D] font-mono">
+                {draftTitle} • Grounded in Verified Statutory Corpuses
               </p>
             </div>
           </div>
 
           <button
             onClick={handleModalClose}
-            className="p-2 rounded-xl text-[#0B192C]/70 hover:text-[#0B192C] bg-[#F3F0EA] border-2 border-[#E6E2D8] transition-colors cursor-pointer"
+            className="p-1.5 rounded text-[#74777D] hover:text-[#20344A] bg-[#FBF8F2] border border-[#E5DED2] transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Evaluating State: 3D AI Core + Document Scanning Laser */}
+        {/* Evaluating State */}
         {evaluating ? (
-          <div className="py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-            {/* Left 6 Cols: Central 3D AI Core */}
-            <div className="lg:col-span-6 flex flex-col items-center justify-center space-y-6">
+          <div className="py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+            <div className="lg:col-span-6 flex flex-col items-center justify-center space-y-5">
               <AICoreOrb size="lg" stageText={stages[loadingStage]} />
 
-              {/* Progress Step Nodes */}
-              <div className="w-full max-w-sm space-y-2 pt-2">
+              <div className="w-full max-w-sm space-y-2 pt-1">
                 {stages.map((stage, idx) => {
                   const isDone = idx < loadingStage;
                   const isCurrent = idx === loadingStage;
                   return (
                     <div
                       key={idx}
-                      className={`flex items-center gap-2.5 text-xs font-mono transition-all ${
+                      className={`flex items-center gap-2 text-xs transition-all ${
                         isDone
-                          ? 'text-[#059669]'
+                          ? 'text-[#557B68]'
                           : isCurrent
-                          ? 'text-[#1E3E62] font-bold scale-105'
-                          : 'text-[#0B192C]/40'
+                          ? 'text-[#20344A] font-semibold'
+                          : 'text-[#74777D]/50'
                       }`}
                     >
-                      <span className={`w-2 h-2 rounded-full ${isDone ? 'bg-[#10B981]' : isCurrent ? 'bg-[#F59E0B] animate-ping' : 'bg-[#E6E2D8]'}`} />
+                      <span className={`w-1.5 h-1.5 rounded-full ${isDone ? 'bg-[#557B68]' : isCurrent ? 'bg-[#C78335] animate-ping' : 'bg-[#E5DED2]'}`} />
                       <span className="truncate">{stage}</span>
                     </div>
                   );
@@ -189,52 +190,51 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
               </div>
             </div>
 
-            {/* Right 6 Cols: Document with Sweeping Laser Scan Line */}
+            {/* Document Scan Simulation */}
             <div className="lg:col-span-6">
-              <div className="relative rounded-3xl bg-[#FAF8F5] border-2 border-[#E6E2D8] p-6 font-mono text-xs text-[#0B192C] leading-relaxed overflow-hidden shadow-[0_4px_#E6E2D8] max-h-[360px]">
-                {/* Active Laser Scanning Beam */}
+              <div className="relative rounded bg-[#FBF8F2] border border-[#E5DED2] p-5 text-xs text-[#20344A] leading-relaxed overflow-hidden shadow-inner max-h-[340px]">
                 <div className="laser-scan-line animate-scan" />
 
-                <div className="text-center pb-2 mb-3 border-b-2 border-[#E6E2D8]">
-                  <span className="text-[10px] font-bold text-[#F59E0B] uppercase tracking-widest block font-mono">
-                    ACTIVE STATUTORY SCAN
+                <div className="text-center pb-2 mb-3 border-b border-[#E5DED2]">
+                  <span className="text-[10px] font-semibold text-[#C78335] uppercase tracking-wider block">
+                    Active Statutory Examination
                   </span>
-                  <p className="font-serif text-xs text-[#0B192C] font-bold truncate">{draftTitle}</p>
+                  <p className="font-serif text-xs text-[#20344A] font-medium truncate">{draftTitle}</p>
                 </div>
 
-                <div className="space-y-2 text-[11px] text-[#0B192C]/80 leading-relaxed max-h-[240px] overflow-hidden select-none">
+                <div className="space-y-2 text-[11px] text-[#43474D] font-serif leading-relaxed max-h-[220px] overflow-hidden select-none">
                   {draftContent ? (
                     <p className="whitespace-pre-wrap">{draftContent.slice(0, 500)}...</p>
                   ) : (
                     <>
-                      <p className="text-[#0B192C]">1. IDENTIFICATION & AGE: I, the deponent, solemnly affirm...</p>
-                      <p className="text-[#0B192C]">2. OPERATIVE COVENANTS: That all declarations made herein are true...</p>
-                      <p className="text-[#0B192C]">3. VERIFICATION JURAT: Verified under the Indian Evidence Act...</p>
-                      <p className="text-[#0B192C]/60">4. DISPUTE RESOLUTION: Subject to competent jurisdiction...</p>
+                      <p>1. STATEMENT OF PARTIES: Counsel enters appearance on behalf of...</p>
+                      <p>2. OPERATIVE COVENANTS: It is hereby agreed and understood under statutory provisions...</p>
+                      <p>3. VERIFICATION JURAT: Verified under the Indian Evidence Act that contents are true...</p>
+                      <p className="text-[#74777D]">4. ARBITRATION & JURISDICTION: Courts of competent territorial jurisdiction...</p>
                     </>
                   )}
                 </div>
 
-                <div className="mt-4 pt-2 border-t-2 border-[#E6E2D8] flex items-center justify-between text-[10px] text-[#0B192C]/60 font-mono">
-                  <span>FastEmbed Tokenizer</span>
-                  <span className="text-[#059669] font-bold animate-pulse">Scanning Active</span>
+                <div className="mt-3 pt-2 border-t border-[#E5DED2] flex items-center justify-between text-[10px] text-[#74777D] font-mono">
+                  <span>DraftForge Evaluator</span>
+                  <span className="text-[#557B68] font-semibold">Active Review</span>
                 </div>
               </div>
             </div>
           </div>
         ) : evaluation ? (
-          /* Real Evaluation Results: Cinematic Score Reveal */
-          <div className="space-y-8 relative z-10 animate-fade-in">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Left 5 Cols: Score Reveal Gauge */}
-              <div className="lg:col-span-5 tactile-card bg-[#FAF8F5] p-8 rounded-3xl border-2 border-[#E6E2D8] text-center space-y-4 shadow-[0_4px_#E6E2D8]">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#0B192C]/60 block font-mono">
-                  Deterministic Score Result
+          /* Real Evaluation Results */
+          <div className="space-y-6 relative z-10 animate-fade-in">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              {/* Score Reveal Gauge */}
+              <div className="lg:col-span-5 bg-[#FBF8F2] p-6 rounded-lg border border-[#E5DED2] text-center space-y-3 shadow-2xs">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#74777D] block">
+                  Overall Composite Result
                 </span>
 
-                <div className="relative w-40 h-40 mx-auto flex items-center justify-center">
+                <div className="relative w-36 h-36 mx-auto flex items-center justify-center">
                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 108 108">
-                    <circle cx="54" cy="54" r="46" stroke="#E6E2D8" strokeWidth="8" fill="transparent" />
+                    <circle cx="54" cy="54" r="46" stroke="#E5DED2" strokeWidth="8" fill="transparent" />
                     <circle
                       cx="54"
                       cy="54"
@@ -249,79 +249,79 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-4xl font-serif font-extrabold tracking-tight text-[#0B192C]">
+                    <span className="text-4xl font-serif font-bold tracking-tight text-[#20344A]">
                       {animatedScore}
                     </span>
-                    <span className="text-xs text-[#0B192C]/60 font-bold uppercase font-mono">
+                    <span className="text-[11px] text-[#74777D] font-sans">
                       / {maxScore} pts
                     </span>
                   </div>
                 </div>
 
-                <div className="pt-2">
+                <div>
                   <span
-                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono border-2 ${
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded text-xs font-semibold ${
                       effectiveScore >= 75
-                        ? 'bg-[#F0FDF4] text-[#059669] border-[#10B981]/40'
+                        ? 'bg-[#E8F3ED] text-[#557B68]'
                         : effectiveScore >= 50
-                        ? 'bg-[#FFFBEB] text-[#B45309] border-[#F59E0B]/40'
-                        : 'bg-[#FEF2F2] text-[#DC2626] border-[#DC2626]/40'
+                        ? 'bg-[#FBF0E4] text-[#C78335]'
+                        : 'bg-[#FFDAD6] text-[#BA1A1A]'
                     }`}
                   >
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>{effectiveScore >= 75 ? 'Statutory Compliant' : effectiveScore >= 50 ? 'Revision Advised' : 'High Risk Gaps'}</span>
+                    <span>{effectiveScore >= 75 ? 'Statutory Honors' : effectiveScore >= 50 ? 'Revision Advised' : 'High Priority Gaps'}</span>
                   </span>
                 </div>
               </div>
 
-              {/* Right 7 Cols: 4-Pillar Score Breakdown & Summary */}
-              <div className="lg:col-span-7 space-y-4">
-                <div className="grid grid-cols-2 gap-3.5">
-                  <div className="p-4 rounded-2xl bg-white border-2 border-[#E6E2D8] space-y-1 shadow-[0_2px_#E6E2D8]">
-                    <span className="text-[11px] font-semibold text-[#0B192C]/70">Structure & Demarcation</span>
-                    <p className="text-xl font-serif font-extrabold text-[#0B192C]">{evaluation.structure_score} / 25 pts</p>
-                    <span className="text-[10px] text-[#059669] font-mono">Title, recitals & numbering</span>
+              {/* 4-Pillar Score Breakdown */}
+              <div className="lg:col-span-7 space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3.5 rounded bg-[#FFFFFF] border border-[#E5DED2] space-y-1 shadow-2xs">
+                    <span className="text-[11px] font-medium text-[#74777D]">Structure & Recitals</span>
+                    <p className="text-lg font-serif font-bold text-[#20344A]">{evaluation.structure_score} / 25 pts</p>
+                    <span className="text-[10px] text-[#557B68]">Caption, parties & numbering</span>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-white border-2 border-[#E6E2D8] space-y-1 shadow-[0_2px_#E6E2D8]">
-                    <span className="text-[11px] font-semibold text-[#0B192C]/70">Clause Coverage</span>
-                    <p className="text-xl font-serif font-extrabold text-[#1E3E62]">{evaluation.clause_score} / 50 pts</p>
-                    <span className="text-[10px] text-[#1E3E62]/80 font-mono">Semantic precedent matching</span>
+                  <div className="p-3.5 rounded bg-[#FFFFFF] border border-[#E5DED2] space-y-1 shadow-2xs">
+                    <span className="text-[11px] font-medium text-[#74777D]">Statutory Coverage</span>
+                    <p className="text-lg font-serif font-bold text-[#20344A]">{evaluation.clause_score} / 50 pts</p>
+                    <span className="text-[10px] text-[#20344A]">Required legal covenants</span>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-white border-2 border-[#E6E2D8] space-y-1 shadow-[0_2px_#E6E2D8]">
-                    <span className="text-[11px] font-semibold text-[#0B192C]/70">Formatting & Jurats</span>
-                    <p className="text-xl font-serif font-extrabold text-[#F59E0B]">{evaluation.formatting_score} / 25 pts</p>
-                    <span className="text-[10px] text-[#B45309] font-mono">Oath affirmation & stamps</span>
+                  <div className="p-3.5 rounded bg-[#FFFFFF] border border-[#E5DED2] space-y-1 shadow-2xs">
+                    <span className="text-[11px] font-medium text-[#74777D]">Formatting & Jurats</span>
+                    <p className="text-lg font-serif font-bold text-[#C78335]">{evaluation.formatting_score} / 25 pts</p>
+                    <span className="text-[10px] text-[#C78335]">Oath, jurat & execution</span>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-white border-2 border-[#E6E2D8] space-y-1 shadow-[0_2px_#E6E2D8]">
-                    <span className="text-[11px] font-semibold text-[#0B192C]/70">Contradiction Penalty</span>
-                    <p className="text-xl font-serif font-extrabold text-[#DC2626]">-{evaluation.gap_penalty} pts</p>
-                    <span className="text-[10px] text-[#DC2626] font-mono">Restraints & statutory gaps</span>
+                  <div className="p-3.5 rounded bg-[#FFFFFF] border border-[#E5DED2] space-y-1 shadow-2xs">
+                    <span className="text-[11px] font-medium text-[#74777D]">Contradiction Penalty</span>
+                    <p className="text-lg font-serif font-bold text-[#BA1A1A]">-{evaluation.gap_penalty} pts</p>
+                    <span className="text-[10px] text-[#BA1A1A]">Deductions for ambiguities</span>
                   </div>
                 </div>
 
                 {/* Evidence Summary Counters */}
-                <div className="p-4 rounded-2xl bg-[#F3F0EA] border-2 border-[#E6E2D8] flex items-center justify-around text-center text-xs font-mono">
+                <div className="p-3 rounded bg-[#FBF8F2] border border-[#E5DED2] flex items-center justify-around text-center text-xs">
                   <div>
-                    <span className="text-[#0B192C]/60 block text-[10px]">Validated Items</span>
-                    <span className="text-[#059669] font-bold text-base flex items-center justify-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" /> {passCount} PASS
+                    <span className="text-[#74777D] block text-[10px]">Validated Items</span>
+                    <span className="text-[#557B68] font-bold text-sm flex items-center justify-center gap-1 font-serif">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#557B68]" /> {passCount} Met
                     </span>
                   </div>
-                  <div className="h-8 w-0.5 bg-[#E6E2D8]" />
+                  <div className="h-6 w-px bg-[#E5DED2]" />
                   <div>
-                    <span className="text-[#0B192C]/60 block text-[10px]">Advisory Warnings</span>
-                    <span className="text-[#B45309] font-bold text-base flex items-center justify-center gap-1">
-                      <AlertTriangle className="w-3.5 h-3.5 text-[#F59E0B]" /> {warningCount} WARN
+                    <span className="text-[#74777D] block text-[10px]">Advisory Notes</span>
+                    <span className="text-[#C78335] font-bold text-sm flex items-center justify-center gap-1 font-serif">
+                      <AlertTriangle className="w-3.5 h-3.5 text-[#C78335]" /> {warningCount} Warn
                     </span>
                   </div>
-                  <div className="h-8 w-0.5 bg-[#E6E2D8]" />
+                  <div className="h-6 w-px bg-[#E5DED2]" />
                   <div>
-                    <span className="text-[#0B192C]/60 block text-[10px]">Critical Gaps</span>
-                    <span className="text-[#DC2626] font-bold text-base flex items-center justify-center gap-1">
-                      <XCircle className="w-3.5 h-3.5 text-[#DC2626]" /> {failCount} FAIL
+                    <span className="text-[#74777D] block text-[10px]">Missing Elements</span>
+                    <span className="text-[#BA1A1A] font-bold text-sm flex items-center justify-center gap-1 font-serif">
+                      <XCircle className="w-3.5 h-3.5 text-[#BA1A1A]" /> {failCount} Gaps
                     </span>
                   </div>
                 </div>
@@ -329,29 +329,29 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
             </div>
 
             {/* Next Action Gateway Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t-2 border-[#E6E2D8]">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-[#E5DED2]">
               <button
                 onClick={() => {
                   handleModalClose();
                   if (onViewDetailedEvidence) onViewDetailedEvidence();
                 }}
-                className="tactile-btn w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white hover:bg-[#F3F0EA] text-[#0B192C] text-xs font-bold border-2 border-[#E6E2D8] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto px-4 py-2 rounded bg-[#FBF8F2] hover:bg-[#F3EFE6] text-[#20344A] text-xs font-semibold border border-[#E5DED2] transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
               >
-                <FileText className="w-4 h-4 text-[#1E3E62]" />
-                <span>Inspect Evidence Findings ({evaluation.evidence_items?.length || 0})</span>
+                <FileText className="w-4 h-4 text-[#20344A]" />
+                <span>Examine Audit Findings ({evaluation.evidence_items?.length || 0})</span>
               </button>
 
-              <div className="flex items-center gap-3 w-full sm:w-auto">
+              <div className="flex items-center gap-2.5 w-full sm:w-auto">
                 {onNavigateToLoopholes && (
                   <button
                     onClick={() => {
                       handleModalClose();
                       onNavigateToLoopholes(evaluation.id);
                     }}
-                    className="tactile-btn flex-1 sm:flex-none px-5 py-2.5 bg-[#FEF2F2] hover:bg-[#FEE2E2] text-[#DC2626] text-xs font-bold rounded-xl border-2 border-[#DC2626]/40 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="flex-1 sm:flex-none px-4 py-2 bg-[#FBF8F2] hover:bg-[#F3EFE6] text-[#20344A] text-xs font-semibold rounded border border-[#E5DED2] transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                   >
-                    <Network className="w-4 h-4 text-[#DC2626]" />
-                    <span>Neo4j Graph Loopholes</span>
+                    <ShieldAlert className="w-4 h-4 text-[#C78335]" />
+                    <span>Doctrinal Risk Audit</span>
                   </button>
                 )}
 
@@ -361,11 +361,11 @@ export const AIEvaluationModal: React.FC<AIEvaluationModalProps> = ({
                       handleModalClose();
                       onNavigateToRoadmap();
                     }}
-                    className="tactile-btn flex-1 sm:flex-none px-6 py-2.5 bg-[#1E3E62] hover:bg-[#152C46] text-white text-xs font-bold rounded-xl border-b-4 border-[#0B192C] shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="flex-1 sm:flex-none px-5 py-2 bg-[#20344A] hover:bg-[#152332] text-white text-xs font-semibold rounded transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                   >
-                    <GraduationCap className="w-4 h-4 text-[#F59E0B]" />
-                    <span>Synthesize 5-Phase Roadmap</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#F59E0B]" />
+                    <GraduationCap className="w-4 h-4 text-[#C78335]" />
+                    <span>View Learning Roadmap</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#C78335]" />
                   </button>
                 )}
               </div>

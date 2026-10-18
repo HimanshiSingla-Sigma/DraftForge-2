@@ -185,7 +185,7 @@ export const api = {
   acceptInvitation: (data: { token: string; password: string; full_name?: string }) =>
     apiClient.post<AuthResponse>('/invitations/accept', data),
   resendInvitation: (invitationId: string) =>
-    apiClient.post<{ status: string; message: string; invitation: Invitation }>(`/invitations/${invitationId}/resend`),
+    apiClient.post<{ status: string; message: string; invitation: Invitation; invitation_url?: string; email_sent?: boolean }>(`/invitations/${invitationId}/resend`),
   revokeInvitation: (invitationId: string) =>
     apiClient.post<{ status: string; message: string; invitation: Invitation }>(`/invitations/${invitationId}/revoke`),
 
@@ -195,7 +195,9 @@ export const api = {
   getAdminTeachers: () =>
     apiClient.get<TeacherOverview[]>('/admin/teachers'),
   inviteTeacher: (data: { email: string; section_ids?: string[]; full_name?: string }) =>
-    apiClient.post<{ status: string; message: string; invitation: Invitation }>('/admin/teachers/invite', data),
+    apiClient.post<{ status: string; message: string; invitation: Invitation; invitation_url?: string; email_sent?: boolean }>('/admin/teachers/invite', data),
+  inviteStudentAsAdmin: (data: { email: string; section_id: string; full_name?: string }) =>
+    apiClient.post<{ status: string; message: string; invitation: Invitation; invitation_url?: string; email_sent?: boolean }>('/admin/students/invite', data),
   getAdminStudents: () =>
     apiClient.get<StudentOverview[]>('/admin/students'),
   createSection: (data: { name: string; code: string; academic_year?: string; description?: string }) =>
@@ -217,7 +219,7 @@ export const api = {
   getSectionStudents: (sectionId: string) =>
     apiClient.get<Array<{ id: string; email: string; full_name: string | null; enrolled_at: string }>>(`/teachers/sections/${sectionId}/students`),
   inviteStudentToSection: (sectionId: string, data: { email: string; full_name?: string }) =>
-    apiClient.post<{ status: string; message: string; invitation: Invitation }>(`/teachers/sections/${sectionId}/invite-student`, data),
+    apiClient.post<{ status: string; message: string; invitation: Invitation; invitation_url?: string; email_sent?: boolean }>(`/teachers/sections/${sectionId}/invite-student`, data),
   getTeacherInvitations: () =>
     apiClient.get<Invitation[]>('/teachers/invitations'),
 };

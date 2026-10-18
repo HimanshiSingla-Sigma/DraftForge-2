@@ -117,6 +117,43 @@ def test_teacher_invitation_accepts_valid_college_domain():
                         assert result["role"] == "TEACHER"
 
 
+def test_student_invitation_rejects_non_college_domain_from_admin():
+    """
+    Student invitations from Admin must strictly require @ncuindia.edu domain.
+    """
+    service = InvitationService()
+    mock_section = {"id": "sec-001", "name": "Law of Contracts", "is_active": True}
+    with patch.object(service.section_repo, "get_by_id", return_value=mock_section):
+        with pytest.raises(ValidationError) as exc_info:
+            service.invite_student(
+                inviter_id="admin-01",
+                inviter_email="admin@ncuindia.edu",
+                inviter_role="ADMIN",
+                student_email="student@gmail.com",
+                section_id="sec-001",
+            )
+        assert "Email domain must be one of" in str(exc_info.value.detail)
+
+
+def test_student_invitation_rejects_non_college_domain_from_teacher():
+    """
+    Student invitations from Teacher must strictly require @ncuindia.edu domain.
+    """
+    service = InvitationService()
+    mock_section = {"id": "sec-001", "name": "Law of Contracts", "is_active": True}
+    with patch.object(service.section_repo, "get_by_id", return_value=mock_section):
+        with patch.object(service.section_repo, "is_teacher_assigned", return_value=True):
+            with pytest.raises(ValidationError) as exc_info:
+                service.invite_student(
+                    inviter_id="teacher-01",
+                    inviter_email="teacher@ncuindia.edu",
+                    inviter_role="TEACHER",
+                    student_email="scholar@yahoo.com",
+                    section_id="sec-001",
+                )
+            assert "Email domain must be one of" in str(exc_info.value.detail)
+
+
 # =============================================================================
 # 3. IDOR PREVENTION & SECTION AUTHORIZATION TESTS
 # =============================================================================
@@ -432,4 +469,205 @@ async def test_teacher_sections_endpoint(mock_teacher_user):
                 assert data[0]["students_count"] == 35
             finally:
                 app.dependency_overrides.clear()
+
+
+@pytest.mark.asyncio
+async def test_admin_students_invite_endpoint(mock_admin_user):
+    """
+    POST /api/v1/admin/students/invite enables administrators to invite students to any section.
+    """
+    app.dependency_overrides[require_admin] = lambda: mock_admin_user
+    mock_invite = {
+        "id": "inv-student-100",
+        "email": "student2025@ncuindia.edu",
+        "role": "STUDENT",
+        "section_ids": ["sec-10"],
+        "status": "PENDING",
+        "expires_at": "2026-10-21T00:00:00Z",
+        "invitation_url": "http://localhost:5173/accept-invitation?token=mocktoken123",
+        "email_sent": False,
+    }
+    with patch("app.api.v1.admin.invitation_service.invite_student", return_value=mock_invite):
+        try:
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                response = await ac.post(
+                    "/api/v1/admin/students/invite",
+                    json={
+                        "email": "student2025@ncuindia.edu",
+                        "section_id": "sec-10",
+                        "full_name": "Rohan Mehra",
+                    },
+                )
+            assert response.status_code == 201
+            data = response.json()
+            assert data["status"] == "success"
+            assert data["invitation"]["email"] == "student2025@ncuindia.edu"
+            assert data["invitation"]["role"] == "STUDENT"
+            assert data["invitation_url"] == "http://localhost:5173/accept-invitation?token=mocktoken123"
+            assert data["email_sent"] is False
+        finally:
+            app.dependency_overrides.clear()
+
+
+@pytest.mark.asyncio
+async def test_teacher_cannot_access_admin_invitation_endpoints(mock_teacher_user):
+    """
+    Teachers are strictly forbidden from accessing /admin/teachers/invite and /admin/students/invite.
+    """
+    app.dependency_overrides[get_current_user] = lambda: mock_teacher_user
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            res_teachers = await ac.post(
+                "/api/v1/admin/teachers/invite",
+                json={"email": "prof2@ncuindia.edu", "section_ids": []},
+            )
+            assert res_teachers.status_code == 403
+
+            res_students = await ac.post(
+                "/api/v1/admin/students/invite",
+                json={"email": "stud2@ncuindia.edu", "section_id": "sec-10"},
+            )
+            assert res_students.status_code == 403
+    finally:
+        app.dependency_overrides.clear()
+
+
+@pytest.mark.asyncio
+async def test_teacher_can_invite_student_to_assigned_section(mock_teacher_user):
+    """
+    POST /api/v1/teachers/sections/{section_id}/invite-student succeeds for assigned teacher.
+    """
+    app.dependency_overrides[get_current_user] = lambda: mock_teacher_user
+    app.dependency_overrides[require_teacher] = lambda: mock_teacher_user
+    mock_invite = {
+        "id": "inv-student-200",
+        "email": "scholar@ncuindia.edu",
+        "role": "STUDENT",
+        "section_ids": ["sec-10"],
+        "status": "PENDING",
+        "expires_at": "2026-10-21T00:00:00Z",
+    }
+    with patch("app.api.v1.teachers.invitation_service.invite_student", return_value=mock_invite):
+        try:
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                response = await ac.post(
+                    "/api/v1/teachers/sections/sec-10/invite-student",
+                    json={"email": "scholar@ncuindia.edu", "full_name": "Scholar One"},
+                )
+            assert response.status_code == 201
+            data = response.json()
+            assert data["status"] == "success"
+            assert data["invitation"]["role"] == "STUDENT"
+        finally:
+            app.dependency_overrides.clear()
+
+
+@pytest.mark.asyncio
+async def test_admin_and_teacher_whatsapp_invitation_flows(mock_admin_user, mock_teacher_user):
+    """
+    Verifies the 3 required invitation flows return valid invitation URLs and roles:
+    1. Admin -> Teacher (role: TEACHER, invitation_url present)
+    2. Admin -> Student (role: STUDENT, invitation_url present)
+    3. Teacher -> Student (role: STUDENT, invitation_url present)
+    """
+    # 1. Admin -> Teacher
+    app.dependency_overrides[require_admin] = lambda: mock_admin_user
+    mock_teacher_invite = {
+        "id": "inv-teacher-whatsapp-1",
+        "email": "dr.patel@ncuindia.edu",
+        "role": "TEACHER",
+        "section_ids": ["sec-101"],
+        "status": "PENDING",
+        "expires_at": "2026-10-21T00:00:00Z",
+        "invitation_url": "http://localhost:5173/accept-invitation?token=teacher_token_xyz",
+        "email_sent": False,
+    }
+    with patch("app.api.v1.admin.invitation_service.invite_teacher", return_value=mock_teacher_invite):
+        try:
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                res_teacher = await ac.post(
+                    "/api/v1/admin/teachers/invite",
+                    json={
+                        "email": "dr.patel@ncuindia.edu",
+                        "full_name": "Dr. Patel",
+                        "section_ids": ["sec-101"],
+                    },
+                )
+            assert res_teacher.status_code == 201
+            teacher_data = res_teacher.json()
+            assert teacher_data["status"] == "success"
+            assert teacher_data["invitation"]["role"] == "TEACHER"
+            assert teacher_data["invitation_url"] == "http://localhost:5173/accept-invitation?token=teacher_token_xyz"
+        finally:
+            app.dependency_overrides.clear()
+
+    # 2. Admin -> Student
+    app.dependency_overrides[require_admin] = lambda: mock_admin_user
+    mock_student_invite = {
+        "id": "inv-student-whatsapp-2",
+        "email": "24llb999@ncuindia.edu",
+        "role": "STUDENT",
+        "section_ids": ["sec-101"],
+        "status": "PENDING",
+        "expires_at": "2026-10-21T00:00:00Z",
+        "invitation_url": "http://localhost:5173/accept-invitation?token=student_token_abc",
+        "email_sent": False,
+    }
+    with patch("app.api.v1.admin.invitation_service.invite_student", return_value=mock_student_invite):
+        try:
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                res_student = await ac.post(
+                    "/api/v1/admin/students/invite",
+                    json={
+                        "email": "24llb999@ncuindia.edu",
+                        "section_id": "sec-101",
+                        "full_name": "Kavya Rao",
+                    },
+                )
+            assert res_student.status_code == 201
+            student_data = res_student.json()
+            assert student_data["status"] == "success"
+            assert student_data["invitation"]["role"] == "STUDENT"
+            assert student_data["invitation_url"] == "http://localhost:5173/accept-invitation?token=student_token_abc"
+        finally:
+            app.dependency_overrides.clear()
+
+    # 3. Teacher -> Student
+    app.dependency_overrides[get_current_user] = lambda: mock_teacher_user
+    app.dependency_overrides[require_teacher] = lambda: mock_teacher_user
+    mock_teacher_to_student = {
+        "id": "inv-t2s-whatsapp-3",
+        "email": "24llb101@ncuindia.edu",
+        "role": "STUDENT",
+        "section_ids": ["sec-101"],
+        "status": "PENDING",
+        "expires_at": "2026-10-21T00:00:00Z",
+        "invitation_url": "http://localhost:5173/accept-invitation?token=t2s_token_def",
+        "email_sent": False,
+    }
+    with patch("app.api.v1.teachers.invitation_service.invite_student", return_value=mock_teacher_to_student):
+        try:
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                res_t2s = await ac.post(
+                    "/api/v1/teachers/sections/sec-101/invite-student",
+                    json={
+                        "email": "24llb101@ncuindia.edu",
+                        "full_name": "Aarav Gupta",
+                    },
+                )
+            assert res_t2s.status_code == 201
+            t2s_data = res_t2s.json()
+            assert t2s_data["status"] == "success"
+            assert t2s_data["invitation"]["role"] == "STUDENT"
+            assert t2s_data["invitation_url"] == "http://localhost:5173/accept-invitation?token=t2s_token_def"
+        finally:
+            app.dependency_overrides.clear()
+
+
 

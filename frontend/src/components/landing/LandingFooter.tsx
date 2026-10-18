@@ -1,7 +1,4 @@
-import React from 'react';
-import {
-  Scale,
-} from 'lucide-react';
+import { Scale } from 'lucide-react';
 
 interface LandingFooterProps {
   onOpenAuth: () => void;
@@ -13,64 +10,64 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
   onOpenHealth,
 }) => {
   return (
-    <footer className="border-t-2 border-[#E6E2D8] bg-[#F3F0EA] pt-16 pb-12 text-[#5A6A80] font-sans">
+    <footer className="border-t border-[#E5DED2] bg-[#F5F0E7] pt-14 pb-12 text-[#687584] font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Col 1: Brand & Positioning */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#1E3E62] border-2 border-[#0B192C] flex items-center justify-center shadow-[0_3px_#0B192C]">
-                <Scale className="w-5 h-5 text-[#F59E0B]" />
+              <div className="w-8 h-8 rounded-lg bg-[#20344A] flex items-center justify-center text-white">
+                <Scale className="w-4 h-4 text-[#C78335]" />
               </div>
-              <span className="font-serif text-xl font-black text-[#0B192C] tracking-tight">
-                Draft<span className="text-[#F59E0B]">Forge</span>
+              <span className="font-serif text-xl font-normal text-[#20344A] tracking-tight">
+                DraftForge AI
               </span>
             </div>
 
-            <p className="text-xs text-[#5A6A80] leading-relaxed max-w-sm">
-              The AI-powered legal drafting, evaluation, and learning platform. Built for law students, legal scholars, and faculty with deterministic rubric precision, dense vector retrieval, and Neo4j knowledge graph reasoning.
+            <p className="text-xs text-[#43566B] leading-relaxed max-w-sm font-sans">
+              The academic legal drafting and evaluation platform. Crafted for law students and clinical faculty to cultivate rigorous doctrinal analysis, structured rubric feedback, and Bluebook citation precision.
             </p>
 
             {onOpenHealth && (
               <button
                 onClick={onOpenHealth}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white hover:bg-[#FAF8F5] border-2 border-[#E6E2D8] border-b-4 border-b-[#D5CEBE] text-xs font-mono font-bold text-[#059669] tactile-btn transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white hover:bg-[#FBF8F2] border border-[#E5DED2] text-xs font-sans text-[#557B68] transition-colors shadow-sm"
               >
-                <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-                <span>System Telemetry & Architecture Health</span>
+                <span className="w-2 h-2 rounded-full bg-[#557B68] animate-pulse" />
+                <span>Platform Architecture & Health Status</span>
               </button>
             )}
           </div>
 
           {/* Col 2: Core Platform */}
           <div className="space-y-3 text-xs">
-            <h4 className="font-serif font-black text-[#0B192C] uppercase tracking-wider text-xs">
-              Platform Modules
+            <h4 className="font-serif font-medium text-[#20344A] uppercase tracking-wider text-xs">
+              Curriculum Modules
             </h4>
-            <ul className="space-y-2 text-[#5A6A80]">
+            <ul className="space-y-2 text-[#43566B]">
               <li>
-                <a href="#scanner" className="hover:text-[#1E3E62] transition-colors font-medium">
+                <a href="#how-it-works" className="hover:text-[#20344A] transition-colors font-medium">
+                  The Methodology
+                </a>
+              </li>
+              <li>
+                <a href="#scanner" className="hover:text-[#20344A] transition-colors font-medium">
                   Interactive Scanner
                 </a>
               </li>
               <li>
-                <a href="#features" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  AI Drafting Copilot
+                <a href="#capabilities" className="hover:text-[#20344A] transition-colors font-medium">
+                  AI Legal Tutor
                 </a>
               </li>
               <li>
-                <a href="#ai-evaluation" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  Deterministic Rubrics
+                <a href="#capabilities" className="hover:text-[#20344A] transition-colors font-medium">
+                  Academic Rubrics
                 </a>
               </li>
               <li>
-                <a href="#features" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  GraphRAG Loopholes
-                </a>
-              </li>
-              <li>
-                <a href="#features" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  Reference Precedent Corpus
+                <a href="#capabilities" className="hover:text-[#20344A] transition-colors font-medium">
+                  Precedent Library
                 </a>
               </li>
             </ul>
@@ -78,33 +75,33 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
 
           {/* Col 3: Student Studio */}
           <div className="space-y-3 text-xs">
-            <h4 className="font-serif font-black text-[#0B192C] uppercase tracking-wider text-xs">
-              For Students
+            <h4 className="font-serif font-medium text-[#20344A] uppercase tracking-wider text-xs">
+              For Law Students
             </h4>
-            <ul className="space-y-2 text-[#5A6A80]">
+            <ul className="space-y-2 text-[#43566B]">
               <li>
-                <a href="#students" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  Legal Drafting Workspace
+                <a href="#students" className="hover:text-[#20344A] transition-colors font-medium">
+                  Draft Studio
                 </a>
               </li>
               <li>
-                <a href="#students" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  5-Phase Learning Roadmap
+                <a href="#students" className="hover:text-[#20344A] transition-colors font-medium">
+                  Learning Roadmap
                 </a>
               </li>
               <li>
-                <a href="#students" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  Socratic AI Tutor Chat
+                <a href="#students" className="hover:text-[#20344A] transition-colors font-medium">
+                  Socratic AI Tutor
                 </a>
               </li>
               <li>
-                <a href="#students" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  Interactive Statutory Quizzes
+                <a href="#students" className="hover:text-[#20344A] transition-colors font-medium">
+                  Practice Exercises
                 </a>
               </li>
               <li>
-                <a href="#students" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  Skill Mastery Matrix (EMA)
+                <a href="#students" className="hover:text-[#20344A] transition-colors font-medium">
+                  Core Competencies
                 </a>
               </li>
             </ul>
@@ -112,33 +109,33 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
 
           {/* Col 4: Faculty Studio */}
           <div className="space-y-3 text-xs">
-            <h4 className="font-serif font-black text-[#0B192C] uppercase tracking-wider text-xs">
-              For Faculty
+            <h4 className="font-serif font-medium text-[#20344A] uppercase tracking-wider text-xs">
+              For Clinical Faculty
             </h4>
-            <ul className="space-y-2 text-[#5A6A80]">
+            <ul className="space-y-2 text-[#43566B]">
               <li>
-                <a href="#faculty" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  Assignment Manager
+                <a href="#faculty" className="hover:text-[#20344A] transition-colors font-medium">
+                  Assignment Management
                 </a>
               </li>
               <li>
-                <a href="#faculty" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  Submissions Auditor & Grading
+                <a href="#faculty" className="hover:text-[#20344A] transition-colors font-medium">
+                  Submissions Auditor
                 </a>
               </li>
               <li>
-                <a href="#faculty" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  Audited Score Overrides
+                <a href="#faculty" className="hover:text-[#20344A] transition-colors font-medium">
+                  Audited Grade Overrides
                 </a>
               </li>
               <li>
-                <a href="#faculty" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  Reference Corpus Ingestion
+                <a href="#faculty" className="hover:text-[#20344A] transition-colors font-medium">
+                  Statutory Precedent Corpus
                 </a>
               </li>
               <li>
-                <a href="#faculty" className="hover:text-[#1E3E62] transition-colors font-medium">
-                  Cohort Weak-Skill Analytics
+                <a href="#faculty" className="hover:text-[#20344A] transition-colors font-medium">
+                  Cohort Doctrinal Analytics
                 </a>
               </li>
             </ul>
@@ -146,17 +143,17 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t-2 border-[#E6E2D8] flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-[#5A6A80]">
-          <p>© {new Date().getFullYear()} DraftForge AI. All rights reserved. Deterministic LegalTech Platform.</p>
+        <div className="pt-8 border-t border-[#E5DED2] flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-[#687584]">
+          <p>© {new Date().getFullYear()} DraftForge AI. All rights reserved. Juris Education Platform.</p>
           <div className="flex items-center gap-6">
-            <span className="font-mono text-[11px] font-bold">
-              FastEmbed • Qdrant • Neo4j Aura • Supabase
+            <span className="text-[11px] font-sans">
+              ABA Standards 302 & 314 Aligned
             </span>
             <button
               onClick={onOpenAuth}
-              className="text-[#1E3E62] hover:text-[#0B192C] font-bold underline"
+              className="text-[#20344A] hover:text-[#101D29] font-medium underline font-sans"
             >
-              Sign In to Portal →
+              Sign In to Academic Portal →
             </button>
           </div>
         </div>

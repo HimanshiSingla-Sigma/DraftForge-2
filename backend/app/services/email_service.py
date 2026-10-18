@@ -1,3 +1,4 @@
+import re
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -188,6 +189,88 @@ The DraftForge Academic Team
             reply_to=self.settings.INITIAL_ADMIN_EMAIL or "singlahimanshi2@gmail.com",
         )
 
+    def _resolve_from_address(self) -> str:
+        """
+        Resolves the appropriate sender address for Resend HTTPS API.
+        Resend requires sending from either a verified custom domain or its verified
+        onboarding address ('onboarding@resend.dev'). Unverified public domains (like
+        @gmail.com or @yahoo.com) without DNS verification are rejected by Resend with 403.
+        """
+        custom_from = getattr(self.settings, "RESEND_FROM_EMAIL", None)
+        if custom_from and custom_from.strip():
+            return custom_from.strip()
+
+        from_name = (self.settings.SMTP_FROM_NAME or "DraftForge Legal AI").strip()
+        from_email = (self.settings.SMTP_FROM_EMAIL or "").strip()
+
+        # If from_email is empty or a common public mailbox that cannot be DNS-verified on Resend
+        public_domains = ("@gmail.com", "@yahoo.com", "@outlook.com", "@hotmail.com", "@icloud.com")
+        if not from_email or any(from_email.lower().endswith(d) for d in public_domains):
+            return f"{from_name} <onboarding@resend.dev>"
+
+        return f"{from_name} <{from_email}>"
+
+    def _dispatch_console(self, recipient_email: str, subject: str, text_content: str) -> bool:
+        logger.info(
+            f"\n====================== [EMAIL DISPATCH - CONSOLE FALLBACK] ======================\n"
+            f"To: {recipient_email}\n"
+            f"Subject: {subject}\n"
+            f"---------------------------------------------------------------------------------\n"
+            f"{text_content.strip()}\n"
+            f"=================================================================================\n"
+        )
+        return True
+
+    def _dispatch_smtp(
+        self,
+        recipient_email: str,
+        subject: str,
+        text_content: str,
+        html_content: str,
+    ) -> bool:
+        """
+        Legacy SMTP transport. Guards against blocked outbound SMTP ports (25, 465, 587)
+        common in cloud environments (Render, AWS, DigitalOcean).
+        """
+        if not self.settings.SMTP_HOST:
+            logger.warning("SMTP_HOST is not configured. Falling back to console dispatch.")
+            return self._dispatch_console(recipient_email, subject, text_content)
+
+        logger.warning(
+            "SMTP transport is active. Note: Many cloud providers block outbound SMTP ports. "
+            "Prefer EMAIL_PROVIDER='resend' for HTTPS email delivery."
+        )
+        try:
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = subject
+            msg["From"] = f"{self.settings.SMTP_FROM_NAME} <{self.settings.SMTP_FROM_EMAIL}>"
+            msg["To"] = recipient_email
+
+            part1 = MIMEText(text_content, "plain")
+            part2 = MIMEText(html_content, "html")
+            msg.attach(part1)
+            msg.attach(part2)
+
+            server = smtplib.SMTP(self.settings.SMTP_HOST, self.settings.SMTP_PORT, timeout=5)
+            if self.settings.SMTP_USE_TLS:
+                server.starttls()
+            if self.settings.SMTP_USERNAME and self.settings.SMTP_PASSWORD:
+                server.login(self.settings.SMTP_USERNAME, self.settings.SMTP_PASSWORD)
+            server.sendmail(self.settings.SMTP_FROM_EMAIL, [recipient_email], msg.as_string())
+            server.quit()
+            logger.info(f"Successfully delivered email via SMTP to {recipient_email}")
+            return True
+        except (smtplib.SMTPException, OSError, TimeoutError, ConnectionRefusedError) as exc:
+            logger.error(
+                f"SMTP transport to {self.settings.SMTP_HOST}:{self.settings.SMTP_PORT} failed ({exc}). "
+                f"Outbound SMTP is likely blocked by firewall/network policy."
+            )
+            if self.settings.EMAIL_FALLBACK_TO_CONSOLE:
+                logger.warning("Automatic fallback to console dispatch applied to prevent invitation failure.")
+                self._dispatch_console(recipient_email, subject, text_content)
+                return True
+            raise RuntimeError(f"SMTP delivery failed: {str(exc)}") from exc
+
     def _dispatch(
         self,
         recipient_email: str,
@@ -200,8 +283,8 @@ The DraftForge Academic Team
     ) -> bool:
         provider = (self.settings.EMAIL_PROVIDER or "").strip().lower()
 
-        # If RESEND_API_KEY is present and provider is unset, smtp, or resend, prioritize Resend (works on Render)
-        if self.settings.RESEND_API_KEY and provider in ("resend", "smtp", ""):
+        # If RESEND_API_KEY is present and provider is unset, smtp, resend or https, prioritize Resend (works on Render)
+        if self.settings.RESEND_API_KEY and provider in ("resend", "https", "smtp", ""):
             return self._dispatch_resend(
                 recipient_email=recipient_email,
                 subject=subject,
@@ -392,28 +475,42 @@ The DraftForge Academic Team
             self._fallback_console(recipient_email, subject, text_content)
             return False
         try:
-            configured_from = self.settings.RESEND_FROM_EMAIL or self.settings.SMTP_FROM_EMAIL
-            from_email = configured_from
-            if not from_email or "draftforge.ai" in from_email:
-                from_email = "onboarding@resend.dev"
+            configured_from = (self.settings.RESEND_FROM_EMAIL or self.settings.SMTP_FROM_EMAIL or "onboarding@resend.dev").strip()
+
+            # Cleanly extract just the email address if configured_from has "Display Name <email@domain>"
+            clean_from = configured_from.strip('"\'')
+            if "<" in clean_from and ">" in clean_from:
+                match = re.search(r"<([^>]+)>", clean_from)
+                if match:
+                    clean_from = match.group(1).strip()
+
+            if not clean_from or "draftforge.ai" in clean_from:
+                clean_from = "onboarding@resend.dev"
 
             # Check if inviter_email has custom domain matching verified from_email domain
-            if inviter_email and "@" in inviter_email and configured_from and "@" in configured_from:
+            if inviter_email and "@" in inviter_email and clean_from and "@" in clean_from:
                 inviter_domain = inviter_email.split("@")[1].lower()
-                from_domain = configured_from.split("@")[1].lower()
+                from_domain = clean_from.split("@")[1].lower()
                 if inviter_domain == from_domain and from_domain != "resend.dev":
-                    from_email = inviter_email
+                    clean_from = inviter_email
 
-            from_name = self.settings.SMTP_FROM_NAME or "DraftForge Legal AI"
-            sender_display = f"{inviter_display} via DraftForge" if inviter_display else from_name
+            from_name = (self.settings.SMTP_FROM_NAME or "DraftForge Legal AI").strip()
+            clean_inviter = (inviter_display or "").replace("<", "").replace(">", "").replace('"', '').strip()
+            clean_from_name = from_name.replace("<", "").replace(">", "").replace('"', '').strip()
+
+            if clean_inviter:
+                sender_display = f"{clean_inviter} via DraftForge"
+            else:
+                sender_display = clean_from_name or "DraftForge Legal AI"
+
             effective_reply_to = reply_to or inviter_email
 
             headers = {
-                "Authorization": f"Bearer {self.settings.RESEND_API_KEY}",
+                "Authorization": f"Bearer {self.settings.RESEND_API_KEY.strip()}",
                 "Content-Type": "application/json",
             }
             payload = {
-                "from": f"{sender_display} <{from_email}>",
+                "from": f"{sender_display} <{clean_from}>",
                 "to": [recipient_email],
                 "subject": subject,
                 "html": html_content,
@@ -424,7 +521,7 @@ The DraftForge Academic Team
 
             resp = httpx.post("https://api.resend.com/emails", json=payload, headers=headers, timeout=15)
             if resp.status_code in (200, 201):
-                logger.info(f"Successfully delivered email via Resend to {recipient_email} (From: {sender_display}, Reply-To: {effective_reply_to})")
+                logger.info(f"Successfully delivered email via Resend to {recipient_email} (From: {sender_display} <{clean_from}>, Reply-To: {effective_reply_to})")
                 return True
             else:
                 if resp.status_code == 403:

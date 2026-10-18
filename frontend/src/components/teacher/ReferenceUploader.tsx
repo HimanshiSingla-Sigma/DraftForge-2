@@ -8,8 +8,7 @@ import {
   CheckCircle2,
   FileText,
   BookOpen,
-  ShieldCheck,
-  Server,
+  Library,
 } from 'lucide-react';
 
 export const ReferenceUploader: React.FC = () => {
@@ -51,7 +50,7 @@ export const ReferenceUploader: React.FC = () => {
 
     try {
       await api.uploadReference(fd);
-      showToast(`Document "${file.name}" chunked and indexed into Qdrant Cloud!`, 'success');
+      showToast(`Document "${file.name}" ingested into the statutory precedent library!`, 'success');
       setFile(null);
       await fetchRecent();
     } catch (err: any) {
@@ -62,44 +61,49 @@ export const ReferenceUploader: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in font-sans">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl tactile-card bg-[#FAF8F5] border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8]">
+      <header className="bg-[#FFFFFF] p-5 sm:p-6 rounded-lg border border-[#E5DED2] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-serif font-bold text-[#0B192C] tracking-tight">Ingest Master Reference Corpus</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#1E3E62]/10 text-[#1E3E62] border border-[#1E3E62]/30 font-mono">
-              FastEmbed + Qdrant Cloud
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider text-[#C78335] font-semibold bg-[#FBF0E4] px-2 py-0.5 rounded">
+              Institutional Knowledge Corpus
+            </span>
+            <span className="text-xs text-[#557B68] font-semibold bg-[#E8F3ED] px-2 py-0.5 rounded">
+              Authoritative Precedents
             </span>
           </div>
-          <p className="text-xs text-[#0B192C]/70 mt-1">
-            Uploaded reference documents are parsed, chunked by legal section, and indexed as 384-dimensional dense vectors.
+          <h2 className="font-serif text-xl sm:text-2xl text-[#20344A] tracking-tight font-medium mt-1">
+            Precedent Library & Statutory Ingestion
+          </h2>
+          <p className="text-xs text-[#74777D] mt-0.5">
+            Ingest master model templates, judicial forms, and statutory covenants used as grading benchmarks.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-mono font-semibold text-[#0B192C] px-3.5 py-2 bg-[#F3F0EA] rounded-xl border-2 border-[#E6E2D8]">
-          <Server className="w-3.5 h-3.5 text-[#1E3E62]" />
-          <span>Collection: legal_reference_corpus</span>
+        <div className="flex items-center gap-2 text-xs font-mono font-medium text-[#20344A] px-3.5 py-1.5 bg-[#FBF8F2] rounded border border-[#E5DED2] shrink-0">
+          <Library className="w-3.5 h-3.5 text-[#C78335]" />
+          <span>Repository: Statutory Precedents</span>
         </div>
-      </div>
+      </header>
 
-      <div className="grid grid-cols-12 gap-6">
+      <div className="grid grid-cols-12 gap-6 items-start">
         {/* Left 6 Cols: Ingestion Upload Form */}
-        <div className="col-span-12 lg:col-span-6 tactile-card bg-[#FAF8F5] p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-5">
-          <div className="flex items-center gap-2 pb-2 border-b-2 border-[#E6E2D8]">
-            <UploadCloud className="w-4 h-4 text-[#1E3E62]" />
-            <h3 className="font-serif font-bold text-base text-[#0B192C]">Upload Benchmark Template</h3>
+        <div className="col-span-12 lg:col-span-6 bg-[#FFFFFF] p-6 lg:p-8 rounded-lg border border-[#E5DED2] shadow-sm space-y-4">
+          <div className="flex items-center gap-2 pb-2 border-b border-[#E5DED2]">
+            <UploadCloud className="w-4 h-4 text-[#C78335]" />
+            <h3 className="font-serif font-medium text-base text-[#20344A]">Upload Benchmark Template</h3>
           </div>
 
           <form onSubmit={handleUpload} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-[#0B192C] mb-1.5">
+              <label className="block text-xs font-semibold text-[#20344A] mb-1">
                 Target Legal Document Category
               </label>
               <select
                 value={docType}
                 onChange={(e) => setDocType(e.target.value as DocumentType)}
-                className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl p-2.5 text-xs text-[#0B192C] focus:border-[#1E3E62] focus:outline-none"
+                className="w-full bg-[#FBF8F2] border border-[#E5DED2] rounded px-3 py-1.5 text-xs text-[#20344A] focus:border-[#20344A] focus:outline-none"
               >
                 <option value="AFFIDAVIT_OF_CHARACTER">Affidavit of Character (India)</option>
                 <option value="EMPLOYMENT_AGREEMENT">Employment Agreement (India)</option>
@@ -109,20 +113,20 @@ export const ReferenceUploader: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#0B192C] mb-1.5">
-                Jurisdiction
+              <label className="block text-xs font-semibold text-[#20344A] mb-1">
+                Statutory Jurisdiction
               </label>
               <input
                 type="text"
                 value={jurisdiction}
                 onChange={(e) => setJurisdiction(e.target.value)}
-                placeholder="e.g. India (Bar Council / High Court)"
-                className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-xl px-3 py-2 text-xs text-[#0B192C] placeholder-[#0B192C]/40 focus:border-[#1E3E62] focus:outline-none"
+                placeholder="e.g. India (High Court / Bar Council Standard)"
+                className="w-full bg-[#FBF8F2] border border-[#E5DED2] rounded px-3 py-1.5 text-xs text-[#20344A] placeholder-[#74777D] focus:border-[#20344A] focus:outline-none"
               />
             </div>
 
-            {/* Drag and drop / file selector */}
-            <div className="border-2 border-dashed border-[#E6E2D8] hover:border-[#1E3E62] rounded-2xl p-8 text-center cursor-pointer transition-all bg-[#FDFBF7] shadow-inner group">
+            {/* File drop area */}
+            <div className="border border-dashed border-[#E5DED2] hover:border-[#20344A] rounded p-6 text-center cursor-pointer transition-all bg-[#FBF8F2] group">
               <input
                 type="file"
                 accept=".pdf,.docx,.txt"
@@ -130,13 +134,13 @@ export const ReferenceUploader: React.FC = () => {
                 className="hidden"
                 id="ref-upload-input"
               />
-              <label htmlFor="ref-upload-input" className="cursor-pointer space-y-2 block">
-                <UploadCloud className="w-10 h-10 text-[#1E3E62] mx-auto group-hover:scale-110 transition-transform" />
-                <p className="font-serif text-sm font-bold text-[#0B192C]">
-                  {file ? file.name : 'Select or Drag Benchmark Legal File'}
+              <label htmlFor="ref-upload-input" className="cursor-pointer space-y-1.5 block">
+                <UploadCloud className="w-8 h-8 text-[#C78335] mx-auto transition-transform group-hover:scale-105" />
+                <p className="font-serif text-sm font-medium text-[#20344A]">
+                  {file ? file.name : 'Select or drop benchmark legal file'}
                 </p>
-                <p className="text-[11px] text-[#0B192C]/50 font-mono">
-                  Accepts .PDF, .DOCX, .TXT up to 15MB
+                <p className="text-[11px] text-[#74777D] font-mono">
+                  Accepts PDF, DOCX, TXT up to 15MB
                 </p>
               </label>
             </div>
@@ -144,71 +148,59 @@ export const ReferenceUploader: React.FC = () => {
             <button
               type="submit"
               disabled={uploading || !file}
-              className="tactile-btn w-full py-3 bg-[#1E3E62] hover:bg-[#152e4a] text-white font-bold text-xs rounded-xl border-b-4 border-[#0B192C] shadow-[0_3px_#0B192C] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-2 bg-[#20344A] hover:bg-[#152332] text-white font-semibold text-xs rounded transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
             >
-              {uploading ? (
-                <>
-                  <LoadingSpinner size="sm" />
-                  <span>Parsing, Chunking & Vectorizing...</span>
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="w-4 h-4 text-[#F59E0B]" />
-                  <span>Vectorize & Index into Qdrant</span>
-                </>
-              )}
+              {uploading ? <LoadingSpinner size="sm" /> : <UploadCloud className="w-3.5 h-3.5 text-[#C78335]" />}
+              <span>Ingest into Precedent Library</span>
             </button>
           </form>
         </div>
 
-        {/* Right 6 Cols: Recent Indexed Corpus Files */}
-        <div className="col-span-12 lg:col-span-6 tactile-card bg-[#FAF8F5] p-6 sm:p-8 rounded-3xl border-2 border-[#E6E2D8] shadow-[0_4px_#E6E2D8] space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b-2 border-[#E6E2D8]">
+        {/* Right 6 Cols: Recent Master Ingestions */}
+        <div className="col-span-12 lg:col-span-6 bg-[#FFFFFF] p-6 lg:p-8 rounded-lg border border-[#E5DED2] shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-[#E5DED2]">
             <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-[#1E3E62]" />
-              <h3 className="font-serif font-bold text-base text-[#0B192C]">Active Reference Corpus</h3>
+              <BookOpen className="w-4 h-4 text-[#20344A]" />
+              <h3 className="font-serif font-medium text-base text-[#20344A]">Recently Ingested Precedents</h3>
             </div>
-            <span className="text-[10px] font-mono font-bold text-[#0B192C]/60">
-              {recentUploads.length} Documents
-            </span>
+            <span className="text-[11px] text-[#74777D] font-mono">Indexed Corpus</span>
           </div>
 
           {loadingRecent ? (
-            <div className="py-16 flex justify-center">
+            <div className="py-12 flex justify-center">
               <LoadingSpinner size="md" />
             </div>
           ) : recentUploads.length === 0 ? (
-            <div className="py-12 text-center text-xs text-[#0B192C]/50 space-y-2">
-              <FileText className="w-8 h-8 text-[#0B192C]/30 mx-auto" />
-              <p>No reference documents ingested yet. Upload benchmark templates on the left.</p>
+            <div className="py-12 text-center text-xs text-[#74777D] space-y-2">
+              <FileText className="w-8 h-8 text-[#74777D]/30 mx-auto" />
+              <p>No master reference documents ingested yet.</p>
             </div>
           ) : (
-            <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
+            <div className="space-y-2.5">
               {recentUploads.map((doc) => (
                 <div
                   key={doc.id}
-                  className="p-4 rounded-2xl bg-[#F3F0EA] border-2 border-[#E6E2D8] space-y-2 shadow-[0_2px_#E6E2D8]"
+                  className="p-3.5 rounded bg-[#FBF8F2] border border-[#E5DED2] flex items-center justify-between gap-3 shadow-2xs"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-serif font-bold text-xs text-[#0B192C] truncate max-w-[200px]">
-                      {doc.title}
-                    </span>
-                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FAF8F5] text-[#1E3E62] border border-[#E6E2D8]">
-                      {doc.document_type.replace(/_/g, ' ')}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-[11px] text-[#0B192C]/70 font-mono">
-                    <span>Jurisdiction: {doc.jurisdiction}</span>
-                    <span>{(doc.file_size_bytes / 1024).toFixed(1)} KB</span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-[10px] text-[#0B192C]/60 pt-1 border-t-2 border-[#E6E2D8]">
-                    <div className="flex items-center gap-1 font-mono text-emerald-800 font-bold">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
-                      <span>{doc.file_hash.substring(0, 12)}...</span>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-7 h-7 rounded bg-white border border-[#E5DED2] flex items-center justify-center text-[#20344A] shrink-0">
+                      <FileText className="w-3.5 h-3.5" />
                     </div>
-                    <span className="font-mono">{new Date(doc.created_at).toLocaleDateString()}</span>
+                    <div className="min-w-0">
+                      <h4 className="font-serif font-medium text-xs text-[#20344A] truncate">
+                        {doc.title}
+                      </h4>
+                      <div className="flex items-center gap-2 text-[10px] text-[#74777D] font-mono mt-0.5">
+                        <span className="text-[#557B68] font-semibold">{doc.document_type.replace(/_/g, ' ')}</span>
+                        <span>•</span>
+                        <span>{doc.jurisdiction}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 text-[10px] text-[#557B68] font-semibold bg-[#E8F3ED] px-2 py-0.5 rounded shrink-0">
+                    <CheckCircle2 className="w-3 h-3" />
+                    <span>Indexed</span>
                   </div>
                 </div>
               ))}

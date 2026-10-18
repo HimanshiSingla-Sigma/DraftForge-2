@@ -230,11 +230,12 @@ class InvitationService:
             if not self.section_repo.is_teacher_assigned(inviter_id, section_id):
                 raise PermissionDeniedError(f"Teacher is not authorized to invite students to section '{sec['name']}'.")
 
-        # Check student email policy
-        if self.settings.STUDENT_EMAIL_POLICY.upper() == "COLLEGE_DOMAIN_ONLY":
-            if not self.settings.is_allowed_college_email(norm_email):
-                allowed = ", ".join(self.settings.get_allowed_college_domains_list())
-                raise ValidationError(f"Student email policy requires a college domain in [{allowed}].")
+        # Enforce official NCU college domain validation (@ncuindia.edu)
+        if not self.settings.is_allowed_college_email(norm_email):
+            allowed = ", ".join(self.settings.get_allowed_college_domains_list())
+            raise ValidationError(
+                f"Student invitation rejected: Email domain must be one of [{allowed}]. Provided: '{norm_email}'"
+            )
 
         # Check existing active invitation
         existing_invite = self.invitation_repo.get_active_by_email(norm_email)

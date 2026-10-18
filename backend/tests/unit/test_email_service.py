@@ -128,3 +128,51 @@ def test_invitation_service_student_invite_email_failure_does_not_crash():
                         assert res["id"] == "inv-999"
                         assert res["email_sent"] is False
                         assert "accept-invitation?token=" in res["invitation_url"]
+import pytest
+from unittest.mock import patch, MagicMock
+from app.services.email_service import EmailService
+from app.config import Settings
+
+
+class MockResponse:
+    def __init__(self, status_code: int, json_data: dict, text: str = ""):
+        self.status_code = status_code
+        self._json_data = json_data
+        self.text = text or str(json_data)
+
+    def json(self):
+        return self._json_data
+
+
+def test_resolve_from_address_custom_configured():
+    service = EmailService()
+    service.settings = MagicMock(spec=Settings)
+    service.settings.RESEND_FROM_EMAIL = "DraftForge Support <support@mail.draftforge.ai>"
+    service.settings.SMTP_FROM_NAME = "DraftForge"
+    service.settings.SMTP_FROM_EMAIL = "noreply@draftforge.ai"
+
+    resolved = service._resolve_from_address()
+    assert resolved == "DraftForge Support <support@mail.draftforge.ai>"
+
+
+def test_resolve_from_address_gmail_fallback_to_resend_sandbox():
+    service = EmailService()
+    service.settings = MagicMock(spec=Settings)
+    service.settings.RESEND_FROM_EMAIL = ""
+    service.settings.SMTP_FROM_NAME = "DraftForge Law Studio"
+    service.settings.SMTP_FROM_EMAIL = "singlahimanshi2@gmail.com"
+
+    resolved = service._resolve_from_address()
+    # Should fall back to onboarding@resend.dev so Resend doesn't reject with 403 unverified domain
+    assert resolved == "DraftForge Law Studio <onboarding@resend.dev>"
+
+
+def test_resolve_from_address_verified_custom_domain():
+    service = EmailService()
+    service.settings = MagicMock(spec=Settings)
+    service.settings.RESEND_FROM_EMAIL = ""
+    service.settings.SMTP_FROM_NAME = "NCU Law Faculty"
+    service.settings.SMTP_FROM_EMAIL = "admissions@ncuindia.edu"
+
+    resolved = service._resolve_from_address()
+    assert resolved == "NCU Law Faculty <admissions@ncuindia.edu>"

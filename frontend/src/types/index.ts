@@ -383,6 +383,8 @@ export interface Invitation {
   expires_at: string;
   accepted_at?: string | null;
   created_at?: string;
+  invitation_url?: string;
+  email_sent?: boolean;
 }
 
 export interface VerifyInvitationResponse {

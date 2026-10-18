@@ -57,15 +57,15 @@ export const ClassifierModal: React.FC<ClassifierModalProps> = ({
         resetForm();
         onClose();
       }}
-      title="Rule-Based Document Classifier"
-      subtitle="Paste raw legal text to detect statutory document classification and structural confidence"
-      icon={<Sparkles className="w-5 h-5" />}
+      title="Document Type Identifier"
+      subtitle="Analyze draft language to automatically detect the statutory document category"
+      icon={<Sparkles className="w-4 h-4" />}
       maxWidth="2xl"
     >
       <div className="space-y-5">
         <form onSubmit={handleClassify} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-[#0B192C] uppercase tracking-wider mb-2 font-mono">
+            <label className="block text-xs font-medium text-[#20344A] uppercase tracking-wider mb-2 font-mono">
               Legal Draft Content / Excerpt
             </label>
             <textarea
@@ -73,7 +73,7 @@ export const ClassifierModal: React.FC<ClassifierModalProps> = ({
               onChange={(e) => setText(e.target.value)}
               placeholder="Paste deed text, recital preamble, or affidavit verification clause..."
               rows={6}
-              className="w-full bg-[#FAF8F5] border-2 border-[#E6E2D8] rounded-2xl p-4 text-xs text-[#0B192C] placeholder-[#5A6A80]/60 font-mono focus:border-[#1E3E62] focus:outline-none transition-colors"
+              className="w-full bg-[#FBF8F2] border border-[#E5DED2] rounded-lg p-3.5 text-xs text-[#20344A] placeholder-[#74777D]/60 font-mono focus:border-[#20344A] focus:outline-none transition-colors"
             />
           </div>
 
@@ -85,7 +85,7 @@ export const ClassifierModal: React.FC<ClassifierModalProps> = ({
                   "I, Ramesh Kumar, son of Late Shri Suresh Kumar, aged about 24 years, resident of Sector 14, Gurugram, do hereby solemnly affirm and declare on oath that I am applying for enrollment as an Advocate before the Bar Council..."
                 )
               }
-              className="text-xs text-[#1E3E62] hover:text-[#0B192C] font-bold underline"
+              className="text-xs text-[#C78335] hover:text-[#20344A] font-medium underline"
             >
               Insert sample affidavit excerpt
             </button>
@@ -93,53 +93,53 @@ export const ClassifierModal: React.FC<ClassifierModalProps> = ({
               <button
                 type="button"
                 onClick={resetForm}
-                className="px-3 py-2 text-xs font-bold text-[#5A6A80] hover:text-[#0B192C] transition-colors"
+                className="px-3 py-1.5 text-xs font-medium text-[#74777D] hover:text-[#20344A] transition-colors"
               >
                 Clear
               </button>
               <button
                 type="submit"
                 disabled={loading || !text.trim()}
-                className="px-5 py-2.5 bg-[#F59E0B] hover:bg-[#D97706] text-[#0B192C] text-xs font-black rounded-xl flex items-center gap-2 border-2 border-[#B45309] border-b-4 border-b-[#B45309] tactile-btn shadow-sm disabled:opacity-50 transition-all"
+                className="px-4 py-2 bg-[#20344A] hover:bg-[#152434] text-white text-xs font-medium rounded flex items-center gap-2 shadow-xs disabled:opacity-50 transition-colors"
               >
                 {loading ? <LoadingSpinner size="sm" /> : <Search className="w-3.5 h-3.5" />}
-                Analyze Structure
+                <span>Identify Document</span>
               </button>
             </div>
           </div>
         </form>
 
         {error && (
-          <div className="p-3.5 rounded-2xl bg-rose-50 border-2 border-rose-300 text-rose-800 text-xs font-medium">
+          <div className="p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium">
             {error}
           </div>
         )}
 
         {result && (
-          <div className="p-5 rounded-2xl bg-[#FAF8F5] border-2 border-[#E6E2D8] shadow-sm space-y-3 animate-fade-in-up">
+          <div className="p-4 rounded-lg bg-[#FBF8F2] border border-[#E5DED2] shadow-xs space-y-3 animate-fade-in-up">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#059669]">
+                <div className="w-7 h-7 rounded bg-[#E8F3ED] border border-[#557B68]/30 flex items-center justify-center text-[#557B68]">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="font-serif text-sm font-black text-[#0B192C]">
+                  <h4 className="font-serif text-sm font-medium text-[#20344A]">
                     {result.detected_type.replace(/_/g, ' ')}
                   </h4>
-                  <p className="text-xs text-[#5A6A80] font-mono">
-                    Structural Match Confidence:{' '}
-                    <span className="text-[#059669] font-bold">
+                  <p className="text-xs text-[#74777D] font-mono">
+                    Match Confidence:{' '}
+                    <span className="text-[#557B68] font-bold">
                       {(result.confidence * 100).toFixed(0)}%
                     </span>
                   </p>
                 </div>
               </div>
-              <span className="px-2.5 py-1 bg-[#1E3E62]/10 text-[#1E3E62] text-xs font-bold rounded-lg border border-[#1E3E62]/20 font-mono">
+              <span className="px-2 py-0.5 bg-[#F4EFEA] text-[#20344A] text-[11px] font-medium rounded border border-[#E5DED2] font-mono">
                 {result.detected_type}
               </span>
             </div>
 
-            <p className="text-xs text-[#0B192C] bg-white p-3.5 rounded-xl border border-[#E6E2D8] leading-relaxed">
+            <p className="text-xs text-[#20344A] bg-white p-3 rounded border border-[#E5DED2] leading-relaxed">
               {result.summary}
             </p>
 
@@ -147,7 +147,7 @@ export const ClassifierModal: React.FC<ClassifierModalProps> = ({
               <div className="flex justify-end pt-1">
                 <button
                   onClick={handleApply}
-                  className="px-4 py-2 bg-[#1E3E62] hover:bg-[#0B192C] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors border-2 border-[#0B192C] border-b-4 border-b-[#0B192C] tactile-btn"
+                  className="px-3.5 py-1.5 bg-[#20344A] hover:bg-[#152434] text-white text-xs font-medium rounded flex items-center gap-1.5 transition-colors shadow-xs"
                 >
                   Apply Document Type <ArrowRight className="w-3.5 h-3.5" />
                 </button>

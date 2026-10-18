@@ -9,7 +9,7 @@ To meet institutional governance standards for university handover (specifically
 ```
                       ┌────────────────────────────────────────┐
                       │             CHIEF ADMIN                │
-                      │  (singlahimanshi2@gmail.com / Root)   │
+                      │  (singlahimanshi2@gmail.com / Root)    │
                       └───────────────────┬────────────────────┘
                                           │
                                           │ Dispatches @ncuindia.edu Invites
@@ -69,13 +69,13 @@ Configure the following variables in `backend/.env`:
 | `INVITATION_EXPIRY_HOURS` | `int` | `72` | Time-to-live for invitation tokens (in hours). |
 | `APP_BASE_URL` | `str` | `http://localhost:5173` | Public URL of the frontend application used to format invitation URLs. |
 | `STUDENT_EMAIL_POLICY` | `str` | `ANY_VERIFIED` | Either `ANY_VERIFIED` or `COLLEGE_DOMAIN_ONLY`. |
-| `EMAIL_PROVIDER` | `str` | `console` | Dispatch engine: `console` (dev logs), `smtp` (production), or `resend`. |
-| `SMTP_HOST` | `str` | `smtp.gmail.com` | SMTP server address (when `EMAIL_PROVIDER=smtp`). |
-| `SMTP_PORT` | `int` | `587` | SMTP port (587 for TLS, 465 for SSL). |
-| `SMTP_USERNAME` | `str` | `—` | SMTP authentication user. |
-| `SMTP_PASSWORD` | `str` | `—` | SMTP authentication password or app password. |
-| `SMTP_FROM_EMAIL` | `str` | `noreply@ncuindia.edu` | From address on outbound invitation emails. |
-| `RESEND_API_KEY` | `str` | `—` | API key if using Resend (`EMAIL_PROVIDER=resend`). |
+| `EMAIL_PROVIDER` | `str` | `resend` | Dispatch engine: `resend` (HTTPS API via port 443, immune to firewall blocks), `console` (dev logs), or `smtp` (legacy). |
+| `RESEND_API_KEY` | `str` | `re_...` | API key from Resend (https://resend.com) for reliable HTTPS delivery. |
+| `RESEND_FROM_EMAIL` | `str` | `DraftForge <onboarding@resend.dev>` | From address for Resend. Use `onboarding@resend.dev` for sandbox/dev or your verified university domain in production. |
+| `EMAIL_FALLBACK_TO_CONSOLE` | `bool` | `True` | Fallback to console dispatch if the external email API encounters a temporary network or domain error. |
+| `SMTP_HOST` | `str` | `smtp.gmail.com` | Optional legacy SMTP host (Note: Outbound SMTP ports are blocked on Render/AWS). |
+| `SMTP_PORT` | `int` | `587` | Legacy SMTP port. |
+| `SMTP_FROM_EMAIL` | `str` | `noreply@ncuindia.edu` | Legacy SMTP from address. |
 
 ### Frontend Configuration (`frontend/.env`)
 
